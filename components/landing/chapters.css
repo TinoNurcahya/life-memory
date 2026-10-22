@@ -1,0 +1,1519 @@
+.memory-archive .lm-kicker.lm-chapter-label {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+}
+
+.memory-archive .lm-chapter-label>span {
+  opacity: .5;
+}
+
+.memory-archive .lm-photo {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: #b5a28a;
+}
+
+.memory-archive .lm-photo-inner {
+  position: absolute;
+  inset: -6% 0;
+}
+
+.memory-archive .lm-photo-image {
+  object-fit: cover;
+}
+
+.memory-archive .lm-handwritten {
+  font-family: var(--font-newsreader), Georgia, serif;
+  font-size: clamp(1.3rem, 2vw, 2rem);
+  font-style: italic;
+  letter-spacing: -.03em;
+}
+
+.memory-archive .lm-chapter.lm-ordinary {
+  padding-block: clamp(5rem, 9vw, 10rem);
+}
+
+.memory-archive .lm-ordinary-composition {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 4rem 2rem;
+  margin-top: clamp(3rem, 6vw, 7rem);
+}
+
+.memory-archive .lm-title.lm-ordinary-title {
+  grid-column: 1 / 8;
+  grid-row: 1;
+  align-self: center;
+  z-index: 1;
+  font-size: clamp(3.2rem, 7.5vw, 8.5rem);
+}
+
+.memory-archive .lm-ordinary-main {
+  grid-column: 8 / 13;
+  grid-row: 1 / 3;
+  padding-top: 2rem;
+}
+
+.memory-archive .lm-ordinary-main .lm-photo {
+  aspect-ratio: 3 / 4;
+}
+
+.memory-archive .lm-ordinary-main figcaption {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.memory-archive .lm-ordinary-detail {
+  grid-column: 1 / 4;
+  grid-row: 2;
+}
+
+.memory-archive .lm-ordinary-detail .lm-photo {
+  aspect-ratio: 4 / 5;
+}
+
+.memory-archive .lm-ordinary-detail figcaption {
+  margin-top: 1rem;
+}
+
+.memory-archive .lm-ordinary-note {
+  grid-column: 4 / 7;
+  grid-row: 2;
+  align-self: center;
+}
+
+.memory-archive .lm-ordinary-note .lm-handwritten {
+  display: block;
+  margin-bottom: 2rem;
+}
+
+.memory-archive .lm-ordinary-note .lm-copy+.lm-copy {
+  margin-top: 1.2rem;
+}
+
+.memory-archive .lm-ordinary-afterword {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 3rem;
+  padding-top: clamp(5rem, 10vw, 11rem);
+}
+
+.memory-archive .lm-ordinary-afterword>p {
+  width: 66%;
+  font-family: var(--font-newsreader), Georgia, serif;
+  font-size: clamp(2.2rem, 4.3vw, 4.7rem);
+  line-height: 1.15;
+  letter-spacing: -.04em;
+}
+
+.memory-archive .lm-chapter.lm-patterns {
+  padding-block: clamp(5rem, 8vw, 9rem);
+}
+
+.memory-archive .lm-patterns-heading,
+.memory-archive .lm-firsts-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 3rem;
+  margin-top: 4rem;
+}
+
+.memory-archive .lm-patterns-heading>.lm-copy {
+  max-width: 20rem;
+  margin-bottom: .5rem;
+}
+
+.memory-archive .lm-patterns-body {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 6%;
+  align-items: center;
+  margin-top: 5rem;
+  padding-block: 2rem 4rem;
+}
+
+.memory-archive .lm-huge-number {
+  display: block;
+  font-family: var(--font-newsreader), Georgia, serif;
+  font-size: clamp(11rem, 23vw, 24rem);
+  line-height: .9;
+  letter-spacing: -.08em;
+  margin: 1rem 0 0 -.035em;
+}
+
+.memory-archive .lm-return-caption {
+  font-family: var(--font-newsreader), Georgia, serif;
+  font-size: clamp(1.8rem, 3vw, 3rem);
+  letter-spacing: -.04em;
+  margin-bottom: 1.5rem;
+}
+
+.memory-archive .lm-pattern-map-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.memory-archive .lm-pattern-map-label>span:last-child {
+  font-size: 2.5rem;
+  font-weight: 300;
+}
+
+.memory-archive .lm-pattern-orbit {
+  position: relative;
+  aspect-ratio: 520 / 320;
+  margin-top: 1rem;
+  cursor: pointer;
+}
+
+.memory-archive .lm-pattern-orbit svg {
+  position: absolute;
+  inset: 7% 0;
+  width: 100%;
+  height: 86%;
+}
+
+.memory-archive .lm-pattern-orbit path {
+  stroke: currentColor;
+  stroke-width: 1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: .7;
+}
+
+.memory-archive .lm-pattern-orbit .lm-orbit-secondary {
+  opacity: .26;
+}
+
+/* Glowing Traveling Pulse Beams */
+.memory-archive .lm-pattern-orbit .lm-orbit-glow-path {
+  stroke: #ffffff;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  filter: drop-shadow(0 0 5px #fff2c2) drop-shadow(0 0 12px rgba(255, 215, 120, 0.9)) drop-shadow(0 0 24px rgba(255, 175, 70, 0.55));
+  opacity: 0;
+  pointer-events: none;
+  will-change: stroke-dashoffset, opacity;
+}
+
+.memory-archive .lm-pattern-orbit .lm-orbit-glow-secondary {
+  stroke: #ffe4a0;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  filter: drop-shadow(0 0 4px #ffd978) drop-shadow(0 0 10px rgba(255, 200, 90, 0.7));
+  opacity: 0;
+  pointer-events: none;
+  will-change: stroke-dashoffset, opacity;
+}
+
+.memory-archive .lm-pattern-orbit circle {
+  fill: currentColor;
+}
+
+.memory-archive .lm-pattern-orbit .lm-orbit-minor {
+  opacity: .65;
+}
+
+/* Star bloom ripples & major stars */
+.memory-archive .lm-orbit-bloom {
+  fill: url(#lm-star-bloom-grad);
+  opacity: 0;
+  pointer-events: none;
+  transform-origin: center;
+  will-change: transform, opacity;
+}
+
+.memory-archive .lm-pattern-orbit .lm-orbit-star {
+  transition: filter 0.35s ease, fill 0.35s ease;
+  transform-origin: center;
+}
+
+.memory-archive .lm-pattern-orbit .lm-orbit-star.is-lit {
+  fill: #ffffff;
+  filter: drop-shadow(0 0 6px #ffffff) drop-shadow(0 0 14px rgba(255, 230, 160, 0.95)) drop-shadow(0 0 22px rgba(255, 190, 90, 0.7));
+}
+
+.memory-archive .lm-orbit-stage {
+  position: absolute;
+  inset: 7% 0;
+  width: 100%;
+  height: 86%;
+  pointer-events: none;
+}
+
+.memory-archive .lm-orbit-word {
+  position: absolute;
+  font-family: var(--font-newsreader), Georgia, serif;
+  font-size: clamp(1rem, 2vw, 1.7rem);
+  white-space: nowrap;
+  line-height: 1;
+  transition: color 0.4s ease, text-shadow 0.45s ease;
+  will-change: text-shadow, color;
+}
+
+.memory-archive .lm-orbit-word.is-active-glow {
+  color: #ffffff !important;
+  text-shadow: 0 0 10px rgba(255, 245, 215, 1), 0 0 20px rgba(255, 215, 120, 0.9), 0 0 35px rgba(255, 175, 60, 0.6) !important;
+}
+
+.memory-archive .lm-orbit-you {
+  font-family: inherit;
+  font-size: 12px;
+  letter-spacing: .12em;
+}
+
+.memory-archive .lm-orbit-coffee {
+  font-style: italic;
+}
+
+.memory-archive .lm-orbit-lena {}
+
+.memory-archive .lm-orbit-learning {
+  font-size: .9rem;
+  font-style: italic;
+}
+
+.memory-archive .lm-visit-line {
+  display: flex;
+  justify-content: space-between;
+  list-style: none;
+  padding: 0;
+  margin-top: 2rem;
+  border-top: 1px solid currentColor;
+}
+
+.memory-archive .lm-visit-line li {
+  position: relative;
+  padding-top: 1rem;
+  font-size: 12px;
+  letter-spacing: .09em;
+}
+
+.memory-archive .lm-visit-line li>span {
+  display: block;
+  width: .375rem;
+  height: .375rem;
+  border-radius: 50%;
+  background: currentColor;
+  position: absolute;
+  top: -.22rem;
+}
+
+.memory-archive .lm-visit-line li:last-child>span {
+  right: 0;
+}
+
+.memory-archive .lm-pattern-map-caption {
+  margin-top: 2rem;
+}
+
+.memory-archive .lm-sample-statistics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding-block: 2.5rem;
+  border-top: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+}
+
+.memory-archive .lm-sample-statistics>div {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: .75rem;
+  padding-left: 3rem;
+  border-left: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+}
+
+.memory-archive .lm-sample-statistics>div:first-child {
+  padding-left: 0;
+  border-left: 0;
+}
+
+.memory-archive .lm-sample-statistics dt {
+  color: var(--chapter-muted);
+  font-size: 12px;
+}
+
+.memory-archive .lm-sample-statistics dd {
+  font-family: var(--font-newsreader), Georgia, serif;
+  font-size: clamp(3rem, 5vw, 5rem);
+  line-height: 1;
+  letter-spacing: -.04em;
+}
+
+.memory-archive .lm-then-now {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 3rem;
+  align-items: center;
+  padding-block: 3rem;
+}
+
+.memory-archive .lm-then-now>div>p:last-child {
+  margin-top: 1rem;
+  font-family: var(--font-newsreader), Georgia, serif;
+  font-size: clamp(1.8rem, 3.5vw, 3.8rem);
+  line-height: 1.15;
+  letter-spacing: -.03em;
+}
+
+.memory-archive .lm-then-arrow {
+  font-size: 3rem;
+  opacity: .55;
+}
+
+.memory-archive .lm-sample-disclosure {
+  color: var(--chapter-muted);
+  max-width: 100%;
+}
+
+.memory-archive .lm-chapter.lm-firsts {
+  padding-block: clamp(5rem, 8vw, 9rem);
+}
+
+.memory-archive .lm-firsts-heading>.lm-copy {
+  max-width: 21rem;
+  margin-bottom: 1rem;
+}
+
+.memory-archive .lm-firsts-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+  gap: 0;
+  margin-top: 6rem;
+  padding-inline: 1rem;
+}
+
+.memory-archive .lm-first-item {
+  position: relative;
+}
+
+.memory-archive .lm-first-item:first-child {
+  margin-right: -1.25rem;
+}
+
+.memory-archive .lm-first-item:nth-child(2) {
+  margin-top: 7rem;
+  margin-inline: -1.25rem;
+}
+
+.memory-archive .lm-first-item:nth-child(3) {
+  margin-top: 2rem;
+  margin-left: -1.25rem;
+}
+
+.memory-archive .lm-first-figure {
+  position: relative;
+}
+
+.memory-archive .lm-first-image-wrap {
+  position: relative;
+  z-index: 1;
+}
+
+.memory-archive .lm-first-item:nth-child(2) .lm-first-image-wrap {
+  z-index: 2;
+}
+
+.memory-archive .lm-first-item:nth-child(3) .lm-first-image-wrap {
+  z-index: 3;
+}
+
+.memory-archive .lm-first-item:first-child .lm-photo {
+  aspect-ratio: 4 / 5;
+}
+
+.memory-archive .lm-first-item:nth-child(2) .lm-photo {
+  aspect-ratio: 4 / 5.2;
+}
+
+.memory-archive .lm-first-item:nth-child(3) .lm-photo {
+  aspect-ratio: 4 / 5.5;
+}
+
+.memory-archive .lm-first-number {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  color: #faf6ee;
+  font-family: var(--font-newsreader), Georgia, serif;
+  font-size: 2.5rem;
+  line-height: 1;
+  text-shadow: 0 1px 8px #0008;
+}
+
+.memory-archive .lm-first-figure figcaption {
+  position: relative;
+  z-index: 4;
+  padding: 1.5rem 2rem 1.25rem .25rem;
+  background: var(--archive-paper);
+}
+
+.memory-archive .lm-first-figure h3 {
+  font-family: var(--font-newsreader), Georgia, serif;
+  font-size: clamp(1.8rem, 2.8vw, 3rem);
+  line-height: 1.05;
+  letter-spacing: -.04em;
+  margin-top: .75rem;
+}
+
+.memory-archive .lm-first-figure .lm-copy {
+  max-width: 17rem;
+  font-size: .875rem;
+  margin-top: .75rem;
+}
+
+.memory-archive .lm-firsts-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 2rem;
+  margin-top: 5rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--archive-line);
+}
+
+.memory-archive .lm-firsts-bottom>p {
+  font-family: var(--font-newsreader), Georgia, serif;
+  font-size: clamp(1.5rem, 2.5vw, 2.5rem);
+  letter-spacing: -.03em;
+}
+
+.memory-archive .lm-chapter.lm-rediscovery {
+  padding-block: clamp(5rem, 8vw, 9rem) 0;
+}
+
+.memory-archive .lm-rediscovery-heading {
+  text-align: center;
+  padding-block: 5rem 4rem;
+}
+
+.memory-archive .lm-rediscovery-heading>.lm-meta {
+  display: block;
+  margin-bottom: 2rem;
+}
+
+.memory-archive .lm-rediscovery-heading>h2 {
+  font-size: clamp(3.5rem, 9vw, 10rem);
+}
+
+.memory-archive .lm-rediscovery-scene {
+  position: relative;
+  width: 100%;
+}
+
+.memory-archive .lm-rediscovery-scene>.lm-photo {
+  aspect-ratio: 16 / 8;
+  min-height: 35rem;
+}
+
+.memory-archive .lm-rediscovery-scene>.lm-photo::after {
+  content: "";
+  position: absolute;
+  inset: 60% 0 0;
+  background: linear-gradient(transparent, #05152299);
+  pointer-events: none;
+}
+
+.memory-archive .lm-retrieved-note-track {
+  position: absolute;
+  right: 7%;
+  bottom: 2.5rem;
+  width: min(28rem, 42%);
+  z-index: 5;
+  pointer-events: none;
+}
+
+.memory-archive .lm-retrieved-note {
+  --curl-cut: 0%;
+  --curl-progress: 0;
+  position: relative;
+  width: 100%;
+  filter: drop-shadow(0 20px 45px rgba(0, 0, 0, 0.48)) drop-shadow(0 6px 16px rgba(0, 0, 0, 0.28));
+  pointer-events: auto;
+  cursor: pointer;
+  will-change: transform;
+}
+
+.memory-archive .lm-retrieved-note-paper {
+  position: relative;
+  width: 100%;
+  padding: clamp(1.75rem, 3.2vw, 3.2rem);
+  background-color: #f4ede3;
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 31px,
+    rgba(34, 44, 53, 0.055) 31px,
+    rgba(34, 44, 53, 0.055) 32px
+  );
+  color: #222c35;
+  border-radius: 2px;
+  /* Dynamically synchronized cut based on curl-cut */
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - var(--curl-cut, 0%)),
+    calc(100% - var(--curl-cut, 0%)) 100%,
+    0 100%
+  );
+  transition: clip-path 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: clip-path;
+}
+
+/* 3D corner curl SVG positioning strictly anchored to bottom-right corner, scaling to center */
+.memory-archive .lm-retrieved-note-curl {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 52%;
+  height: 52%;
+  pointer-events: auto;
+  cursor: pointer;
+  z-index: 10;
+  transform-origin: 100% 100%;
+  will-change: transform, opacity;
+  transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.45s ease, filter 0.3s ease;
+}
+
+.memory-archive .lm-retrieved-note-curl:hover {
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.35));
+}
+
+/* Hover: curl opens completely flat to reveal the full note */
+.memory-archive .lm-retrieved-note:hover {
+  --curl-cut: 0% !important;
+}
+
+.memory-archive .lm-retrieved-note:hover .lm-retrieved-note-curl {
+  transform: scale(0) !important;
+  opacity: 0 !important;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .memory-archive .lm-retrieved-note {
+    --curl-cut: 0% !important;
+  }
+  .memory-archive .lm-retrieved-note-curl {
+    display: none !important;
+  }
+}
+
+/* 3D Vertical Paper Scroll Canvas Container */
+.memory-archive .lm-paper-3d-wrapper {
+  position: relative;
+  width: 100%;
+  pointer-events: auto;
+}
+
+.memory-archive .lm-paper-3d-canvas-container {
+  position: relative;
+  width: 100%;
+}
+
+.memory-archive .lm-paper-3d-canvas-container canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Red push pin at top-center of the notebook note */
+.memory-archive .lm-retrieved-note-pin {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  pointer-events: none;
+}
+
+.memory-archive .lm-retrieved-note-paper>.lm-meta,
+.memory-archive .lm-retrieved-note>.lm-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  color: #575c5f;
+  position: relative;
+  z-index: 2;
+}
+
+.memory-archive .lm-retrieved-note-paper>p,
+.memory-archive .lm-retrieved-note>p {
+  font-family: var(--font-newsreader), Georgia, serif;
+  font-size: clamp(1.5rem, 2.4vw, 2.6rem);
+  line-height: 1.2;
+  letter-spacing: -.025em;
+  margin-block: 2rem;
+  position: relative;
+  z-index: 2;
+}
+
+.memory-archive .lm-retrieved-source {
+  border-top: 1px solid #222c3530;
+  padding-top: 1.25rem;
+  font-size: 12px;
+  position: relative;
+  z-index: 2;
+}
+
+.memory-archive .lm-rediscovery-photo-caption {
+  position: absolute;
+  left: 5%;
+  bottom: 2rem;
+  color: #fff4df;
+  max-width: 40%;
+}
+
+.memory-archive .lm-reflection {
+  padding-block: clamp(9rem, 14vw, 15rem) clamp(6rem, 10vw, 11rem);
+}
+
+.memory-archive .lm-reflection>.lm-meta {
+  margin-bottom: 3rem;
+}
+
+.memory-archive .lm-reflection blockquote {
+  font-family: var(--font-newsreader), Georgia, serif;
+  font-size: clamp(2.5rem, 5.8vw, 6.6rem);
+  line-height: 1.13;
+  letter-spacing: -.04em;
+  max-width: 67rem;
+}
+
+.memory-archive .lm-reflection-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  align-items: end;
+  margin-top: 3rem;
+}
+
+.memory-archive .lm-chapter.lm-closing {
+  padding-block: clamp(3.5rem, 6vw, 6rem) 2.5rem;
+}
+
+.memory-archive .lm-closing-composition {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  align-items: center;
+  gap: clamp(2rem, 4vw, 4rem);
+  padding-block: clamp(2rem, 4vw, 4rem);
+}
+
+.memory-archive .lm-closing-words {
+  position: relative;
+  z-index: 1;
+}
+
+.memory-archive .lm-closing-words>.lm-title {
+  font-size: clamp(3.5rem, 7vw, 7.5rem);
+}
+
+.memory-archive .lm-closing-words>.lm-copy {
+  margin-top: 1.25rem;
+}
+
+.memory-archive .lm-closing-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.25rem 2rem;
+  margin-top: 1.75rem;
+}
+
+.memory-archive .lm-closing-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  color: var(--archive-paper);
+  background: var(--archive-ink);
+  border: 1px solid var(--archive-ink);
+  border-radius: 0;
+  padding: 0.95rem 1.4rem;
+  font-size: .8rem;
+  transition: background-color .25s, color .25s;
+}
+
+.memory-archive .lm-closing-primary>span {
+  font-size: 1.3rem;
+  transition: transform .25s;
+}
+
+.memory-archive .lm-closing-primary:hover {
+  background: transparent;
+  color: var(--archive-ink);
+}
+
+.memory-archive .lm-closing-primary:hover>span {
+  transform: translate(3px, -3px);
+}
+
+/* ==========================================================================
+   Closing Chapter: Polaroid Photo & 3D Interactive Parallax
+   ========================================================================== */
+
+.memory-archive .lm-closing-photo-wrap {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+}
+
+.memory-archive .lm-polaroid-container {
+  position: relative;
+  perspective: 1100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 1.25rem;
+}
+
+.memory-archive .lm-closing-photo {
+  width: 100%;
+  max-width: clamp(17rem, 25vw, 24rem);
+  margin: 0.5rem 0 0 auto;
+}
+
+.memory-archive .lm-polaroid-card {
+  position: relative;
+  width: 100%;
+  transform-style: preserve-3d;
+  will-change: transform, box-shadow;
+  transform: rotate(var(--base-rot, 2.2deg)) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) translateZ(var(--tilt-z, 0px)) scale(var(--tilt-scale, 1));
+  box-shadow:
+    var(--shadow-x, 0px) var(--shadow-y, 18px) 30px -8px rgba(32, 26, 20, 0.22),
+    0 4px 10px -2px rgba(32, 26, 20, 0.1);
+  transition: transform 0.5s cubic-bezier(0.2, 0.9, 0.3, 1), box-shadow 0.5s ease;
+  cursor: grab;
+}
+
+.memory-archive .lm-polaroid-card:active {
+  cursor: grabbing;
+}
+
+.memory-archive .lm-polaroid-card.is-hovered {
+  box-shadow:
+    var(--shadow-x, 0px) var(--shadow-y, 24px) 44px -6px rgba(32, 26, 20, 0.28),
+    0 6px 14px -2px rgba(32, 26, 20, 0.16);
+  transition: transform 0.08s ease-out, box-shadow 0.2s ease-out;
+}
+
+/* Washi Tape Accent */
+.memory-archive .lm-polaroid-tape-wrap {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-1.5deg) translateZ(24px);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.memory-archive .lm-polaroid-tape-svg {
+  display: block;
+  width: 135px;
+  height: auto;
+  filter: drop-shadow(0 2px 4px rgba(45, 35, 20, 0.18));
+}
+
+/* Vintage Archival Frame */
+.memory-archive .lm-polaroid-frame {
+  position: relative;
+  background: #faf7f0;
+  background-image: linear-gradient(145deg, #fdfbf7 0%, #f7f3eb 50%, #f2ede3 100%);
+  border: 1px solid rgba(215, 205, 190, 0.75);
+  border-radius: 2px;
+  padding: 0.85rem 0.85rem 0 0.85rem;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.55);
+  overflow: hidden;
+}
+
+/* Inner Photo Window */
+.memory-archive .lm-polaroid-photo-window {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1.05;
+  background: #181512;
+  border-radius: 1px;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+}
+
+.memory-archive .lm-polaroid-img {
+  object-fit: cover;
+  transition: transform 0.55s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+.memory-archive .lm-polaroid-card:hover .lm-polaroid-img {
+  transform: scale(1.025);
+}
+
+/* Specular Glare Reflection Sheen */
+.memory-archive .lm-polaroid-glare {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle 380px at var(--glare-x, 50%) var(--glare-y, 50%), rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.14) 35%, rgba(255, 255, 255, 0) 70%);
+  opacity: var(--glare-opacity, 0);
+  mix-blend-mode: overlay;
+  transition: opacity 0.25s ease;
+  z-index: 2;
+}
+
+/* Photo Edge Vignette */
+.memory-archive .lm-polaroid-inner-shadow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), inset 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 3;
+}
+
+/* Polaroid Chin with Handwritten Caption */
+.memory-archive .lm-polaroid-chin {
+  padding: 1.15rem 0.5rem 1.25rem 0.5rem;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.memory-archive .lm-polaroid-caption {
+  font-family: var(--font-newsreader), Georgia, serif;
+  font-style: italic;
+  font-size: clamp(1.05rem, 1.4vw, 1.25rem);
+  letter-spacing: -0.015em;
+  color: #38312b;
+  margin: 0;
+  user-select: none;
+  opacity: 0.92;
+  text-shadow: 0 0.5px 0.5px rgba(0, 0, 0, 0.06);
+}
+
+.memory-archive .lm-colophon {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  border-top: 1px solid var(--archive-line);
+  padding-top: 1.75rem;
+}
+
+.memory-archive .lm-colophon-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  font-family: var(--font-newsreader), Georgia, serif;
+  font-size: 1.8rem;
+  letter-spacing: -.055em;
+}
+
+.memory-archive .lm-colophon-brand>span {
+  font-size: 2rem;
+}
+
+.memory-archive .lm-closing-disclosure {
+  max-width: 42rem;
+  margin-top: 1rem;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--archive-muted);
+}
+
+@media (min-width: 1600px) {
+  .memory-archive .lm-firsts-gallery {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 1023px) {
+  .memory-archive .lm-ordinary-composition {
+    column-gap: 1.25rem;
+  }
+
+  .memory-archive .lm-title.lm-ordinary-title {
+    grid-column: 1 / 8;
+    font-size: clamp(3.2rem, 8vw, 6.5rem);
+  }
+
+  .memory-archive .lm-ordinary-detail {
+    grid-column: 1 / 4;
+  }
+
+  .memory-archive .lm-ordinary-note {
+    grid-column: 4 / 8;
+  }
+
+  .memory-archive .lm-ordinary-note .lm-handwritten {
+    font-size: 1.25rem;
+  }
+
+  .memory-archive .lm-patterns-body {
+    gap: 4%;
+  }
+
+  .memory-archive .lm-firsts-gallery {
+    padding-inline: 0;
+    margin-top: 4rem;
+  }
+
+  .memory-archive .lm-first-item:first-child {
+    margin-right: -.5rem;
+  }
+
+  .memory-archive .lm-first-item:nth-child(2) {
+    margin-inline: -.5rem;
+    margin-top: 4rem;
+  }
+
+  .memory-archive .lm-first-item:nth-child(3) {
+    margin-left: -.5rem;
+  }
+
+  .memory-archive .lm-first-figure figcaption {
+    padding-right: 1rem;
+  }
+
+  .memory-archive .lm-first-figure h3 {
+    font-size: 1.8rem;
+  }
+
+  .memory-archive .lm-retrieved-note {
+    width: 48%;
+    right: 5%;
+  }
+
+  .memory-archive .lm-rediscovery-photo-caption {
+    max-width: 35%;
+  }
+
+  .memory-archive .lm-closing-composition {
+    gap: 2rem;
+  }
+
+  .memory-archive .lm-colophon>.lm-meta {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .memory-archive .lm-ordinary-composition {
+    gap: 2rem 1.25rem;
+    margin-top: 3rem;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .memory-archive .lm-title.lm-ordinary-title {
+    grid-column: 1 / 7;
+    grid-row: 1;
+    font-size: clamp(3.5rem, 13vw, 6rem);
+  }
+
+  .memory-archive .lm-ordinary-main {
+    grid-column: 2 / 7;
+    grid-row: 2;
+    padding-top: 1rem;
+  }
+
+  .memory-archive .lm-ordinary-main .lm-photo {
+    aspect-ratio: 4 / 5;
+  }
+
+  .memory-archive .lm-ordinary-main figcaption {
+    font-size: 12px;
+  }
+
+  .memory-archive .lm-ordinary-main figcaption>span:last-child {
+    flex-shrink: 0;
+  }
+
+  .memory-archive .lm-ordinary-detail {
+    grid-column: 1 / 4;
+    grid-row: 3;
+    margin-top: 2rem;
+  }
+
+  .memory-archive .lm-ordinary-note {
+    grid-column: 4 / 7;
+    grid-row: 3;
+    align-self: end;
+    padding-bottom: 1rem;
+  }
+
+  .memory-archive .lm-ordinary-note .lm-copy {
+    font-size: .8rem;
+    line-height: 1.7;
+  }
+
+  .memory-archive .lm-ordinary-note .lm-handwritten {
+    font-size: 1.2rem;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+
+  .memory-archive .lm-ordinary-afterword {
+    display: block;
+    padding-top: 4rem;
+  }
+
+  .memory-archive .lm-ordinary-afterword>.lm-meta {
+    display: block;
+    margin-bottom: 2rem;
+  }
+
+  .memory-archive .lm-ordinary-afterword>p {
+    width: 100%;
+    font-size: clamp(2rem, 7vw, 3.5rem);
+  }
+
+  .memory-archive .lm-patterns-heading,
+  .memory-archive .lm-firsts-heading {
+    display: block;
+    margin-top: 3rem;
+  }
+
+  .memory-archive .lm-patterns-heading>.lm-copy,
+  .memory-archive .lm-firsts-heading>.lm-copy {
+    margin-top: 2rem;
+  }
+
+  .memory-archive .lm-patterns-body {
+    grid-template-columns: 1fr;
+    margin-top: 3rem;
+    gap: 3rem;
+    padding-bottom: 3rem;
+  }
+
+  .memory-archive .lm-huge-number {
+    font-size: 13rem;
+  }
+
+  .memory-archive .lm-return-caption {
+    font-size: 2.4rem;
+  }
+
+  .memory-archive .lm-pattern-map {
+    padding-top: 1.5rem;
+    border-top: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+  }
+
+  .memory-archive .lm-orbit-word {
+    font-size: 1.2rem;
+  }
+
+  .memory-archive .lm-orbit-you {
+    font-size: 12px;
+  }
+
+  .memory-archive .lm-orbit-learning {
+    font-size: .9rem;
+  }
+
+  .memory-archive .lm-sample-statistics {
+    padding-block: 1.5rem;
+  }
+
+  .memory-archive .lm-sample-statistics>div {
+    padding-left: 1rem;
+  }
+
+  .memory-archive .lm-sample-statistics dd {
+    font-size: 3rem;
+  }
+
+  .memory-archive .lm-sample-statistics dt {
+    font-size: 12px;
+    max-width: 5rem;
+  }
+
+  .memory-archive .lm-then-now {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding-block: 2rem;
+  }
+
+  .memory-archive .lm-then-arrow {
+    line-height: 1;
+    rotate: 90deg;
+    width: 2rem;
+    margin-left: .5rem;
+  }
+
+  .memory-archive .lm-then-now>div>p:last-child {
+    font-size: 2.5rem;
+  }
+
+  .memory-archive .lm-sample-disclosure {
+    line-height: 1.8;
+  }
+
+  .memory-archive .lm-firsts-gallery {
+    display: block;
+    margin-top: 3rem;
+  }
+
+  .memory-archive .lm-first-item:first-child,
+  .memory-archive .lm-first-item:nth-child(2),
+  .memory-archive .lm-first-item:nth-child(3) {
+    width: 91%;
+    margin: 0;
+  }
+
+  .memory-archive .lm-first-item:nth-child(2) {
+    margin: 3rem 0 3rem auto;
+  }
+
+  .memory-archive .lm-first-item .lm-first-figure .lm-photo {
+    aspect-ratio: 4 / 4.5;
+  }
+
+  .memory-archive .lm-first-figure h3 {
+    font-size: 2.3rem;
+  }
+
+  .memory-archive .lm-first-figure .lm-copy {
+    max-width: 100%;
+  }
+
+  .memory-archive .lm-firsts-bottom {
+    display: block;
+    margin-top: 3rem;
+  }
+
+  .memory-archive .lm-firsts-bottom>p {
+    margin-top: 1.25rem;
+    font-size: 1.9rem;
+  }
+
+  .memory-archive .lm-rediscovery-heading {
+    padding-block: 3rem;
+  }
+
+  .memory-archive .lm-rediscovery-heading>.lm-title {
+    font-size: clamp(3rem, 12vw, 5.5rem);
+  }
+
+  .memory-archive .lm-rediscovery-scene>.lm-photo {
+    aspect-ratio: 4 / 5;
+    min-height: 0;
+  }
+
+  .memory-archive .lm-retrieved-note-track {
+    position: relative;
+    width: 85%;
+    right: auto;
+    bottom: auto;
+    margin: -3rem 5% 0 auto;
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  .memory-archive .lm-retrieved-note {
+    --curl-cut: 0% !important;
+    position: relative;
+    width: 100%;
+    right: auto;
+    bottom: auto;
+    margin: 0;
+    padding: 0;
+    pointer-events: auto;
+    will-change: transform;
+    box-shadow: none;
+  }
+
+  .memory-archive .lm-retrieved-note-paper {
+    padding: 1.75rem;
+    clip-path: none !important;
+  }
+
+  .memory-archive .lm-retrieved-note-curl {
+    display: none !important;
+  }
+
+  .memory-archive .lm-retrieved-note-paper>p,
+  .memory-archive .lm-retrieved-note>p {
+    font-size: 1.8rem;
+    margin-block: 1.5rem;
+  }
+
+  .memory-archive .lm-retrieved-source {
+    font-size: 12px;
+  }
+
+  .memory-archive .lm-rediscovery-photo-caption {
+    position: static;
+    max-width: 80%;
+    margin: 2rem auto 0;
+    text-align: center;
+    font-size: 12px;
+  }
+
+  .memory-archive .lm-reflection {
+    padding-top: 5rem;
+  }
+
+  .memory-archive .lm-reflection>.lm-meta {
+    margin-bottom: 2rem;
+  }
+
+  .memory-archive .lm-reflection blockquote {
+    font-size: clamp(2.2rem, 8vw, 3.5rem);
+  }
+
+  .memory-archive .lm-reflection blockquote br {
+    display: none;
+  }
+
+  .memory-archive .lm-reflection-foot {
+    display: block;
+    margin-top: 2rem;
+  }
+
+  .memory-archive .lm-reflection-foot>.lm-copy {
+    margin-top: 1.5rem;
+  }
+
+  .memory-archive .lm-closing-composition {
+    grid-template-columns: 1fr;
+    padding-block: 3rem 4rem;
+    gap: 3rem;
+  }
+
+  .memory-archive .lm-closing-words>.lm-title {
+    font-size: clamp(4rem, 16vw, 7.5rem);
+  }
+
+  .memory-archive .lm-closing-actions {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .memory-archive .lm-closing-photo-wrap {
+    justify-content: flex-end;
+  }
+
+  .memory-archive .lm-closing-photo {
+    margin: 1.5rem auto 0 auto;
+    width: 85%;
+    max-width: 22rem;
+  }
+
+  .memory-archive .lm-colophon {
+    align-items: start;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .memory-archive .lm-closing-disclosure {
+    margin-top: 1.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .memory-archive .lm-photo-inner {
+    inset: 0;
+  }
+
+  .memory-archive .lm-closing-primary,
+  .memory-archive .lm-closing-primary>span {
+    transition: none;
+  }
+
+  .memory-archive .lm-closing-primary:hover>span {
+    transform: none;
+  }
+}
+
+/* Footer Reveal (motion.dev sticky unmask effect) */
+@media (min-width: 1024px) and (min-height: 600px) {
+  .memory-archive .lm-chapter.lm-rediscovery {
+    position: relative;
+    z-index: 2;
+    background: #112736;
+  }
+
+  .dark .memory-archive .lm-chapter.lm-rediscovery {
+    background: #0e1e28;
+  }
+
+  .memory-archive .lm-footer-reveal-container {
+    position: relative;
+    z-index: 1;
+    height: 100vh;
+    background: var(--archive-paper);
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+  }
+
+  .memory-archive .lm-footer-reveal-track {
+    position: relative;
+    height: 200vh;
+    top: -100vh;
+  }
+
+  .memory-archive .lm-footer-reveal-sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    width: 100%;
+    background: var(--archive-paper);
+  }
+
+  .memory-archive .lm-chapter.lm-closing {
+    height: 100vh;
+    min-height: 100vh;
+    box-sizing: border-box;
+    background: var(--archive-paper);
+    color: var(--archive-ink);
+    padding-block: clamp(1.5rem, 3vh, 2.5rem) clamp(1rem, 2vh, 1.75rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .dark .memory-archive .lm-footer-reveal-container,
+  .dark .memory-archive .lm-footer-reveal-sticky,
+  .dark .memory-archive .lm-chapter.lm-closing {
+    background: var(--archive-paper);
+    color: var(--archive-ink);
+  }
+
+  .memory-archive .lm-chapter.lm-closing>.lm-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .memory-archive .lm-chapter.lm-closing .lm-kicker {
+    margin-bottom: 0;
+  }
+
+  .memory-archive .lm-closing-composition {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    align-items: center;
+    gap: clamp(2rem, 3.5vw, 3.5rem);
+    padding-block: 0.25rem;
+    margin-block: auto;
+  }
+
+  .memory-archive .lm-closing-words>.lm-title {
+    font-size: clamp(2.5rem, 4.2vw, 4.2rem);
+    line-height: 0.95;
+  }
+
+  .memory-archive .lm-closing-words>.lm-copy {
+    margin-top: 0.6rem;
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+
+  .memory-archive .lm-closing-quote {
+    max-width: 38rem;
+    margin-top: clamp(1.25rem, 2.5vh, 2rem);
+    font-size: clamp(1.05rem, 1.35vw, 1.35rem);
+    line-height: 1.45;
+    letter-spacing: -0.015em;
+    min-height: clamp(8rem, 12vh, 10.5rem);
+  }
+
+  .memory-archive .lm-closing-quote em {
+    display: inline;
+  }
+
+  .memory-archive .lm-closing-actions {
+    margin-top: clamp(1.25rem, 2.5vh, 1.75rem);
+    gap: 1.25rem 1.75rem;
+  }
+
+  .memory-archive .lm-closing-primary {
+    padding: 0.85rem 1.35rem;
+    font-size: 0.8rem;
+  }
+
+  .memory-archive .lm-closing-photo {
+    max-width: clamp(13rem, 18vw, 17.5rem);
+    margin-top: 0;
+  }
+
+  .memory-archive .lm-polaroid-photo-window {
+    aspect-ratio: 1 / 1;
+  }
+
+  .memory-archive .lm-polaroid-chin {
+    padding: 0.85rem 0.35rem 0.95rem 0.35rem;
+  }
+
+  .memory-archive .lm-polaroid-caption {
+    font-size: 1rem;
+  }
+
+  .memory-archive .lm-colophon {
+    padding-top: 1rem;
+    margin-top: auto;
+  }
+
+  .memory-archive .lm-closing-disclosure {
+    margin-top: 0.35rem;
+  }
+
+}
+
+@media (max-width: 1023px),
+(max-height: 599px) {
+  .memory-archive .lm-footer-reveal-container {
+    position: relative;
+    height: auto;
+    clip-path: none;
+    background: var(--archive-paper);
+    color: var(--archive-ink);
+  }
+
+  .memory-archive .lm-footer-reveal-track {
+    position: relative;
+    height: auto;
+    top: auto;
+  }
+
+  .memory-archive .lm-footer-reveal-sticky {
+    position: static;
+    height: auto;
+    background: var(--archive-paper);
+    color: var(--archive-ink);
+  }
+
+  .memory-archive .lm-chapter.lm-closing {
+    height: auto;
+    min-height: auto;
+    background: var(--archive-paper);
+    color: var(--archive-ink);
+    padding-block: 4rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .memory-archive .lm-polaroid-card {
+    transform: rotate(var(--base-rot, 2.2deg)) !important;
+    transition: none !important;
+  }
+
+  .memory-archive .lm-polaroid-glare {
+    display: none !important;
+  }
+
+  .memory-archive .lm-polaroid-img {
+    transform: none !important;
+  }
+}
