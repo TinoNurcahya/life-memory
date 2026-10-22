@@ -4,6 +4,7 @@
   --archive-muted: #646c63;
   --archive-line: #c7c9bc;
   --archive-accent: #8c4d30;
+  --navbar-accent: #263B67;
   --font-serif: var(--font-newsreader);
   --font-mono: var(--font-inter);
   position: relative;
@@ -17,6 +18,7 @@
   --archive-muted: #b2bab0;
   --archive-line: #4e5b55;
   --archive-accent: #d6a282;
+  --navbar-accent: #7ea1e6;
 }
 .memory-archive *, .memory-archive *::before, .memory-archive *::after { box-sizing: border-box; }
 .memory-archive section[id], .memory-archive footer[id], .memory-archive [id="closing"] { scroll-margin-top: 78px; }
@@ -42,12 +44,79 @@
 .memory-archive .lm-header { position: fixed; z-index: 40; top: 0; left: 0; width: 100%; height: 82px; padding-inline: 4.3%; display: flex; align-items: center; justify-content: space-between; gap: 24px; color: var(--archive-ink); background: color-mix(in srgb, var(--archive-paper) 93%, transparent); border-bottom: 1px solid var(--archive-line); backdrop-filter: blur(16px); }
 .memory-archive .lm-header { transition: transform .35s cubic-bezier(.22, .61, .36, 1), opacity .25s ease; }
 .memory-archive .lm-header.is-hidden { opacity: 0; pointer-events: none; transform: translateY(-110%); }
-.memory-archive .lm-wordmark { display: inline-flex; align-items: center; font-size: 21px; letter-spacing: -.07em; font-weight: 500; white-space: nowrap; }
-.memory-archive .lm-brand-icon { font-size: 32px; font-weight: 300; margin-right: 10px; }
-.memory-archive .lm-brand-period { color: var(--archive-accent); }
+.memory-archive .lm-wordmark {
+  display: inline-flex;
+  align-items: center;
+  font-size: 21px;
+  letter-spacing: -.07em;
+  font-weight: 500;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+}
+.memory-archive .lm-brand-icon {
+  display: inline-block;
+  font-size: 32px;
+  font-weight: 300;
+  margin-right: 10px;
+  line-height: 1;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease;
+  transform-origin: center;
+}
+.memory-archive .lm-wordmark:hover .lm-brand-icon {
+  transform: rotate(90deg) scale(1.12);
+  color: var(--navbar-accent);
+}
+.memory-archive .lm-brand-text {
+  display: inline-flex;
+  align-items: center;
+}
+.memory-archive .lm-brand-char {
+  display: inline-block;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease;
+  transition-delay: calc(var(--char-index) * 20ms);
+  will-change: transform;
+}
+.memory-archive .lm-wordmark:hover .lm-brand-char {
+  transform: translateY(-3px);
+  color: var(--archive-ink);
+}
+.memory-archive .lm-brand-period {
+  display: inline-block;
+  color: var(--navbar-accent);
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), filter 0.35s ease;
+  transition-delay: 220ms;
+}
+.memory-archive .lm-wordmark:hover .lm-brand-period {
+  transform: translateY(-3.5px) scale(1.25);
+  filter: drop-shadow(0 0 6px var(--navbar-accent));
+}
 .memory-archive .lm-header-description { color: var(--archive-muted); margin-left: auto; margin-right: 12%; font-size: 12px; }
 .memory-archive .lm-header-actions { display: flex; align-items: center; gap: 26px; }
-.memory-archive .lm-theme-toggle { display: grid; place-items: center; height: 40px; width: 40px; border: 1px solid var(--archive-line); border-radius: 50%; }
+.memory-archive .lm-theme-toggle {
+  display: grid;
+  place-items: center;
+  height: 40px;
+  width: 40px;
+  border: 1px solid var(--archive-line);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--archive-paper) 70%, transparent);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.4s ease;
+  cursor: pointer;
+}
+.memory-archive .lm-theme-toggle svg {
+  transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease;
+}
+.memory-archive .lm-theme-toggle:hover {
+  transform: scale(1.06);
+  border-color: var(--navbar-accent);
+  background: color-mix(in srgb, var(--archive-paper) 95%, transparent);
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--navbar-accent) 25%, transparent);
+}
+.memory-archive .lm-theme-toggle:hover svg {
+  transform: rotate(180deg) scale(1.1);
+  color: var(--navbar-accent);
+}
 /* Only the landing theme toggle opts into this full-viewport iris. */
 html[data-lm-theme-transition="iris"]::view-transition { pointer-events: none; }
 html[data-lm-theme-transition="iris"]::view-transition-group(root),
@@ -83,7 +152,96 @@ html[data-lm-theme-transition="iris"] .memory-archive .lm-closing-primary { tran
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
 }
-.memory-archive .lm-demo-link { display: inline-flex; align-items: center; gap: 14px; font-size: 12px; border-bottom: 1px solid var(--archive-ink); padding-bottom: 4px; }
+.memory-archive .lm-demo-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 12px;
+  border-bottom: 1px solid var(--archive-ink);
+  padding-bottom: 4px;
+  transition: border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+}
+.memory-archive .lm-demo-link svg {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease;
+}
+.memory-archive .lm-demo-link:hover {
+  border-color: var(--navbar-accent);
+}
+.memory-archive .lm-demo-link:hover svg {
+  transform: translate(3px, -3px) scale(1.12);
+  color: var(--navbar-accent);
+}
+
+/* Initial Load Entrance Micro-animations */
+@keyframes lm-intro-star {
+  0% { transform: rotate(0deg) scale(1); color: inherit; }
+  45% { transform: rotate(90deg) scale(1.12); color: var(--navbar-accent); }
+  100% { transform: rotate(0deg) scale(1); color: inherit; }
+}
+@keyframes lm-intro-char {
+  0% { transform: translateY(0); color: inherit; }
+  50% { transform: translateY(-3px); color: var(--archive-ink); }
+  100% { transform: translateY(0); color: inherit; }
+}
+@keyframes lm-intro-period {
+  0% { transform: translateY(0) scale(1); filter: none; }
+  50% { transform: translateY(-3.5px) scale(1.25); filter: drop-shadow(0 0 6px var(--navbar-accent)); }
+  100% { transform: translateY(0) scale(1); filter: none; }
+}
+@keyframes lm-intro-theme-btn {
+  0% { transform: scale(1); border-color: var(--archive-line); box-shadow: none; }
+  45% { transform: scale(1.06); border-color: var(--navbar-accent); box-shadow: 0 2px 10px color-mix(in srgb, var(--navbar-accent) 25%, transparent); }
+  100% { transform: scale(1); border-color: var(--archive-line); box-shadow: none; }
+}
+@keyframes lm-intro-theme-icon {
+  0% { transform: rotate(0deg) scale(1); color: inherit; }
+  45% { transform: rotate(180deg) scale(1.1); color: var(--navbar-accent); }
+  100% { transform: rotate(0deg) scale(1); color: inherit; }
+}
+@keyframes lm-intro-demo {
+  0% { border-color: var(--archive-ink); }
+  45% { border-color: var(--navbar-accent); }
+  100% { border-color: var(--archive-ink); }
+}
+@keyframes lm-intro-demo-arrow {
+  0% { transform: translate(0, 0) scale(1); color: inherit; }
+  45% { transform: translate(3px, -3px) scale(1.12); color: var(--navbar-accent); }
+  100% { transform: translate(0, 0) scale(1); color: inherit; }
+}
+
+.memory-archive .lm-header.is-intro .lm-brand-icon {
+  animation: lm-intro-star 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+}
+.memory-archive .lm-header.is-intro .lm-brand-char {
+  animation: lm-intro-char 0.75s cubic-bezier(0.16, 1, 0.3, 1) calc(0.22s + var(--char-index) * 32ms) both;
+}
+.memory-archive .lm-header.is-intro .lm-brand-period {
+  animation: lm-intro-period 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.65s both;
+}
+.memory-archive .lm-header.is-intro .lm-theme-toggle {
+  animation: lm-intro-theme-btn 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+}
+.memory-archive .lm-header.is-intro .lm-theme-toggle svg {
+  animation: lm-intro-theme-icon 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+}
+.memory-archive .lm-header.is-intro .lm-demo-link {
+  animation: lm-intro-demo 0.95s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
+}
+.memory-archive .lm-header.is-intro .lm-demo-link svg {
+  animation: lm-intro-demo-arrow 0.95s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
+}
+
+/* User hover immediately cancels intro animation for zero-lag response */
+.memory-archive .lm-wordmark:hover .lm-brand-icon,
+.memory-archive .lm-wordmark:hover .lm-brand-char,
+.memory-archive .lm-wordmark:hover .lm-brand-period,
+.memory-archive .lm-theme-toggle:hover,
+.memory-archive .lm-theme-toggle:hover svg,
+.memory-archive .lm-demo-link:hover,
+.memory-archive .lm-demo-link:hover svg {
+  animation: none !important;
+}
+
 .memory-archive .lm-index { position: fixed; z-index: 35; right: 16px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 4px; padding: 10px 4px; border-radius: 30px; background: color-mix(in srgb, var(--archive-paper) 92%, transparent); color: var(--archive-ink); border: 1px solid var(--archive-line); }
 .memory-archive .lm-index-label { display: none; }
 .memory-archive .lm-index a { position: relative; display: grid; place-items: center; width: 34px; height: 32px; border-radius: 50%; font-family: var(--font-inter), sans-serif; font-size: 12px; }
@@ -232,4 +390,18 @@ html[data-lm-theme-transition="iris"] .memory-archive .lm-closing-primary { tran
 @media (prefers-reduced-motion: reduce) {
   .memory-archive .lm-grain { display: none; }
   .memory-archive .lm-hero-photo { transform: none; }
+  .memory-archive .lm-header.is-intro * {
+    animation: none !important;
+  }
+  .memory-archive .lm-brand-icon,
+  .memory-archive .lm-brand-char,
+  .memory-archive .lm-brand-period,
+  .memory-archive .lm-theme-toggle,
+  .memory-archive .lm-theme-toggle svg,
+  .memory-archive .lm-demo-link svg {
+    transition: none !important;
+    transform: none !important;
+    animation: none !important;
+  }
 }
+

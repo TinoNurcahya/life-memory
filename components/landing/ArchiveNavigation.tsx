@@ -14,13 +14,23 @@ export function ArchiveNavigation() {
   const [active, setActive] = useState<string>("hero");
   const [headerHidden, setHeaderHidden] = useState(false);
   const [themeTransitioning, setThemeTransitioning] = useState(false);
+  const [introActive, setIntroActive] = useState(false);
   const navigationMounted = useRef(true);
   const cancelThemeTransition = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     navigationMounted.current = true;
+    const startIntro = setTimeout(() => {
+      if (navigationMounted.current) setIntroActive(true);
+    }, 200);
+    const stopIntro = setTimeout(() => {
+      if (navigationMounted.current) setIntroActive(false);
+    }, 2400);
+
     return () => {
       navigationMounted.current = false;
+      clearTimeout(startIntro);
+      clearTimeout(stopIntro);
       cancelThemeTransition.current?.();
     };
   }, []);
@@ -135,8 +145,22 @@ export function ArchiveNavigation() {
   }, []);
   return (
     <>
-      <header className={`lm-header${headerHidden ? " is-hidden" : ""}`}>
-        <a href="#hero" className="lm-wordmark" aria-label="Life Memory, back to top"><span className="lm-brand-icon" aria-hidden="true">✳</span> life memory<span className="lm-brand-period">.</span></a>
+      <header className={`lm-header${headerHidden ? " is-hidden" : ""}${introActive ? " is-intro" : ""}`}>
+        <a href="#hero" className="lm-wordmark" aria-label="Life Memory, back to top">
+          <span className="lm-brand-icon" aria-hidden="true">✳</span>
+          <span className="lm-brand-text">
+            {"life memory".split("").map((char, i) => (
+              <span
+                key={i}
+                className="lm-brand-char"
+                style={{ "--char-index": i } as React.CSSProperties}
+              >
+                {char === " " ? "\u00A0" : char}
+              </span>
+            ))}
+          </span>
+          <span className="lm-brand-period">.</span>
+        </a>
         <span className="lm-header-description lm-meta">An ongoing collection</span>
         <div className="lm-header-actions">
           <button
