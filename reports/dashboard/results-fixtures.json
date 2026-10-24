@@ -1,0 +1,27 @@
+{
+  "status": "passed",
+  "results": [
+    {
+      "name": "fixture empty",
+      "details": true
+    },
+    {
+      "name": "fixture error",
+      "details": true
+    },
+    {
+      "name": "fixture statuses",
+      "details": true
+    },
+    {
+      "name": "fixture long",
+      "details": true
+    },
+    {
+      "name": "no browser runtime exceptions",
+      "details": true
+    }
+  ],
+  "errors": [],
+  "failure": null
+}

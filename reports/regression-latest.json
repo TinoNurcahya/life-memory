@@ -1,0 +1,747 @@
+{
+  "generatedAt": "2026-10-20T03:20:36.354Z",
+  "fixtureVersion": 2,
+  "mode": "production-extractor",
+  "productionExtractorTested": true,
+  "results": [
+    {
+      "id": "TC-01",
+      "status": "passed",
+      "reasons": [],
+      "modelUsed": "gemini-3.5-flash-lite",
+      "actual": [
+        {
+          "summary": "Nongkrong bersama Raka di kafe dekat stasiun",
+          "source_text": "kmrn sore nongkrong sm Raka di kafe dkt stasiun",
+          "category": "social",
+          "day_offset": -1,
+          "time_of_day": "afternoon",
+          "time_hint": "sore",
+          "event_status": "completed",
+          "people": [
+            "Raka"
+          ],
+          "places": [],
+          "topics": [],
+          "is_first_time": false
+        }
+      ],
+      "durationMs": 1225
+    },
+    {
+      "id": "TC-02",
+      "status": "passed",
+      "reasons": [],
+      "modelUsed": "gemini-3.5-flash-lite",
+      "actual": [
+        {
+          "summary": "Shipped the authentication middleware",
+          "source_text": "Shipped the authentication middleware",
+          "category": "career",
+          "day_offset": 0,
+          "time_of_day": "unknown",
+          "time_hint": null,
+          "event_status": "completed",
+          "people": [],
+          "places": [],
+          "topics": [
+            "authentication middleware"
+          ],
+          "is_first_time": false
+        },
+        {
+          "summary": "Reviewed 3 PRs with David",
+          "source_text": "reviewed 3 PRs with David",
+          "category": "career",
+          "day_offset": 0,
+          "time_of_day": "unknown",
+          "time_hint": null,
+          "event_status": "completed",
+          "people": [
+            "David"
+          ],
+          "places": [],
+          "topics": [
+            "PRs"
+          ],
+          "is_first_time": false
+        }
+      ],
+      "durationMs": 3342
+    },
+    {
+      "id": "TC-03",
+      "status": "passed",
+      "reasons": [],
+      "modelUsed": "gemini-3.5-flash-lite",
+      "actual": [
+        {
+          "summary": "Jogging 5k di GBK",
+          "source_text": "Pagi jogging 5k di GBK",
+          "category": "health",
+          "day_offset": 0,
+          "time_of_day": "morning",
+          "time_hint": "Pagi",
+          "event_status": "completed",
+          "people": [],
+          "places": [
+            "GBK"
+          ],
+          "topics": [],
+          "is_first_time": false
+        },
+        {
+          "summary": "Coding fitur auth",
+          "source_text": "siang coding fitur auth",
+          "category": "career",
+          "day_offset": 0,
+          "time_of_day": "afternoon",
+          "time_hint": "siang",
+          "event_status": "completed",
+          "people": [],
+          "places": [],
+          "topics": [
+            "auth"
+          ],
+          "is_first_time": false
+        },
+        {
+          "summary": "Dinner dengan Maya",
+          "source_text": "malem dinner sm Maya",
+          "category": "social",
+          "day_offset": 0,
+          "time_of_day": "night",
+          "time_hint": "malem",
+          "event_status": "completed",
+          "people": [
+            "Maya"
+          ],
+          "places": [],
+          "topics": [],
+          "is_first_time": false
+        }
+      ],
+      "durationMs": 3218
+    },
+    {
+      "id": "TC-04",
+      "status": "passed",
+      "reasons": [],
+      "modelUsed": "gemini-3.5-flash-lite",
+      "actual": [
+        {
+          "summary": "Mencoba diving untuk pertama kalinya di Pulau Pari",
+          "source_text": "Pertama kali nyobain diving di Pulau Pari",
+          "category": "leisure",
+          "day_offset": 0,
+          "time_of_day": "unknown",
+          "time_hint": null,
+          "event_status": "completed",
+          "people": [],
+          "places": [
+            "Pulau Pari"
+          ],
+          "topics": [
+            "diving"
+          ],
+          "is_first_time": true
+        }
+      ],
+      "durationMs": 2854
+    },
+    {
+      "id": "TC-05",
+      "status": "passed",
+      "reasons": [],
+      "modelUsed": "gemini-3.5-flash-lite",
+      "actual": [
+        {
+          "summary": "Mengerjakan proposal bisnis semalam dengan tim",
+          "source_text": "semalem begadang beresin proposal bisnis bareng tim",
+          "category": "career",
+          "day_offset": -1,
+          "time_of_day": "night",
+          "time_hint": "semalem",
+          "event_status": "completed",
+          "people": [],
+          "places": [],
+          "topics": [
+            "proposal bisnis"
+          ],
+          "is_first_time": false
+        }
+      ],
+      "durationMs": 2837
+    },
+    {
+      "id": "TC-06",
+      "status": "passed",
+      "reasons": [],
+      "modelUsed": "gemini-3.5-flash-lite",
+      "actual": [
+        {
+          "summary": "Makan siang soto ayam di Warung Bu Kris bersama Dimas",
+          "source_text": "makan siang soto ayam di Warung Bu Kris bareng Mas Dimas",
+          "category": "social",
+          "day_offset": 0,
+          "time_of_day": "afternoon",
+          "time_hint": "makan siang",
+          "event_status": "completed",
+          "people": [
+            "Dimas"
+          ],
+          "places": [
+            "Warung Bu Kris"
+          ],
+          "topics": [],
+          "is_first_time": false
+        }
+      ],
+      "durationMs": 2598
+    },
+    {
+      "id": "TC-07",
+      "status": "failed",
+      "reasons": [
+        "activity 1: is_first_time: expected false, got true",
+        "activity 1: topics: expected [], got [\"lari 10k\"]"
+      ],
+      "modelUsed": "gemini-3.5-flash-lite",
+      "actual": [
+        {
+          "summary": "Berencana lari 10k di GBK bersama rekan kantor",
+          "source_text": "Besok sore mau coba lari 10k di GBK bareng anak-anak kantor",
+          "category": "health",
+          "day_offset": 1,
+          "time_of_day": "afternoon",
+          "time_hint": "sore",
+          "event_status": "planned",
+          "people": [],
+          "places": [
+            "GBK"
+          ],
+          "topics": [
+            "lari 10k"
+          ],
+          "is_first_time": true
+        }
+      ],
+      "durationMs": 2586
+    },
+    {
+      "id": "TC-08",
+      "status": "passed",
+      "reasons": [],
+      "modelUsed": "gemini-3.5-flash-lite",
+      "actual": [
+        {
+          "summary": "Membatalkan pertemuan dengan Raka di Senopati karena hujan badai",
+          "source_text": "Tadi gak jadi ketemu Raka di Senopati karena mendadak hujan badai",
+          "category": "social",
+          "day_offset": 0,
+          "time_of_day": "unknown",
+          "time_hint": null,
+          "event_status": "cancelled",
+          "people": [
+            "Raka"
+          ],
+          "places": [
+            "Senopati"
+          ],
+          "topics": [],
+          "is_first_time": false
+        }
+      ],
+      "durationMs": 2558
+    },
+    {
+      "id": "TC-09",
+      "status": "passed",
+      "reasons": [],
+      "modelUsed": "gemini-3.5-flash-lite",
+      "actual": [
+        {
+          "summary": "Belanja bulanan di Superindo",
+          "source_text": "Dianter Mama belanja bulanan di Superindo",
+          "category": "routine",
+          "day_offset": 0,
+          "time_of_day": "unknown",
+          "time_hint": null,
+          "event_status": "completed",
+          "people": [
+            "Mama"
+          ],
+          "places": [
+            "Superindo"
+          ],
+          "topics": [],
+          "is_first_time": false
+        }
+      ],
+      "durationMs": 2529
+    },
+    {
+      "id": "TC-10",
+      "status": "passed",
+      "reasons": [],
+      "modelUsed": "gemini-3.5-flash-lite",
+      "actual": [
+        {
+          "summary": "Mengerjakan tugas kuliah",
+          "source_text": "Seharian di kosan ngerjain tugas kuliah",
+          "category": "learning",
+          "day_offset": 0,
+          "time_of_day": "unknown",
+          "time_hint": null,
+          "event_status": "completed",
+          "people": [],
+          "places": [],
+          "topics": [],
+          "is_first_time": false
+        }
+      ],
+      "durationMs": 2811
+    },
+    {
+      "id": "TC-11",
+      "status": "passed",
+      "reasons": [],
+      "modelUsed": "gemini-3.5-flash-lite",
+      "actual": [],
+      "durationMs": 2667
+    },
+    {
+      "id": "TC-12",
+      "status": "passed",
+      "reasons": [],
+      "modelUsed": "gemini-3.5-flash-lite",
+      "actual": [
+        {
+          "summary": "Jogging in Prospect Park",
+          "source_text": "This morning I went jogging in Prospect Park.",
+          "category": "health",
+          "day_offset": 0,
+          "time_of_day": "morning",
+          "time_hint": "morning",
+          "event_status": "completed",
+          "people": [],
+          "places": [
+            "Prospect Park"
+          ],
+          "topics": [],
+          "is_first_time": false
+        },
+        {
+          "summary": "Studied TypeScript generics at Campus Library",
+          "source_text": "In the afternoon I studied TypeScript at Campus Library.",
+          "category": "learning",
+          "day_offset": 0,
+          "time_of_day": "afternoon",
+          "time_hint": "afternoon",
+          "event_status": "completed",
+          "people": [],
+          "places": [
+            "Campus Library"
+          ],
+          "topics": [
+            "TypeScript"
+          ],
+          "is_first_time": false
+        },
+        {
+          "summary": "Had dinner with Maya at Warung Bu Kris",
+          "source_text": "Later I had dinner with Maya at Warung Bu Kris.",
+          "category": "social",
+          "day_offset": 0,
+          "time_of_day": "evening",
+          "time_hint": null,
+          "event_status": "completed",
+          "people": [
+            "Maya"
+          ],
+          "places": [
+            "Warung Bu Kris"
+          ],
+          "topics": [],
+          "is_first_time": false
+        },
+        {
+          "summary": "Watched a film at home",
+          "source_text": "At night I watched a film at home.",
+          "category": "leisure",
+          "day_offset": 0,
+          "time_of_day": "night",
+          "time_hint": "night",
+          "event_status": "completed",
+          "people": [],
+          "places": [],
+          "topics": [],
+          "is_first_time": false
+        }
+      ],
+      "durationMs": 3101
+    },
+    {
+      "id": "V-01",
+      "status": "passed",
+      "reasons": [],
+      "modelUsed": "gemini-3.5-flash-lite",
+      "actual": [
+        {
+          "summary": "Ngopi dengan Dita di Kopi Kenangan",
+          "source_text": "kemarin ngopi sama Dita di Kopi Kenangan",
+          "category": "social",
+          "day_offset": -1,
+          "time_of_day": "unknown",
+          "time_hint": "kemarin",
+          "event_status": "completed",
+          "people": [
+            "Dita"
+          ],
+          "places": [
+            "Kopi Kenangan"
+          ],
+          "topics": [],
+          "is_first_time": false
+        }
+      ],
+      "durationMs": 2877
+    },
+    {
+      "id": "V-02",
+      "status": "passed",
+      "reasons": [],
+      "modelUsed": "gemini-3.5-flash-lite",
+      "actual": [
+        {
+          "summary": "Meeting client",
+          "source_text": "Meeting client di kantor",
+          "category": "career",
+          "day_offset": 0,
+          "time_of_day": "unknown",
+          "time_hint": null,
+          "event_status": "completed",
+          "people": [],
+          "places": [],
+          "topics": [],
+          "is_first_time": false
+        }
+      ],
+      "durationMs": 2411
+    },
+    {
+      "id": "V-03",
+      "status": "passed",
+      "reasons": [],
+      "modelUsed": "gemini-3.5-flash-lite",
+      "actual": [
+        {
+          "summary": "Lari pagi 5k di GBK",
+          "source_text": "gue lari pagi 5k di GBK",
+          "category": "health",
+          "day_offset": 0,
+          "time_of_day": "morning",
+          "time_hint": "pagi",
+          "event_status": "completed",
+          "people": [],
+          "places": [
+            "GBK"
+          ],
+          "topics": [],
+          "is_first_time": false
+        }
+      ],
+      "durationMs": 2750
+    },
+    {
+      "id": "V-04",
+      "status": "quota_blocked",
+      "reasons": [
+        "Gemini quota or rate limit reached."
+      ],
+      "durationMs": 5057
+    },
+    {
+      "id": "V-05",
+      "status": "quota_blocked",
+      "reasons": [
+        "Not attempted after API quota limit; rerun when quota is available."
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "V-06",
+      "status": "quota_blocked",
+      "reasons": [
+        "Not attempted after API quota limit; rerun when quota is available."
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "V-07",
+      "status": "quota_blocked",
+      "reasons": [
+        "Not attempted after API quota limit; rerun when quota is available."
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "V-08",
+      "status": "quota_blocked",
+      "reasons": [
+        "Not attempted after API quota limit; rerun when quota is available."
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "V-09",
+      "status": "quota_blocked",
+      "reasons": [
+        "Not attempted after API quota limit; rerun when quota is available."
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "V-10",
+      "status": "quota_blocked",
+      "reasons": [
+        "Not attempted after API quota limit; rerun when quota is available."
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "V-11",
+      "status": "quota_blocked",
+      "reasons": [
+        "Not attempted after API quota limit; rerun when quota is available."
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "V-12",
+      "status": "quota_blocked",
+      "reasons": [
+        "Not attempted after API quota limit; rerun when quota is available."
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "V-13",
+      "status": "quota_blocked",
+      "reasons": [
+        "Not attempted after API quota limit; rerun when quota is available."
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "V-14",
+      "status": "quota_blocked",
+      "reasons": [
+        "Not attempted after API quota limit; rerun when quota is available."
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "V-15",
+      "status": "quota_blocked",
+      "reasons": [
+        "Not attempted after API quota limit; rerun when quota is available."
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "V-16",
+      "status": "quota_blocked",
+      "reasons": [
+        "Not attempted after API quota limit; rerun when quota is available."
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "V-17",
+      "status": "quota_blocked",
+      "reasons": [
+        "Not attempted after API quota limit; rerun when quota is available."
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "V-18",
+      "status": "quota_blocked",
+      "reasons": [
+        "Not attempted after API quota limit; rerun when quota is available."
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "V-19",
+      "status": "quota_blocked",
+      "reasons": [
+        "Not attempted after API quota limit; rerun when quota is available."
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "V-20",
+      "status": "quota_blocked",
+      "reasons": [
+        "Not attempted after API quota limit; rerun when quota is available."
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "V-21",
+      "status": "quota_blocked",
+      "reasons": [
+        "Not attempted after API quota limit; rerun when quota is available."
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "V-22",
+      "status": "quota_blocked",
+      "reasons": [
+        "Not attempted after API quota limit; rerun when quota is available."
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "V-23",
+      "status": "quota_blocked",
+      "reasons": [
+        "Not attempted after API quota limit; rerun when quota is available."
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "V-24",
+      "status": "quota_blocked",
+      "reasons": [
+        "Not attempted after API quota limit; rerun when quota is available."
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "V-25",
+      "status": "quota_blocked",
+      "reasons": [
+        "Not attempted after API quota limit; rerun when quota is available."
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "V-26",
+      "status": "quota_blocked",
+      "reasons": [
+        "Not attempted after API quota limit; rerun when quota is available."
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "V-27",
+      "status": "quota_blocked",
+      "reasons": [
+        "Not attempted after API quota limit; rerun when quota is available."
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "V-28",
+      "status": "quota_blocked",
+      "reasons": [
+        "Not attempted after API quota limit; rerun when quota is available."
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "V-29",
+      "status": "quota_blocked",
+      "reasons": [
+        "Not attempted after API quota limit; rerun when quota is available."
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "V-30",
+      "status": "quota_blocked",
+      "reasons": [
+        "Not attempted after API quota limit; rerun when quota is available."
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "V-31",
+      "status": "quota_blocked",
+      "reasons": [
+        "Not attempted after API quota limit; rerun when quota is available."
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "V-32",
+      "status": "quota_blocked",
+      "reasons": [
+        "Not attempted after API quota limit; rerun when quota is available."
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "V-33",
+      "status": "quota_blocked",
+      "reasons": [
+        "Not attempted after API quota limit; rerun when quota is available."
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "V-34",
+      "status": "quota_blocked",
+      "reasons": [
+        "Not attempted after API quota limit; rerun when quota is available."
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "V-35",
+      "status": "quota_blocked",
+      "reasons": [
+        "Not attempted after API quota limit; rerun when quota is available."
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "V-36",
+      "status": "quota_blocked",
+      "reasons": [
+        "Not attempted after API quota limit; rerun when quota is available."
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "V-37",
+      "status": "quota_blocked",
+      "reasons": [
+        "Not attempted after API quota limit; rerun when quota is available."
+      ],
+      "durationMs": 0
+    },
+    {
+      "id": "V-38",
+      "status": "quota_blocked",
+      "reasons": [
+        "Not attempted after API quota limit; rerun when quota is available."
+      ],
+      "durationMs": 0
+    }
+  ],
+  "passed": 14,
+  "failed": 1,
+  "quota_blocked": 35,
+  "invalid_response": 0,
+  "score": 0.28,
+  "threshold": 0.9,
+  "benchmarkPassed": 11,
+  "benchmarkTotal": 12,
+  "thresholdMet": false,
+  "complete": true
+}

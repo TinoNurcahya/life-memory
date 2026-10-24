@@ -1,0 +1,1086 @@
+[
+  {
+    "id": "demo-01",
+    "occurredAt": "2026-09-20",
+    "category": "social",
+    "eventStatus": "completed",
+    "summary": "Long conversation with a stranger about graduate school at the library.",
+    "people": [],
+    "places": [
+      {
+        "id": "demo-place-library",
+        "name": "Library"
+      }
+    ],
+    "topics": [
+      {
+        "id": "demo-topic-research",
+        "name": "Research"
+      }
+    ],
+    "isFirstTime": true
+  },
+  {
+    "id": "demo-02",
+    "occurredAt": "2026-09-21",
+    "category": "career",
+    "eventStatus": "completed",
+    "summary": "Mapped the capstone recommendation API with Ethan.",
+    "people": [
+      {
+        "id": "demo-person-ethan",
+        "name": "Ethan"
+      }
+    ],
+    "places": [],
+    "topics": [
+      {
+        "id": "demo-topic-api",
+        "name": "API"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-03",
+    "occurredAt": "2026-09-22",
+    "category": "health",
+    "eventStatus": "completed",
+    "summary": "Morning run through Prospect Park before class.",
+    "people": [],
+    "places": [
+      {
+        "id": "demo-place-prospect-park",
+        "name": "Prospect Park"
+      }
+    ],
+    "topics": [
+      {
+        "id": "demo-topic-running",
+        "name": "Running"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-04",
+    "occurredAt": "2026-09-23",
+    "category": "learning",
+    "eventStatus": "completed",
+    "summary": "Rewrote the introduction to the research notes.",
+    "people": [],
+    "places": [],
+    "topics": [
+      {
+        "id": "demo-topic-writing",
+        "name": "Writing"
+      },
+      {
+        "id": "demo-topic-research",
+        "name": "Research"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-05",
+    "occurredAt": "2026-09-24",
+    "category": "social",
+    "eventStatus": "completed",
+    "summary": "Coffee and interview preparation with Lena.",
+    "people": [
+      {
+        "id": "demo-person-lena",
+        "name": "Lena"
+      }
+    ],
+    "places": [
+      {
+        "id": "demo-place-blank-street-coffee",
+        "name": "Blank Street Coffee"
+      }
+    ],
+    "topics": [
+      {
+        "id": "demo-topic-interview-prep",
+        "name": "Interview prep"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-06",
+    "occurredAt": "2026-09-25",
+    "category": "routine",
+    "eventStatus": "completed",
+    "summary": "Cooked dinner at home and called Maya.",
+    "people": [
+      {
+        "id": "demo-person-maya",
+        "name": "Maya"
+      }
+    ],
+    "places": [],
+    "topics": [],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-07",
+    "occurredAt": "2026-09-26",
+    "category": "leisure",
+    "eventStatus": "completed",
+    "summary": "First visit to the Brooklyn Flea Market with Lena.",
+    "people": [
+      {
+        "id": "demo-person-lena",
+        "name": "Lena"
+      }
+    ],
+    "places": [
+      {
+        "id": "demo-place-brooklyn-flea-market",
+        "name": "Brooklyn Flea Market"
+      }
+    ],
+    "topics": [],
+    "isFirstTime": true
+  },
+  {
+    "id": "demo-08",
+    "occurredAt": "2026-09-27",
+    "category": "career",
+    "eventStatus": "completed",
+    "summary": "Fixed a late-night backend query problem in the capstone.",
+    "people": [
+      {
+        "id": "demo-person-ethan",
+        "name": "Ethan"
+      }
+    ],
+    "places": [],
+    "topics": [
+      {
+        "id": "demo-topic-backend",
+        "name": "Backend"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-09",
+    "occurredAt": "2026-09-28",
+    "category": "learning",
+    "eventStatus": "completed",
+    "summary": "Read three papers at the library and highlighted a useful method.",
+    "people": [],
+    "places": [
+      {
+        "id": "demo-place-campus-library",
+        "name": "Campus Library"
+      }
+    ],
+    "topics": [
+      {
+        "id": "demo-topic-research",
+        "name": "Research"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-10",
+    "occurredAt": "2026-09-29",
+    "category": "health",
+    "eventStatus": "completed",
+    "summary": "Short recovery run after a long day in the lab.",
+    "people": [],
+    "places": [
+      {
+        "id": "demo-place-prospect-park",
+        "name": "Prospect Park"
+      }
+    ],
+    "topics": [
+      {
+        "id": "demo-topic-running",
+        "name": "Running"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-11",
+    "occurredAt": "2026-09-30",
+    "category": "career",
+    "eventStatus": "completed",
+    "summary": "Reviewed API error handling with Ethan.",
+    "people": [
+      {
+        "id": "demo-person-ethan",
+        "name": "Ethan"
+      }
+    ],
+    "places": [],
+    "topics": [
+      {
+        "id": "demo-topic-api",
+        "name": "API"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-12",
+    "occurredAt": "2026-10-01",
+    "category": "leisure",
+    "eventStatus": "completed",
+    "summary": "Took photographs of storefronts on the walk home.",
+    "people": [],
+    "places": [],
+    "topics": [
+      {
+        "id": "demo-topic-photography",
+        "name": "Photography"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-13",
+    "occurredAt": "2026-10-02",
+    "category": "learning",
+    "eventStatus": "completed",
+    "summary": "Outlined a small chapter about memory and place.",
+    "people": [],
+    "places": [],
+    "topics": [
+      {
+        "id": "demo-topic-writing",
+        "name": "Writing"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-14",
+    "occurredAt": "2026-10-03",
+    "category": "social",
+    "eventStatus": "completed",
+    "summary": "Breakfast and a long catch-up with Noah.",
+    "people": [
+      {
+        "id": "demo-person-noah",
+        "name": "Noah"
+      }
+    ],
+    "places": [
+      {
+        "id": "demo-place-blank-street-coffee",
+        "name": "Blank Street Coffee"
+      }
+    ],
+    "topics": [],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-15",
+    "occurredAt": "2026-10-04",
+    "category": "career",
+    "eventStatus": "completed",
+    "summary": "Ran the first integration check for the recommendation API.",
+    "people": [],
+    "places": [],
+    "topics": [
+      {
+        "id": "demo-topic-api",
+        "name": "API"
+      },
+      {
+        "id": "demo-topic-backend",
+        "name": "Backend"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-16",
+    "occurredAt": "2026-10-05",
+    "category": "leisure",
+    "eventStatus": "completed",
+    "summary": "Quiet evening editing photographs from the market.",
+    "people": [],
+    "places": [],
+    "topics": [
+      {
+        "id": "demo-topic-photography",
+        "name": "Photography"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-17",
+    "occurredAt": "2026-10-06",
+    "category": "learning",
+    "eventStatus": "completed",
+    "summary": "Made a study plan for the next two weeks.",
+    "people": [],
+    "places": [],
+    "topics": [
+      {
+        "id": "demo-topic-research",
+        "name": "Research"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-18",
+    "occurredAt": "2026-10-07",
+    "category": "health",
+    "eventStatus": "completed",
+    "summary": "Walked around Prospect Park with Sofia.",
+    "people": [
+      {
+        "id": "demo-person-sofia",
+        "name": "Sofia"
+      }
+    ],
+    "places": [
+      {
+        "id": "demo-place-prospect-park",
+        "name": "Prospect Park"
+      }
+    ],
+    "topics": [
+      {
+        "id": "demo-topic-running",
+        "name": "Running"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-19",
+    "occurredAt": "2026-10-08",
+    "category": "career",
+    "eventStatus": "completed",
+    "summary": "Shipped the backend cleanup branch.",
+    "people": [],
+    "places": [],
+    "topics": [
+      {
+        "id": "demo-topic-backend",
+        "name": "Backend"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-20",
+    "occurredAt": "2026-10-09",
+    "category": "career",
+    "eventStatus": "completed",
+    "summary": "Wrote a thank-you note to the interview panel.",
+    "people": [],
+    "places": [],
+    "topics": [
+      {
+        "id": "demo-topic-interview-prep",
+        "name": "Interview prep"
+      },
+      {
+        "id": "demo-topic-writing",
+        "name": "Writing"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-21",
+    "occurredAt": "2026-10-10",
+    "category": "social",
+    "eventStatus": "completed",
+    "summary": "Lunch with Lena between seminars.",
+    "people": [
+      {
+        "id": "demo-person-lena",
+        "name": "Lena"
+      }
+    ],
+    "places": [
+      {
+        "id": "demo-place-campus-library",
+        "name": "Campus Library"
+      }
+    ],
+    "topics": [],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-22",
+    "occurredAt": "2026-10-11",
+    "category": "learning",
+    "eventStatus": "completed",
+    "summary": "Explored Rust examples after class.",
+    "people": [],
+    "places": [
+      {
+        "id": "demo-place-blank-street-coffee",
+        "name": "Blank Street Coffee"
+      }
+    ],
+    "topics": [
+      {
+        "id": "demo-topic-rust",
+        "name": "Rust"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-23",
+    "occurredAt": "2026-10-12",
+    "category": "health",
+    "eventStatus": "completed",
+    "summary": "Evening run and a reflection on energy levels.",
+    "people": [],
+    "places": [
+      {
+        "id": "demo-place-prospect-park",
+        "name": "Prospect Park"
+      }
+    ],
+    "topics": [
+      {
+        "id": "demo-topic-running",
+        "name": "Running"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-24",
+    "occurredAt": "2026-10-13",
+    "category": "leisure",
+    "eventStatus": "completed",
+    "summary": "Photographed the first snow near campus.",
+    "people": [],
+    "places": [
+      {
+        "id": "demo-place-campus-library",
+        "name": "Campus Library"
+      }
+    ],
+    "topics": [
+      {
+        "id": "demo-topic-photography",
+        "name": "Photography"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-25",
+    "occurredAt": "2026-10-14",
+    "category": "career",
+    "eventStatus": "completed",
+    "summary": "Pair-debugged a timeout with Ethan.",
+    "people": [
+      {
+        "id": "demo-person-ethan",
+        "name": "Ethan"
+      }
+    ],
+    "places": [],
+    "topics": [
+      {
+        "id": "demo-topic-backend",
+        "name": "Backend"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-26",
+    "occurredAt": "2026-10-15",
+    "category": "learning",
+    "eventStatus": "completed",
+    "summary": "Finished a writing sprint at the home studio.",
+    "people": [],
+    "places": [
+      {
+        "id": "demo-place-home-studio",
+        "name": "Home Studio"
+      }
+    ],
+    "topics": [
+      {
+        "id": "demo-topic-writing",
+        "name": "Writing"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-27",
+    "occurredAt": "2026-10-16",
+    "category": "social",
+    "eventStatus": "completed",
+    "summary": "Dinner with Maya after the lab meeting.",
+    "people": [
+      {
+        "id": "demo-person-maya",
+        "name": "Maya"
+      }
+    ],
+    "places": [
+      {
+        "id": "demo-place-capstone-lab",
+        "name": "Capstone Lab"
+      }
+    ],
+    "topics": [],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-28",
+    "occurredAt": "2026-10-17",
+    "category": "learning",
+    "eventStatus": "completed",
+    "summary": "Practiced a Rust parser and noted two questions.",
+    "people": [],
+    "places": [],
+    "topics": [
+      {
+        "id": "demo-topic-rust",
+        "name": "Rust"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-29",
+    "occurredAt": "2026-10-18",
+    "category": "health",
+    "eventStatus": "completed",
+    "summary": "Morning run, then planned the next capstone milestone.",
+    "people": [],
+    "places": [
+      {
+        "id": "demo-place-prospect-park",
+        "name": "Prospect Park"
+      }
+    ],
+    "topics": [
+      {
+        "id": "demo-topic-running",
+        "name": "Running"
+      },
+      {
+        "id": "demo-topic-api",
+        "name": "API"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-30",
+    "occurredAt": "2026-10-19",
+    "category": "career",
+    "eventStatus": "completed",
+    "summary": "Presented the capstone progress update to Noah and Sofia.",
+    "people": [
+      {
+        "id": "demo-person-noah",
+        "name": "Noah"
+      },
+      {
+        "id": "demo-person-sofia",
+        "name": "Sofia"
+      }
+    ],
+    "places": [
+      {
+        "id": "demo-place-capstone-lab",
+        "name": "Capstone Lab"
+      }
+    ],
+    "topics": [
+      {
+        "id": "demo-topic-api",
+        "name": "API"
+      },
+      {
+        "id": "demo-topic-research",
+        "name": "Research"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-31",
+    "occurredAt": "2026-09-18",
+    "category": "career",
+    "eventStatus": "completed",
+    "summary": "Worked on api at Blank Street Coffee.",
+    "people": [
+      {
+        "id": "demo-person-ethan",
+        "name": "Ethan"
+      }
+    ],
+    "places": [
+      {
+        "id": "demo-place-blank-street-coffee",
+        "name": "Blank Street Coffee"
+      }
+    ],
+    "topics": [
+      {
+        "id": "demo-topic-api",
+        "name": "API"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-32",
+    "occurredAt": "2026-09-17",
+    "category": "learning",
+    "eventStatus": "completed",
+    "summary": "Spent time with backend at Brooklyn Flea Market.",
+    "people": [],
+    "places": [
+      {
+        "id": "demo-place-brooklyn-flea-market",
+        "name": "Brooklyn Flea Market"
+      }
+    ],
+    "topics": [
+      {
+        "id": "demo-topic-backend",
+        "name": "Backend"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-33",
+    "occurredAt": "2026-09-16",
+    "category": "social",
+    "eventStatus": "completed",
+    "summary": "Spent time with interview prep at Campus Library.",
+    "people": [
+      {
+        "id": "demo-person-maya",
+        "name": "Maya"
+      }
+    ],
+    "places": [
+      {
+        "id": "demo-place-campus-library",
+        "name": "Campus Library"
+      }
+    ],
+    "topics": [
+      {
+        "id": "demo-topic-interview-prep",
+        "name": "Interview prep"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-34",
+    "occurredAt": "2026-09-15",
+    "category": "health",
+    "eventStatus": "completed",
+    "summary": "Moved through rust at Prospect Park.",
+    "people": [],
+    "places": [
+      {
+        "id": "demo-place-prospect-park",
+        "name": "Prospect Park"
+      }
+    ],
+    "topics": [
+      {
+        "id": "demo-topic-rust",
+        "name": "Rust"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-35",
+    "occurredAt": "2026-09-14",
+    "category": "leisure",
+    "eventStatus": "completed",
+    "summary": "Spent time with research at Home Studio.",
+    "people": [
+      {
+        "id": "demo-person-sofia",
+        "name": "Sofia"
+      }
+    ],
+    "places": [
+      {
+        "id": "demo-place-home-studio",
+        "name": "Home Studio"
+      }
+    ],
+    "topics": [
+      {
+        "id": "demo-topic-research",
+        "name": "Research"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-36",
+    "occurredAt": "2026-09-13",
+    "category": "routine",
+    "eventStatus": "completed",
+    "summary": "Spent time with running at Capstone Lab.",
+    "people": [],
+    "places": [
+      {
+        "id": "demo-place-capstone-lab",
+        "name": "Capstone Lab"
+      }
+    ],
+    "topics": [
+      {
+        "id": "demo-topic-running",
+        "name": "Running"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-37",
+    "occurredAt": "2026-09-12",
+    "category": "career",
+    "eventStatus": "completed",
+    "summary": "Worked on writing at Blank Street Coffee.",
+    "people": [
+      {
+        "id": "demo-person-ethan",
+        "name": "Ethan"
+      }
+    ],
+    "places": [
+      {
+        "id": "demo-place-blank-street-coffee",
+        "name": "Blank Street Coffee"
+      }
+    ],
+    "topics": [
+      {
+        "id": "demo-topic-writing",
+        "name": "Writing"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-38",
+    "occurredAt": "2026-09-11",
+    "category": "learning",
+    "eventStatus": "completed",
+    "summary": "Spent time with photography at Brooklyn Flea Market.",
+    "people": [],
+    "places": [
+      {
+        "id": "demo-place-brooklyn-flea-market",
+        "name": "Brooklyn Flea Market"
+      }
+    ],
+    "topics": [
+      {
+        "id": "demo-topic-photography",
+        "name": "Photography"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-39",
+    "occurredAt": "2026-09-10",
+    "category": "social",
+    "eventStatus": "completed",
+    "summary": "Spent time with api at Campus Library.",
+    "people": [
+      {
+        "id": "demo-person-maya",
+        "name": "Maya"
+      }
+    ],
+    "places": [
+      {
+        "id": "demo-place-campus-library",
+        "name": "Campus Library"
+      }
+    ],
+    "topics": [
+      {
+        "id": "demo-topic-api",
+        "name": "API"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-40",
+    "occurredAt": "2026-09-09",
+    "category": "health",
+    "eventStatus": "completed",
+    "summary": "Moved through backend at Prospect Park.",
+    "people": [],
+    "places": [
+      {
+        "id": "demo-place-prospect-park",
+        "name": "Prospect Park"
+      }
+    ],
+    "topics": [
+      {
+        "id": "demo-topic-backend",
+        "name": "Backend"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-41",
+    "occurredAt": "2026-09-08",
+    "category": "leisure",
+    "eventStatus": "completed",
+    "summary": "Spent time with interview prep at Home Studio.",
+    "people": [
+      {
+        "id": "demo-person-sofia",
+        "name": "Sofia"
+      }
+    ],
+    "places": [
+      {
+        "id": "demo-place-home-studio",
+        "name": "Home Studio"
+      }
+    ],
+    "topics": [
+      {
+        "id": "demo-topic-interview-prep",
+        "name": "Interview prep"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-42",
+    "occurredAt": "2026-09-07",
+    "category": "routine",
+    "eventStatus": "completed",
+    "summary": "Spent time with rust at Capstone Lab.",
+    "people": [],
+    "places": [
+      {
+        "id": "demo-place-capstone-lab",
+        "name": "Capstone Lab"
+      }
+    ],
+    "topics": [
+      {
+        "id": "demo-topic-rust",
+        "name": "Rust"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-43",
+    "occurredAt": "2026-09-06",
+    "category": "career",
+    "eventStatus": "completed",
+    "summary": "Worked on research at Blank Street Coffee.",
+    "people": [
+      {
+        "id": "demo-person-ethan",
+        "name": "Ethan"
+      }
+    ],
+    "places": [
+      {
+        "id": "demo-place-blank-street-coffee",
+        "name": "Blank Street Coffee"
+      }
+    ],
+    "topics": [
+      {
+        "id": "demo-topic-research",
+        "name": "Research"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-44",
+    "occurredAt": "2026-09-05",
+    "category": "learning",
+    "eventStatus": "completed",
+    "summary": "Spent time with running at Brooklyn Flea Market.",
+    "people": [],
+    "places": [
+      {
+        "id": "demo-place-brooklyn-flea-market",
+        "name": "Brooklyn Flea Market"
+      }
+    ],
+    "topics": [
+      {
+        "id": "demo-topic-running",
+        "name": "Running"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-45",
+    "occurredAt": "2026-09-04",
+    "category": "social",
+    "eventStatus": "completed",
+    "summary": "Spent time with writing at Campus Library.",
+    "people": [
+      {
+        "id": "demo-person-maya",
+        "name": "Maya"
+      }
+    ],
+    "places": [
+      {
+        "id": "demo-place-campus-library",
+        "name": "Campus Library"
+      }
+    ],
+    "topics": [
+      {
+        "id": "demo-topic-writing",
+        "name": "Writing"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-46",
+    "occurredAt": "2026-09-03",
+    "category": "health",
+    "eventStatus": "completed",
+    "summary": "Moved through photography at Prospect Park.",
+    "people": [],
+    "places": [
+      {
+        "id": "demo-place-prospect-park",
+        "name": "Prospect Park"
+      }
+    ],
+    "topics": [
+      {
+        "id": "demo-topic-photography",
+        "name": "Photography"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-47",
+    "occurredAt": "2026-09-02",
+    "category": "leisure",
+    "eventStatus": "completed",
+    "summary": "Spent time with api at Home Studio.",
+    "people": [
+      {
+        "id": "demo-person-sofia",
+        "name": "Sofia"
+      }
+    ],
+    "places": [
+      {
+        "id": "demo-place-home-studio",
+        "name": "Home Studio"
+      }
+    ],
+    "topics": [
+      {
+        "id": "demo-topic-api",
+        "name": "API"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "demo-48",
+    "occurredAt": "2026-09-01",
+    "category": "routine",
+    "eventStatus": "completed",
+    "summary": "Spent time with backend at Capstone Lab.",
+    "people": [],
+    "places": [
+      {
+        "id": "demo-place-capstone-lab",
+        "name": "Capstone Lab"
+      }
+    ],
+    "topics": [
+      {
+        "id": "demo-topic-backend",
+        "name": "Backend"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "ground-planned-01",
+    "occurredAt": "2026-10-18",
+    "category": "social",
+    "eventStatus": "planned",
+    "summary": "Planned dinner with Lena",
+    "people": [
+      {
+        "id": "demo-person-lena",
+        "name": "Lena"
+      }
+    ],
+    "places": [],
+    "topics": [
+      {
+        "id": "demo-topic-writing",
+        "name": "Writing"
+      }
+    ],
+    "isFirstTime": false
+  },
+  {
+    "id": "ground-cancelled-01",
+    "occurredAt": "2026-10-17",
+    "category": "health",
+    "eventStatus": "cancelled",
+    "summary": "Cancelled gym visit",
+    "people": [],
+    "places": [
+      {
+        "id": "demo-place-prospect-park",
+        "name": "Prospect Park"
+      }
+    ],
+    "topics": [
+      {
+        "id": "demo-topic-running",
+        "name": "Running"
+      }
+    ],
+    "isFirstTime": false
+  }
+]

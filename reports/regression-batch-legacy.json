@@ -1,0 +1,241 @@
+{
+  "generatedAt": "2026-10-19T06:40:17.652Z",
+  "cases": 50,
+  "mode": "batch-harness",
+  "productionExtractorTested": false,
+  "passed": [
+    {
+      "caseIndex": 1,
+      "sourceText": "Dinner with Ethan at the Thai place on Bedford Ave"
+    },
+    {
+      "caseIndex": 2,
+      "sourceText": "Finished the React dashboard for work"
+    },
+    {
+      "caseIndex": 3,
+      "sourceText": "Went for a run in Prospect Park"
+    },
+    {
+      "caseIndex": 4,
+      "sourceText": "Read a paper about memory systems"
+    },
+    {
+      "caseIndex": 5,
+      "sourceText": "Planned to call Maya tomorrow"
+    },
+    {
+      "caseIndex": 6,
+      "sourceText": "Stayed home and cooked rice"
+    },
+    {
+      "caseIndex": 7,
+      "sourceText": "First visit to Brooklyn Flea Market with Lena"
+    },
+    {
+      "caseIndex": 8,
+      "sourceText": "Kotlin bug fixed at the office"
+    },
+    {
+      "caseIndex": 9,
+      "sourceText": "Besok mau belajar Rust"
+    },
+    {
+      "caseIndex": 10,
+      "sourceText": "Canceled the dentist appointment"
+    },
+    {
+      "caseIndex": 11,
+      "sourceText": "Coffee with Raka at a cafe"
+    },
+    {
+      "caseIndex": 13,
+      "sourceText": "kemarin ngopi sama Dita di Kopi Kenangan"
+    },
+    {
+      "caseIndex": 14,
+      "sourceText": "tgl 12/10 meeting client di kantor"
+    },
+    {
+      "caseIndex": 15,
+      "sourceText": "gue lari pagi 5k di GBK"
+    },
+    {
+      "caseIndex": 16,
+      "sourceText": "first time nyobain pottery class"
+    },
+    {
+      "caseIndex": 17,
+      "sourceText": "besok rencana baca buku design systems"
+    },
+    {
+      "caseIndex": 18,
+      "sourceText": "appointment dokter dibatalin"
+    },
+    {
+      "caseIndex": 19,
+      "sourceText": "Maya helped me debug the login flow"
+    },
+    {
+      "caseIndex": 20,
+      "sourceText": "met Arif + Nia at the park"
+    },
+    {
+      "caseIndex": 21,
+      "sourceText": "nulis jurnal soal burnout"
+    },
+    {
+      "caseIndex": 22,
+      "sourceText": "belajar TypeScript generics"
+    },
+    {
+      "caseIndex": 23,
+      "sourceText": "movie night at CGV with Sari"
+    },
+    {
+      "caseIndex": 24,
+      "sourceText": "cleaned the kitchen after dinner"
+    },
+    {
+      "caseIndex": 25,
+      "sourceText": "planned to visit Bandung next month"
+    },
+    {
+      "caseIndex": 26,
+      "sourceText": "didn't go to the gym, cancelled it"
+    },
+    {
+      "caseIndex": 27,
+      "sourceText": "shipped v2 of the API"
+    },
+    {
+      "caseIndex": 28,
+      "sourceText": "first time speaking at a meetup"
+    },
+    {
+      "caseIndex": 29,
+      "sourceText": "late-night study session for calculus"
+    },
+    {
+      "caseIndex": 30,
+      "sourceText": "jalan sore sama Bima di Taman Suropati"
+    },
+    {
+      "caseIndex": 31,
+      "sourceText": "will call mom on Sunday"
+    },
+    {
+      "caseIndex": 32,
+      "sourceText": "forgot to attend the dentist, cancelled"
+    },
+    {
+      "caseIndex": 33,
+      "sourceText": "fixed typo in the portfolio README"
+    },
+    {
+      "caseIndex": 34,
+      "sourceText": "binge watched a documentary"
+    },
+    {
+      "caseIndex": 35,
+      "sourceText": "made nasi goreng at home"
+    },
+    {
+      "caseIndex": 36,
+      "sourceText": "first run along the beach"
+    },
+    {
+      "caseIndex": 37,
+      "sourceText": "rsvp planned for the community dinner"
+    },
+    {
+      "caseIndex": 38,
+      "sourceText": "cancelled my flight to Bali"
+    },
+    {
+      "caseIndex": 39,
+      "sourceText": "reviewed pull request with Kevin"
+    },
+    {
+      "caseIndex": 40,
+      "sourceText": "read about cognitive science"
+    },
+    {
+      "caseIndex": 41,
+      "sourceText": "quick walk near the river"
+    },
+    {
+      "caseIndex": 42,
+      "sourceText": "hangout at the new cafe with Jo"
+    },
+    {
+      "caseIndex": 43,
+      "sourceText": "tomorrow I will start yoga"
+    },
+    {
+      "caseIndex": 44,
+      "sourceText": "cancelled yoga because of rain"
+    },
+    {
+      "caseIndex": 45,
+      "sourceText": "updated the Figma handoff"
+    },
+    {
+      "caseIndex": 46,
+      "sourceText": "first time visiting the science museum"
+    },
+    {
+      "caseIndex": 47,
+      "sourceText": "debugged a flaky test lol"
+    },
+    {
+      "caseIndex": 48,
+      "sourceText": "saw Rani at the library"
+    },
+    {
+      "caseIndex": 49,
+      "sourceText": "meal prep for the week"
+    }
+  ],
+  "failed": [
+    {
+      "caseIndex": 12,
+      "sourceText": "Wrote notes about the new project",
+      "reason": "expected learning/completed with entities and source_text",
+      "actual": {
+        "category": "career",
+        "event_status": "completed",
+        "people": [],
+        "places": [],
+        "topics": [
+          "project",
+          "notes"
+        ],
+        "source_text": "Wrote notes about the new project"
+      }
+    },
+    {
+      "caseIndex": 50,
+      "sourceText": "planned a hike in Sentul",
+      "reason": "expected health/planned with entities and source_text",
+      "actual": {
+        "category": "leisure",
+        "event_status": "planned",
+        "people": [],
+        "places": [
+          "Sentul"
+        ],
+        "topics": [
+          "hike",
+          "nature"
+        ],
+        "source_text": "planned a hike in Sentul"
+      }
+    }
+  ],
+  "quota_blocked": [],
+  "invalid_response": [],
+  "score": 0.96,
+  "threshold": 0.9,
+  "thresholdMet": true
+}

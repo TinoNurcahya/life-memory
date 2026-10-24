@@ -1,0 +1,161 @@
+{
+  "status": "passed",
+  "results": [
+    {
+      "name": "persisted collapsed sidebar hydrates and expands",
+      "details": true
+    },
+    {
+      "name": "layout 1440 light",
+      "details": {
+        "first": 481.390625,
+        "secondBottom": 775.390625,
+        "saveBottom": 309.390625,
+        "overflow": false,
+        "undersized": [],
+        "canvas": "#fbf9f5",
+        "ideasClosed": true
+      }
+    },
+    {
+      "name": "layout 1440 dark",
+      "details": {
+        "first": 481.390625,
+        "secondBottom": 775.390625,
+        "saveBottom": 309.390625,
+        "overflow": false,
+        "undersized": [],
+        "canvas": "#171a1d",
+        "ideasClosed": true
+      }
+    },
+    {
+      "name": "layout 768 light",
+      "details": {
+        "first": 518.1875,
+        "secondBottom": 853.75,
+        "saveBottom": 302.1875,
+        "overflow": false,
+        "undersized": [],
+        "canvas": "#fbf9f5",
+        "ideasClosed": true
+      }
+    },
+    {
+      "name": "layout 768 dark",
+      "details": {
+        "first": 518.1875,
+        "secondBottom": 853.75,
+        "saveBottom": 302.1875,
+        "overflow": false,
+        "undersized": [],
+        "canvas": "#171a1d",
+        "ideasClosed": true
+      }
+    },
+    {
+      "name": "layout 390 light",
+      "details": {
+        "first": 525.1875,
+        "secondBottom": 907.125,
+        "saveBottom": 319.1875,
+        "overflow": false,
+        "undersized": [],
+        "canvas": "#fbf9f5",
+        "ideasClosed": true
+      }
+    },
+    {
+      "name": "layout 390 dark",
+      "details": {
+        "first": 525.1875,
+        "secondBottom": 907.125,
+        "saveBottom": 319.1875,
+        "overflow": false,
+        "undersized": [],
+        "canvas": "#171a1d",
+        "ideasClosed": true
+      }
+    },
+    {
+      "name": "rendered font Inter",
+      "details": [
+        "Inter"
+      ]
+    },
+    {
+      "name": "rendered font Newsreader",
+      "details": [
+        "Newsreader 16pt 16pt"
+      ]
+    },
+    {
+      "name": "writing idea selection restores textarea focus",
+      "details": true
+    },
+    {
+      "name": "keyboard tab order and visible focus",
+      "details": true
+    },
+    {
+      "name": "composer grows and resets",
+      "details": true
+    },
+    {
+      "name": "search results, empty state, Escape and focus return",
+      "details": true
+    },
+    {
+      "name": "mobile navigation Escape and focus return",
+      "details": true
+    },
+    {
+      "name": "composer autoresizes after sidebar expansion",
+      "details": true
+    },
+    {
+      "name": "evidence drawer opens, uses scoped fonts and closes",
+      "details": true
+    },
+    {
+      "name": "rediscovered memory dismiss and undo",
+      "details": true
+    },
+    {
+      "name": "photo preview and touch-visible removal",
+      "details": true
+    },
+    {
+      "name": "date selection and Ctrl+Enter demo capture",
+      "details": true
+    },
+    {
+      "name": "reduced motion",
+      "details": true
+    },
+    {
+      "name": "timeline content and shared navigation",
+      "details": true
+    },
+    {
+      "name": "dashboard layout absent on /login",
+      "details": true
+    },
+    {
+      "name": "dashboard layout absent on /",
+      "details": true
+    },
+    {
+      "name": "no dashboard or timeline browser runtime exceptions",
+      "details": true
+    }
+  ],
+  "errors": [],
+  "relatedRouteErrors": [
+    {
+      "route": "/login",
+      "error": "Error: Minified React error #418; visit https://react.dev/errors/418?args[]=HTML&args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.\n    at rJ (http://localhost:3001/_next/static/chunks/0c2eyavw3xi2p.js:1:62610)\n    at id (http://localhost:3001/_next/static/chunks/0c2eyavw3xi2p.js:1:113858)\n    at sh (http://localhost:3001/_next/static/chunks/0c2eyavw3xi2p.js:1:154687)\n    at http://localhost:3001/_next/static/chunks/0c2eyavw3xi2p.js:1:149566\n    at sr (http://localhost:3001/_next/static/chunks/0c2eyavw3xi2p.js:1:149667)\n    at sq (http://localhost:3001/_next/static/chunks/0c2eyavw3xi2p.js:1:176248)\n    at MessagePort.O (http://localhost:3001/_next/static/chunks/0c2eyavw3xi2p.js:1:3356)"
+    }
+  ],
+  "failure": null
+}

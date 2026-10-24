@@ -1,0 +1,44 @@
+name: Keep Supabase Alive
+
+on:
+  schedule:
+    # Runs every 3 days at 04:00 UTC to prevent Supabase Free Tier 7-day auto-pause
+    - cron: '0 4 */3 * *'
+  workflow_dispatch: # Allows manual trigger from GitHub Actions dashboard
+
+permissions:
+  contents: write
+
+jobs:
+  keep-alive:
+    name: Ping Health Check & Keep Database Active
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Ping Life Memory Health Endpoint
+        env:
+          TARGET_URL: ${{ secrets.HEALTH_CHECK_URL || 'https://life-memory.vercel.app/api/health' }}
+        run: |
+          echo "Pinging health endpoint: $TARGET_URL"
+          RESPONSE=$(curl -s -w "\n%{http_code}" --retry 3 --retry-delay 5 "$TARGET_URL")
+          HTTP_BODY=$(echo "$RESPONSE" | sed '$d')
+          HTTP_STATUS=$(echo "$RESPONSE" | tail -n1)
+
+          echo "HTTP Status: $HTTP_STATUS"
+          echo "Response Body: $HTTP_BODY"
+
+          if [ "$HTTP_STATUS" -ne 200 ]; then
+            echo "::error::Health check failed with HTTP status $HTTP_STATUS"
+            exit 1
+          fi
+
+          if echo "$HTTP_BODY" | grep -q '"database":"ready"'; then
+            echo "Database connection is healthy and active. Inactivity timer reset."
+          else
+            echo "::warning::Health endpoint responded 200, but database status was not 'ready'."
+          fi
+
+      - name: Keep GitHub Actions Active (Bypass 60-day inactivity limit)
+        uses: gautamkrishnar/keepalive-workflow@v2

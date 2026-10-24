@@ -1,0 +1,225 @@
+{
+  "status": "passed",
+  "results": [
+    {
+      "name": "fixture empty",
+      "details": true
+    },
+    {
+      "name": "fixture error",
+      "details": true
+    },
+    {
+      "name": "fixture partial-error",
+      "details": true
+    },
+    {
+      "name": "fixture statuses",
+      "details": true
+    },
+    {
+      "name": "fixture long",
+      "details": true
+    },
+    {
+      "name": "scrolled compact photo opens a viewport-sized lightbox",
+      "details": {
+        "top": 0,
+        "left": 0,
+        "width": 390,
+        "height": 844,
+        "viewportWidth": 390,
+        "viewportHeight": 844,
+        "imageTop": 314,
+        "imageBottom": 496,
+        "scrolled": true,
+        "focusInside": true
+      }
+    },
+    {
+      "name": "compact lightbox focus entry, Tab containment and Escape focus return",
+      "details": true
+    },
+    {
+      "name": "fixture photos",
+      "details": true
+    },
+    {
+      "name": "all five search fields, normalized categories, refreshed props preserve filters",
+      "details": true
+    },
+    {
+      "name": "fixture search",
+      "details": true
+    },
+    {
+      "name": "photo Escape does not close an open editor",
+      "details": true
+    },
+    {
+      "name": "editor keyboard behavior, pending state, mocked category rollback, refreshed counts",
+      "details": true
+    },
+    {
+      "name": "mocked people addition/removal success, failure, pending feedback and refreshed props",
+      "details": true
+    },
+    {
+      "name": "mocked places addition/removal success, failure, pending feedback and refreshed props",
+      "details": true
+    },
+    {
+      "name": "mocked topics addition/removal success, failure, pending feedback and refreshed props",
+      "details": true
+    },
+    {
+      "name": "fixture editor",
+      "details": true
+    },
+    {
+      "name": "mocked extraction retry success and failure",
+      "details": true
+    },
+    {
+      "name": "fixture retry",
+      "details": true
+    },
+    {
+      "name": "no timeline runtime exceptions",
+      "details": true
+    }
+  ],
+  "errors": [],
+  "relatedErrors": [],
+  "intercepted": [
+    {
+      "path": "/timeline/audit-preview",
+      "kind": "server-action",
+      "response": {
+        "success": false,
+        "error": "Audit category change failed.",
+        "code": "DATABASE_ERROR"
+      }
+    },
+    {
+      "path": "/timeline/audit-preview",
+      "kind": "server-action",
+      "response": {
+        "success": true
+      }
+    },
+    {
+      "path": "/timeline/audit-preview",
+      "kind": "server-action",
+      "response": {
+        "success": false,
+        "error": "Audit removal failed.",
+        "code": "DATABASE_ERROR"
+      }
+    },
+    {
+      "path": "/timeline/audit-preview",
+      "kind": "server-action",
+      "response": {
+        "success": true
+      }
+    },
+    {
+      "path": "/timeline/audit-preview",
+      "kind": "server-action",
+      "response": {
+        "success": false,
+        "error": "Audit addition failed.",
+        "code": "DATABASE_ERROR"
+      }
+    },
+    {
+      "path": "/timeline/audit-preview",
+      "kind": "server-action",
+      "response": {
+        "success": true
+      }
+    },
+    {
+      "path": "/timeline/audit-preview",
+      "kind": "server-action",
+      "response": {
+        "success": false,
+        "error": "Audit removal failed.",
+        "code": "DATABASE_ERROR"
+      }
+    },
+    {
+      "path": "/timeline/audit-preview",
+      "kind": "server-action",
+      "response": {
+        "success": true
+      }
+    },
+    {
+      "path": "/timeline/audit-preview",
+      "kind": "server-action",
+      "response": {
+        "success": false,
+        "error": "Audit addition failed.",
+        "code": "DATABASE_ERROR"
+      }
+    },
+    {
+      "path": "/timeline/audit-preview",
+      "kind": "server-action",
+      "response": {
+        "success": true
+      }
+    },
+    {
+      "path": "/timeline/audit-preview",
+      "kind": "server-action",
+      "response": {
+        "success": false,
+        "error": "Audit removal failed.",
+        "code": "DATABASE_ERROR"
+      }
+    },
+    {
+      "path": "/timeline/audit-preview",
+      "kind": "server-action",
+      "response": {
+        "success": true
+      }
+    },
+    {
+      "path": "/timeline/audit-preview",
+      "kind": "server-action",
+      "response": {
+        "success": false,
+        "error": "Audit addition failed.",
+        "code": "DATABASE_ERROR"
+      }
+    },
+    {
+      "path": "/timeline/audit-preview",
+      "kind": "server-action",
+      "response": {
+        "success": true
+      }
+    },
+    {
+      "path": "/api/extract",
+      "kind": "extraction",
+      "response": {
+        "success": false,
+        "error": "Audit extraction failed."
+      }
+    },
+    {
+      "path": "/api/extract",
+      "kind": "extraction",
+      "response": {
+        "success": true
+      }
+    }
+  ],
+  "failure": null,
+  "failureDiagnostics": null
+}

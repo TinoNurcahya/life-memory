@@ -1,0 +1,110 @@
+{
+  "status": "passed",
+  "results": [
+    {
+      "name": "layout 1440 light",
+      "details": {
+        "firstStory": 215,
+        "secondBottom": 445.78125,
+        "searchWidth": 729.453125,
+        "entryCount": 48,
+        "editorClosed": true
+      }
+    },
+    {
+      "name": "layout 1440 dark",
+      "details": {
+        "firstStory": 215,
+        "secondBottom": 445.78125,
+        "searchWidth": 729.453125,
+        "entryCount": 48,
+        "editorClosed": true
+      }
+    },
+    {
+      "name": "layout 768 light",
+      "details": {
+        "firstStory": 317.390625,
+        "secondBottom": 679.953125,
+        "searchWidth": 457,
+        "entryCount": 48,
+        "editorClosed": true
+      }
+    },
+    {
+      "name": "layout 768 dark",
+      "details": {
+        "firstStory": 317.390625,
+        "secondBottom": 679.953125,
+        "searchWidth": 457,
+        "entryCount": 48,
+        "editorClosed": true
+      }
+    },
+    {
+      "name": "layout 390 light",
+      "details": {
+        "firstStory": 306.1875,
+        "secondBottom": 828.75,
+        "searchWidth": 350,
+        "entryCount": 48,
+        "editorClosed": true
+      }
+    },
+    {
+      "name": "layout 390 dark",
+      "details": {
+        "firstStory": 306.1875,
+        "secondBottom": 828.75,
+        "searchWidth": 350,
+        "entryCount": 48,
+        "editorClosed": true
+      }
+    },
+    {
+      "name": "rendered font Inter",
+      "details": [
+        "Inter"
+      ]
+    },
+    {
+      "name": "rendered font Newsreader",
+      "details": [
+        "Newsreader 16pt 16pt"
+      ]
+    },
+    {
+      "name": "chronological sort and clear search filters",
+      "details": true
+    },
+    {
+      "name": "keyboard order and visible focus",
+      "details": true
+    },
+    {
+      "name": "saved demo memory and collapsed sidebar hydrate without mismatch",
+      "details": true
+    },
+    {
+      "name": "reduced motion",
+      "details": true
+    },
+    {
+      "name": "dashboard retains its separate content",
+      "details": true
+    },
+    {
+      "name": "calendar retains its separate content",
+      "details": true
+    },
+    {
+      "name": "no timeline runtime exceptions",
+      "details": true
+    }
+  ],
+  "errors": [],
+  "relatedErrors": [],
+  "intercepted": [],
+  "failure": null,
+  "failureDiagnostics": null
+}

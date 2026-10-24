@@ -1,0 +1,151 @@
+{
+  "status": "failed",
+  "results": [
+    {
+      "name": "persisted collapsed sidebar hydrates and expands",
+      "details": true
+    },
+    {
+      "name": "layout 1440 light",
+      "details": {
+        "first": 481.390625,
+        "secondBottom": 775.390625,
+        "saveBottom": 309.390625,
+        "overflow": false,
+        "undersized": [],
+        "canvas": "#fbf9f5",
+        "ideasClosed": true
+      }
+    },
+    {
+      "name": "layout 1440 dark",
+      "details": {
+        "first": 481.390625,
+        "secondBottom": 775.390625,
+        "saveBottom": 309.390625,
+        "overflow": false,
+        "undersized": [],
+        "canvas": "#171a1d",
+        "ideasClosed": true
+      }
+    },
+    {
+      "name": "layout 768 light",
+      "details": {
+        "first": 518.1875,
+        "secondBottom": 853.75,
+        "saveBottom": 302.1875,
+        "overflow": false,
+        "undersized": [],
+        "canvas": "#fbf9f5",
+        "ideasClosed": true
+      }
+    },
+    {
+      "name": "layout 768 dark",
+      "details": {
+        "first": 518.1875,
+        "secondBottom": 853.75,
+        "saveBottom": 302.1875,
+        "overflow": false,
+        "undersized": [],
+        "canvas": "#171a1d",
+        "ideasClosed": true
+      }
+    },
+    {
+      "name": "layout 390 light",
+      "details": {
+        "first": 525.1875,
+        "secondBottom": 907.125,
+        "saveBottom": 319.1875,
+        "overflow": false,
+        "undersized": [],
+        "canvas": "#fbf9f5",
+        "ideasClosed": true
+      }
+    },
+    {
+      "name": "layout 390 dark",
+      "details": {
+        "first": 525.1875,
+        "secondBottom": 907.125,
+        "saveBottom": 319.1875,
+        "overflow": false,
+        "undersized": [],
+        "canvas": "#171a1d",
+        "ideasClosed": true
+      }
+    },
+    {
+      "name": "rendered font Inter",
+      "details": [
+        "Inter"
+      ]
+    },
+    {
+      "name": "rendered font Newsreader",
+      "details": [
+        "Newsreader 16pt 16pt"
+      ]
+    },
+    {
+      "name": "writing idea selection restores textarea focus",
+      "details": true
+    },
+    {
+      "name": "composer grows and resets",
+      "details": true
+    },
+    {
+      "name": "search results, empty state, Escape and focus return",
+      "details": true
+    },
+    {
+      "name": "mobile navigation Escape and focus return",
+      "details": true
+    },
+    {
+      "name": "composer autoresizes after sidebar expansion",
+      "details": true
+    },
+    {
+      "name": "evidence drawer opens, uses scoped fonts and closes",
+      "details": true
+    },
+    {
+      "name": "rediscovered memory dismiss and undo",
+      "details": true
+    },
+    {
+      "name": "photo preview and touch-visible removal",
+      "details": true
+    },
+    {
+      "name": "date selection and Ctrl+Enter demo capture",
+      "details": true
+    },
+    {
+      "name": "reduced motion",
+      "details": true
+    },
+    {
+      "name": "fixture empty",
+      "details": true
+    },
+    {
+      "name": "fixture error",
+      "details": true
+    },
+    {
+      "name": "fixture statuses",
+      "details": true
+    },
+    {
+      "name": "fixture long",
+      "details": true
+    }
+  ],
+  "errors": [],
+  "failure": "Error: CDP timeout: Page.navigate\n    at Timeout._onTimeout (file:///D:/PORTFOLIO/life-memory/scripts/verify-dashboard.mjs:31:65)\n    at listOnTimeout (node:internal/timers:588:17)\n    at process.processTimers (node:internal/timers:523:7)"
+}
