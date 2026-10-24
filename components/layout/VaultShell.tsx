@@ -7,6 +7,9 @@ import { VaultHeaderStrip } from "@/components/navigation/VaultHeaderStrip";
 import { CommandPalette } from "@/components/navigation/CommandPalette";
 import type { TimelineItem } from "@/lib/queries/activities";
 import { JIMMY_DEMO_ITEMS } from "@/lib/demo/jimmy";
+import { cn } from "@/lib/utils";
+import { dashboardSans, dashboardSerif } from "@/components/dashboard/fonts";
+import "@/components/dashboard/dashboard.css";
 
 interface VaultShellProps {
   children: ReactNode;
@@ -28,19 +31,20 @@ function VaultShellInner({
   items,
   showHeader = true,
   editorial = false,
-  variant = "default",
+  variant = "dashboard",
   className = "",
 }: VaultShellProps) {
-  const [collapsed, setCollapsed] = useState(() => {
-    if (typeof window !== "undefined") {
-      try {
-        return localStorage.getItem("lm_sidebar_collapsed") === "true";
-      } catch {
-        return false;
+  const [collapsed, setCollapsed] = useState(false);
+
+  useEffect(() => {
+    try {
+      if (localStorage.getItem("lm_sidebar_collapsed") === "true") {
+        setCollapsed(true);
       }
+    } catch {
+      // ignore
     }
-    return false;
-  });
+  }, []);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const toggleCollapse = () => {
@@ -79,17 +83,16 @@ function VaultShellInner({
   };
 
   return (
-    <div className={`relative flex h-screen w-full overflow-hidden bg-canvas text-foreground transition-colors duration-300 ${editorial ? "lm-vault-shell--editorial" : ""} ${variant === "dashboard" ? "lm-vault-shell--dashboard" : ""} ${className}`}>
-      {/* Ambient Oceanic Glow - Isolated & Hardware Accelerated */}
-      {variant !== "dashboard" && <div className="pointer-events-none fixed inset-0 overflow-hidden transform-gpu will-change-transform" aria-hidden="true">
-        <div className="absolute -top-40 left-1/4 h-[600px] w-[600px] rounded-full bg-brand/10 blur-[120px] transform-gpu" />
-        <div className="absolute top-1/3 -right-20 h-[500px] w-[500px] rounded-full bg-brand/5 blur-[130px] transform-gpu" />
-        <div className="absolute bottom-10 left-10 h-[450px] w-[450px] rounded-full bg-accent-gold/5 blur-[120px] transform-gpu" />
-      </div>}
-
+    <div
+      className={cn(
+        "relative flex h-screen w-full overflow-hidden bg-canvas text-foreground transition-colors duration-300 lm-vault-shell--dashboard font-sans",
+        dashboardSans.variable,
+        dashboardSerif.variable,
+        className
+      )}
+    >
       {/* Persistent Left Sidebar */}
       <VaultSidebar
-        variant={variant}
         isDemo={isDemo}
         userName={userName}
         collapsed={collapsed}
@@ -103,7 +106,6 @@ function VaultShellInner({
       <div className="flex flex-1 flex-col min-w-0 h-full overflow-hidden">
         {showHeader && (
           <VaultHeaderStrip
-            variant={variant}
             title={title}
             isDemo={isDemo}
             userName={userName}
@@ -121,7 +123,7 @@ function VaultShellInner({
       </div>
 
       {/* Global Command Palette */}
-      <CommandPalette items={items || (isDemo ? JIMMY_DEMO_ITEMS : [])} demo={isDemo} variant={variant} showFloatingTrigger={variant !== "dashboard"} />
+      <CommandPalette items={items || (isDemo ? JIMMY_DEMO_ITEMS : [])} demo={isDemo} variant="dashboard" showFloatingTrigger={false} />
     </div>
   );
 }

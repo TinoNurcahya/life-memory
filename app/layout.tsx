@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ThemeScript } from "@/components/ThemeScript";
 import ToasterProvider from "@/components/ui/ToasterProvider";
+import { dashboardSans, dashboardSerif } from "@/components/dashboard/fonts";
 import "./globals.css";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://life-memory.vercel.app";
@@ -31,14 +32,14 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className=""
+      className={`${dashboardSans.variable} ${dashboardSerif.variable}`}
     >
       <head>
         <ThemeScript />
       </head>
       <body
         suppressHydrationWarning
-        className="min-h-screen bg-canvas text-foreground antialiased selection:bg-brand/20 selection:text-brand"
+        className="min-h-screen bg-canvas text-foreground font-sans antialiased selection:bg-brand/20 selection:text-brand"
       >
         {children}
         <ToasterProvider />

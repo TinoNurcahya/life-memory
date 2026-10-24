@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --font-inter: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-inter: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   --font-newsreader: Newsreader, Georgia, "Times New Roman", serif;
   /* Canvas & Surfaces (Light - Warm Alabaster & Linen) */
   --color-canvas: #FBF9F5;
@@ -26,8 +26,9 @@
   --color-sidebar-border: #E5DDD1;
   --color-sidebar-surface: #FAF7F2;
   --color-sidebar-hover: rgba(0, 0, 0, 0.04);
-  --color-sidebar-active: #E6DEC8;
-  --color-sidebar-active-border: #D8CEB3;
+  --color-sidebar-active: #14171a;
+  --color-sidebar-active-border: #14171a;
+  --color-sidebar-active-text: #ffffff;
 
   /* Entity Chips (Light) */
   --entity-person-bg: #F3EFEA;
@@ -94,8 +95,9 @@
   --color-sidebar-border: rgba(255, 255, 255, 0.08);
   --color-sidebar-surface: #122838;
   --color-sidebar-hover: rgba(255, 255, 255, 0.05);
-  --color-sidebar-active: rgba(255, 255, 255, 0.10);
-  --color-sidebar-active-border: rgba(255, 255, 255, 0.12);
+  --color-sidebar-active: rgba(255, 255, 255, 0.18);
+  --color-sidebar-active-border: rgba(255, 255, 255, 0.22);
+  --color-sidebar-active-text: #ffffff;
 
   /* Entity Chips (Dark) */
   --entity-person-bg: #153043;
@@ -796,6 +798,13 @@ section[id] {
 .lm-sidebar-item--active {
   background-color: var(--color-sidebar-active) !important;
   border-color: var(--color-sidebar-active-border) !important;
+  color: var(--color-sidebar-active-text, #ffffff) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.lm-sidebar-item--active .lm-sidebar-item__label,
+.lm-sidebar-item--active .lm-sidebar-item__icon {
+  color: var(--color-sidebar-active-text, #ffffff) !important;
 }
 
 .lm-sidebar-footer {
@@ -1089,131 +1098,4 @@ section[id] {
   .lm-loading__progress span {
     width: 62%;
   }
-}
-
-.timeline-page__intro {
-  background:
-    radial-gradient(circle at 94% 0%, color-mix(in srgb, var(--color-primary) 12%, transparent), transparent 22rem),
-    linear-gradient(135deg, color-mix(in srgb, var(--color-surface) 94%, var(--color-primary)), var(--color-surface));
-}
-
-.timeline-controls {
-  position: relative;
-}
-
-.timeline-controls input::placeholder {
-  opacity: 0.75;
-}
-
-.timeline-spine > section > header {
-  position: relative;
-}
-
-.timeline-day-list {
-  box-shadow: 0 8px 24px rgba(28, 25, 23, 0.04);
-}
-
-.timeline-row {
-  position: relative;
-  overflow: hidden;
-  padding: 1rem 1.15rem;
-  transition: background-color 180ms ease;
-}
-
-.timeline-row__content {
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  justify-content: space-between;
-}
-
-.timeline-row__content > p {
-  min-width: 0;
-  flex: 1;
-}
-
-.memory-image-compact {
-  width: 6rem;
-  height: 4.25rem;
-}
-
-.memory-image-compact:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 3px;
-}
-
-.timeline-row:hover {
-  background-color: color-mix(in srgb, var(--color-primary) 3.5%, var(--color-surface));
-}
-
-.timeline-row::before {
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 3px;
-  background: color-mix(in srgb, var(--color-primary) 70%, transparent);
-  content: "";
-  opacity: 0;
-  transition: opacity 180ms ease;
-}
-
-.timeline-row:hover::before,
-.timeline-row:focus-within::before {
-  opacity: 1;
-}
-
-.timeline-highlight {
-  background:
-    radial-gradient(circle at 92% 12%, color-mix(in srgb, var(--color-accent-gold) 13%, transparent), transparent 18rem),
-    linear-gradient(135deg, color-mix(in srgb, var(--color-accent-gold) 5%, var(--color-surface)), var(--color-surface));
-}
-
-.dark .timeline-page__intro {
-  border-color: rgba(129, 155, 221, 0.22);
-  background:
-    radial-gradient(circle at 88% 0%, rgba(103, 126, 211, 0.22), transparent 22rem),
-    linear-gradient(135deg, #182b4a 0%, #16263e 54%, #142235 100%);
-  box-shadow: 0 18px 45px rgba(3, 10, 24, 0.2);
-}
-
-.dark .timeline-controls,
-.dark .timeline-day-list {
-  border-color: rgba(159, 180, 231, 0.16);
-  background: #172943;
-  box-shadow: 0 12px 30px rgba(3, 10, 24, 0.14);
-}
-
-.dark .timeline-row:hover {
-  background: #1a2f4d;
-}
-
-.dark .timeline-day-list {
-  border-color: rgba(159, 180, 231, 0.16);
-  background: #14263c;
-}
-
-.dark .timeline-highlight {
-  border-color: rgba(224, 171, 102, 0.3);
-  background:
-    radial-gradient(circle at 92% 12%, rgba(224, 171, 102, 0.12), transparent 18rem),
-    linear-gradient(135deg, #263248, #172943 68%);
-}
-
-.dark .timeline-spine {
-  border-color: rgba(159, 180, 231, 0.2);
-}
-
-@media (max-width: 640px) {
-  .timeline-row {
-    padding: 0.9rem 1rem;
-  }
-
-  .timeline-row__content {
-    gap: 0.75rem;
-  }
-
-  .memory-image-compact {
-    width: 5.25rem;
-    height: 3.75rem;
-  }
-
 }

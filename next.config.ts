@@ -2,7 +2,9 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  devIndicators: false,
+  devIndicators: {
+    position: "bottom-left",
+  },
   images: {
     remotePatterns: [
       {

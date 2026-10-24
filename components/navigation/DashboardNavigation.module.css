@@ -21,6 +21,7 @@
 .sidebarCollapsed {
   flex-basis: 64px;
   width: 64px;
+  overflow-x: hidden;
 }
 
 .sidebarBrand {
@@ -44,22 +45,61 @@
   white-space: nowrap;
 }
 
+.iconButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background-color 160ms, color 160ms;
+}
+
+.iconButton:hover {
+  background: var(--color-surface-subdued);
+  color: var(--color-text-foreground);
+}
+
 .sidebarCollapsed .sidebarBrand {
   flex-direction: column;
-  padding: 8px 10px 0;
+  padding: 12px 10px 8px;
+  gap: 10px;
 }
 
 .sidebarCollapsed .brandLink {
   justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin: 0 auto;
+  border-radius: 10px;
+}
+
+.sidebarCollapsed .iconButton {
+  width: 44px;
+  height: 44px;
+  margin: 0 auto;
+  border-radius: 10px;
 }
 
 .sidebarNavigation {
   flex: 1;
   min-height: 0;
   padding: 8px 12px 20px;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   overscroll-behavior: contain;
-  scrollbar-width: thin;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.sidebarNavigation::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 .navigationGroup + .navigationGroup {
@@ -90,7 +130,8 @@
   font-size: 14px;
   line-height: 20px;
   text-align: left;
-  transition: background-color 160ms, color 160ms;
+  cursor: pointer;
+  transition: background-color 160ms, color 160ms, transform 160ms;
 }
 
 .navItem svg {
@@ -103,31 +144,99 @@
   white-space: nowrap;
 }
 
-.navItem:hover,
-.navItemActive {
+.navItem:hover {
   background: var(--color-surface-subdued);
   color: var(--color-text-foreground);
 }
 
 .navItemActive {
+  background: #14171a;
+  color: #ffffff;
   font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
-.sidebarCollapsed .sidebarNavigation,
-.sidebarCollapsed .sidebarFooter {
-  padding-right: 10px;
-  padding-left: 10px;
+.navItemActive svg {
+  color: #ffffff;
+}
+
+.navItemActive:hover {
+  background: #202428;
+  color: #ffffff;
+}
+
+:global(.dark) .navItemActive {
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  box-shadow: 0 0 16px rgba(255, 255, 255, 0.08), 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+:global(.dark) .navItemActive svg {
+  color: #ffffff;
+}
+
+:global(.dark) .navItemActive:hover {
+  background: rgba(255, 255, 255, 0.24);
+  color: #ffffff;
+}
+
+.sidebarCollapsed .sidebarNavigation {
+  padding: 8px 10px 20px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.sidebarCollapsed .sidebarNavigation::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.sidebarCollapsed .navigationGroup + .navigationGroup {
+  margin-top: 14px;
 }
 
 .sidebarCollapsed .navItem {
   justify-content: center;
-  padding: 8px;
+  align-items: center;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  margin: 3px auto;
+  padding: 0;
+  border-radius: 10px;
+}
+
+.sidebarCollapsed .navItem:hover {
+  transform: scale(1.04);
+}
+
+.sidebarCollapsed .navItemActive {
+  background: #14171a;
+  color: #ffffff;
+  border-radius: 10px;
+}
+
+:global(.dark) .sidebarCollapsed .navItemActive {
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  color: #ffffff;
 }
 
 .sidebarFooter {
   flex-shrink: 0;
   padding: 10px 12px 14px;
   border-top: 1px solid var(--color-border-hairline);
+  overflow-x: hidden;
+}
+
+.sidebarCollapsed .sidebarFooter {
+  padding: 10px 10px 14px;
+  overflow-x: hidden;
 }
 
 .profile {
@@ -138,6 +247,8 @@
   margin-top: 10px;
   padding: 4px 8px;
   font-weight: 500;
+  border-radius: 8px;
+  cursor: default;
 }
 
 .profile > span:last-child {
@@ -148,7 +259,11 @@
 
 .sidebarCollapsed .profile {
   justify-content: center;
-  padding: 4px 0;
+  align-items: center;
+  width: 44px;
+  height: 44px;
+  margin: 6px auto 0;
+  padding: 0;
 }
 
 .avatar {

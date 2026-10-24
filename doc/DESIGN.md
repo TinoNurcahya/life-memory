@@ -21,7 +21,7 @@ Typography uses Inter for interface labels, Newsreader for reflective copy, and 
 3. `/register` — email/password and Google OAuth registration, confirmation guidance.
 4. `/dashboard` — authenticated archive summary, quick logger, metrics, recent timeline.
 5. `/dashboard?demo=jimmy` — anonymous read-only demo preview with deterministic S-14 candidate.
-6. `/timeline` — chronological cards with search, category filters, and inline category/entity removal.
+6. `/timeline` — compact chronological memory feed with search, category filters, grouped date spine, and inline category/entity removal. Date groups use the primary surface; memory entries use compact rows instead of repeated large cards. Timeline metadata and controls use a minimum 12px type size.
 
 ## Planned screens
 
