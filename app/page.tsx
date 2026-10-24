@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 import { MotionConfig } from "motion/react";
 import { ThemeProvider } from "@/lib/experience/theme-context";
 import { IntroLoader } from "@/components/experience/IntroLoader";
@@ -17,7 +17,11 @@ const MemoryField = dynamic(() => import("@/components/experience/MemoryField").
 
 export default function Home() {
   const heroRef = useRef<ArchiveHeroHandle>(null);
-  const completeIntro = useCallback(() => heroRef.current?.reveal(), []);
+  const [introDone, setIntroDone] = useState(false);
+  const completeIntro = useCallback(() => {
+    heroRef.current?.reveal();
+    setIntroDone(true);
+  }, []);
   return (
     <MotionConfig reducedMotion="user">
       <ThemeProvider>
@@ -25,7 +29,7 @@ export default function Home() {
           <a className="lm-skip" href="#ordinary">Skip to the story</a>
           <IntroLoader onComplete={completeIntro} />
           <MemoryField />
-          <ArchiveNavigation />
+          <ArchiveNavigation introReady={introDone} />
           <div className="lm-grain" aria-hidden="true" />
           <SmoothScroll>
             <main id="archive-main">

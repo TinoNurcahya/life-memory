@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ARCHIVE_SAMPLE_NOTE } from "@/lib/experience/archive-data";
@@ -9,42 +9,74 @@ import "./reconstruction.css";
 const STEPS = ["The fragment", "The details", "The connections", "The meaning"];
 
 const ENTITIES = [
-  { kind: "Person", label: "Amy", x: 195, y: 100, width: 142 },
-  { kind: "Place", label: "A small café", x: 680, y: 104, width: 218 },
-  { kind: "Moment", label: "Shared cake", x: 210, y: 335, width: 148 },
-  { kind: "Detail", label: "A rainy day", x: 681, y: 333, width: 218 },
+  { kind: "Person", label: "Amy", x: 180, y: 92, width: 205, dotColor: "#6ee7b7" },
+  { kind: "Place", label: "A small café", x: 720, y: 92, width: 275, dotColor: "#93c5fd" },
+  { kind: "Moment", label: "Shared cake", x: 190, y: 345, width: 225, dotColor: "#fde047" },
+  { kind: "Detail", label: "A rainy day", x: 710, y: 345, width: 275, dotColor: "#c4b5fd" },
 ];
 
 function RelationshipMap() {
+  const [hoveredKind, setHoveredKind] = useState<string | null>(null);
+
   return (
     <div className="lm-reconstruction__map">
       <svg viewBox="0 0 900 440" className="lm-reconstruction__graph" role="img" aria-labelledby="archive-map-title">
         <title id="archive-map-title">One note connects you with Amy, a small café, shared cake, and a rainy day.</title>
         <g className="lm-reconstruction__orbits" aria-hidden="true">
-          <ellipse cx="450" cy="220" rx="322" ry="168" />
-          <circle cx="450" cy="220" r="111" />
-          <path d="M450 22V418M48 220H852" />
+          <ellipse cx="450" cy="220" rx="340" ry="175" />
+          <circle cx="450" cy="220" r="115" />
+          <path d="M450 15V425M30 220H870" />
         </g>
         <g className="lm-reconstruction__edges" aria-hidden="true">
-          {ENTITIES.map((entity) => (
-            <path key={entity.kind} d={`M450 220 Q${entity.x} 220 ${entity.x} ${entity.y}`} pathLength="1" data-graph-edge />
-          ))}
+          {ENTITIES.map((entity) => {
+            const isHovered = hoveredKind === entity.kind;
+            const isDimmed = hoveredKind !== null && !isHovered;
+            return (
+              <path
+                key={entity.kind}
+                d={`M450 220 Q${entity.x} 220 ${entity.x} ${entity.y}`}
+                pathLength="1"
+                data-graph-edge
+                data-active={isHovered ? "true" : undefined}
+                data-dimmed={isDimmed ? "true" : undefined}
+              />
+            );
+          })}
         </g>
         <g transform="translate(450 220)">
           <g data-graph-node className="lm-reconstruction__graph-center">
-            <circle r="48" />
-            <text textAnchor="middle" y="7">You</text>
+            <circle r="52" />
+            <text textAnchor="middle" y="9">You</text>
           </g>
         </g>
-        {ENTITIES.map((entity) => (
-          <g key={entity.kind} transform={`translate(${entity.x} ${entity.y})`}>
-            <g data-graph-node className="lm-reconstruction__graph-node">
-              <rect x={-entity.width / 2} y="-36" width={entity.width} height="72" rx="2" />
-              <text className="lm-reconstruction__graph-kind" textAnchor="middle" y="-8">{entity.kind}</text>
-              <text className="lm-reconstruction__graph-label" textAnchor="middle" y="17">{entity.label}</text>
+        {ENTITIES.map((entity) => {
+          const isHovered = hoveredKind === entity.kind;
+          const isDimmed = hoveredKind !== null && !isHovered;
+          return (
+            <g
+              key={entity.kind}
+              transform={`translate(${entity.x} ${entity.y})`}
+              onMouseEnter={() => setHoveredKind(entity.kind)}
+              onMouseLeave={() => setHoveredKind(null)}
+            >
+              <g
+                data-graph-node
+                className="lm-reconstruction__graph-node"
+                data-hovered={isHovered ? "true" : undefined}
+                data-dimmed={isDimmed ? "true" : undefined}
+              >
+                <rect x={-entity.width / 2} y="-46" width={entity.width} height="92" rx="14" />
+                <circle cx={-entity.width / 2 + 24} cy="-17" r="4.5" fill={entity.dotColor} />
+                <text className="lm-reconstruction__graph-kind" textAnchor="start" x={-entity.width / 2 + 37} y="-13">
+                  {entity.kind}
+                </text>
+                <text className="lm-reconstruction__graph-label" textAnchor="start" x={-entity.width / 2 + 24} y="22">
+                  {entity.label}
+                </text>
+              </g>
             </g>
-          </g>
-        ))}
+          );
+        })}
       </svg>
       <ul className="lm-reconstruction__mobile-entities" aria-label="Details connected to you">
         {ENTITIES.map((entity) => (
@@ -100,9 +132,9 @@ export function ArchiveReconstruction() {
           scrollTrigger: {
             trigger: stage,
             start: "top top",
-            end: () => `+=${window.innerHeight * 2}`,
+            end: () => `+=${window.innerHeight * 2.5}`,
             pin: true,
-            scrub: 0.65,
+            scrub: 0.85,
             anticipatePin: 1,
             invalidateOnRefresh: true,
             onRefresh: (trigger) => {

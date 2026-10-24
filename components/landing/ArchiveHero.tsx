@@ -98,6 +98,37 @@ export function ArchiveHero({ ref }: { ref: Ref<ArchiveHeroHandle> }) {
         },
         "<"
       );
+      heroTl.from(
+        ".lm-hero-overline > span:first-child",
+        {
+          opacity: 0,
+          x: -28,
+          duration: 0.85,
+          ease: "power3.out",
+        },
+        "<0.1"
+      );
+      heroTl.from(
+        ".lm-hero-overline > span:last-child",
+        {
+          opacity: 0,
+          x: 20,
+          duration: 0.85,
+          ease: "power3.out",
+        },
+        "<"
+      );
+      heroTl.from(
+        ".lm-hero-side",
+        {
+          opacity: 0,
+          y: -24,
+          rotation: 180,
+          duration: 0.85,
+          ease: "power3.out",
+        },
+        "<0.15"
+      );
       if (introReady.current) heroTl.progress(1);
       return () => { entrance.current = null; };
     });

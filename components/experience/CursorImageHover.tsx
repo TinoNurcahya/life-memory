@@ -22,10 +22,87 @@ export interface CursorHoverItem {
   subtitle?: string;
   date?: string;
   tag?: string;
+  highlightKeyword?: string;
   image: string;
   alt?: string;
   href?: string;
   badge?: string;
+}
+
+function renderHighlightedTitle(
+  title: string,
+  highlightKeyword?: string,
+  isInk: boolean = false,
+  isActive: boolean = false
+) {
+  const keyword = highlightKeyword?.trim();
+  if (keyword && title.toLowerCase().includes(keyword.toLowerCase())) {
+    const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const regex = new RegExp(`(${escaped})`, "gi");
+    const parts = title.split(regex);
+    return parts.map((part, i) => {
+      if (part.toLowerCase() === keyword.toLowerCase()) {
+        return (
+          <mark
+            key={i}
+            className={`inline px-1.5 py-0.5 rounded-sm font-normal not-italic bg-no-repeat bg-left transition-[background-size,color] duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
+              isInk
+                ? "bg-[rgba(161,190,228,0.18)] text-[#d1e4ed] group-hover:text-white"
+                : "bg-[rgba(161,190,228,0.22)] text-foreground group-hover:text-foreground"
+            } ${
+              isActive
+                ? "bg-[length:100%_100%]"
+                : "bg-[length:0%_100%] group-hover:bg-[length:100%_100%]"
+            }`}
+            style={{
+              boxDecorationBreak: "clone",
+              WebkitBoxDecorationBreak: "clone",
+              backgroundImage: isInk
+                ? "linear-gradient(to right, rgba(161, 190, 228, 0.35), rgba(161, 190, 228, 0.35))"
+                : "linear-gradient(to right, rgba(161, 190, 228, 0.42), rgba(161, 190, 228, 0.42))",
+            }}
+          >
+            {part}
+          </mark>
+        );
+      }
+      return <span key={i}>{part}</span>;
+    });
+  }
+
+  if (title.includes("*")) {
+    const parts = title.split(/(\*[^*]+\*)/g);
+    return parts.map((part, i) => {
+      if (part.startsWith("*") && part.endsWith("*")) {
+        return (
+          <mark
+            key={i}
+            className={`inline px-1.5 py-0.5 rounded-sm font-normal not-italic bg-no-repeat bg-left transition-[background-size,color] duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
+              isInk
+                ? "bg-[rgba(161,190,228,0.18)] text-[#d1e4ed] group-hover:text-white"
+                : "bg-[rgba(161,190,228,0.22)] text-foreground group-hover:text-foreground"
+            } ${
+              isActive
+                ? "bg-[length:100%_100%]"
+                : "bg-[length:0%_100%] group-hover:bg-[length:100%_100%]"
+            }`}
+            style={{
+              boxDecorationBreak: "clone",
+              WebkitBoxDecorationBreak: "clone",
+              backgroundImage: isInk
+                ? "linear-gradient(to right, rgba(161, 190, 228, 0.35), rgba(161, 190, 228, 0.35))"
+                : "linear-gradient(to right, rgba(161, 190, 228, 0.42), rgba(161, 190, 228, 0.42))",
+            }}
+          >
+            {part.slice(1, -1)}
+          </mark>
+        );
+      }
+      return <span key={i}>{part}</span>;
+    });
+  }
+
+  return title;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -36,11 +113,13 @@ export function CursorImageHoverList({
   items,
   variant = "default",
   className = "",
+  showTag = false,
   onItemClick,
 }: {
   items: CursorHoverItem[];
   variant?: "default" | "ink";
   className?: string;
+  showTag?: boolean;
   onItemClick?: (item: CursorHoverItem) => void;
 }) {
   const isInk = variant === "ink";
@@ -206,7 +285,7 @@ export function CursorImageHoverList({
                         {item.date}
                       </span>
                     )}
-                    {item.tag && (
+                    {showTag && item.tag && (
                       <span
                         className={`font-mono text-[10px] uppercase px-2 py-0.5 rounded-full ${
                           isInk
@@ -222,14 +301,14 @@ export function CursorImageHoverList({
                     className={`font-serif text-2xl sm:text-3xl font-light transition-colors duration-200 ${
                       isActive
                         ? isInk
-                          ? "text-amber-200"
-                          : "text-brand"
+                          ? "text-white"
+                          : "text-foreground"
                         : isInk
-                        ? "text-white/95 group-hover:text-amber-200"
-                        : "text-foreground group-hover:text-brand"
+                        ? "text-white/85 group-hover:text-white"
+                        : "text-foreground/85 group-hover:text-foreground"
                     }`}
                   >
-                    {item.title}
+                    {renderHighlightedTitle(item.title, item.highlightKeyword, isInk, isActive)}
                   </h3>
                 </div>
 
@@ -300,17 +379,14 @@ export function CursorImageHoverList({
                         priority
                         className="object-cover filter brightness-[0.94] contrast-[1.02]"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-black/10 pointer-events-none" />
-                      <div className="absolute bottom-3 left-3.5 right-3.5 flex items-center justify-between text-white text-[11px] font-mono">
-                        <span className="truncate max-w-[190px] drop-shadow-sm font-medium tracking-wide">
-                          {activeItem.title}
-                        </span>
-                        {activeItem.date && (
-                          <span className="text-white/80 drop-shadow-sm">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/10 pointer-events-none" />
+                      {activeItem.date && (
+                        <div className="absolute bottom-3 right-3.5 flex items-center text-white text-[11px] font-mono">
+                          <span className="text-white/85 drop-shadow-sm tracking-wider uppercase">
                             {activeItem.date}
                           </span>
-                        )}
-                      </div>
+                        </div>
+                      )}
                     </motion.div>
                   </AnimatePresence>
                 </div>

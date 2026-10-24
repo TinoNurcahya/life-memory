@@ -9,7 +9,7 @@ import { RollingText } from "@/components/ui/RollingText";
 
 const chapters = [["hero", "Origin"], ["ordinary", "Ordinary days"], ["reconstruction", "Fragments"], ["patterns", "Taking shape"], ["firsts", "First times"], ["rediscovery", "Rediscovery"], ["closing", "Keep what matters"]] as const;
 
-export function ArchiveNavigation() {
+export function ArchiveNavigation({ introReady }: { introReady?: boolean } = {}) {
   const { theme, mounted, setTheme } = useTheme();
   const [active, setActive] = useState<string>("hero");
   const [headerHidden, setHeaderHidden] = useState(false);
@@ -20,6 +20,15 @@ export function ArchiveNavigation() {
 
   useEffect(() => {
     navigationMounted.current = true;
+    return () => {
+      navigationMounted.current = false;
+      cancelThemeTransition.current?.();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (introReady === false) return;
+
     const startIntro = setTimeout(() => {
       if (navigationMounted.current) setIntroActive(true);
     }, 200);
@@ -28,12 +37,10 @@ export function ArchiveNavigation() {
     }, 2400);
 
     return () => {
-      navigationMounted.current = false;
       clearTimeout(startIntro);
       clearTimeout(stopIntro);
-      cancelThemeTransition.current?.();
     };
-  }, []);
+  }, [introReady]);
 
   const changeTheme = (event: MouseEvent<HTMLButtonElement>) => {
     if (cancelThemeTransition.current) return;
