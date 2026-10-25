@@ -1,4 +1,8 @@
-import { EntityDirectory } from "@/components/directory/EntityDirectory";
-import { getEntityDirectory } from "@/lib/queries/entities";
+import { PeopleDirectory } from "@/components/people/PeopleDirectory";
+import { getPeopleData } from "@/lib/queries/people";
 
-export default async function PeoplePage({ searchParams }: { searchParams: Promise<{ demo?: string }> }) { const demo = (await searchParams).demo === "jimmy"; const result = await getEntityDirectory("people", demo); return <EntityDirectory kind="people" items={result.items} demo={demo} />; }
+export default async function PeoplePage({ searchParams }: { searchParams: Promise<{ demo?: string }> }) {
+  const demo = (await searchParams).demo === "jimmy";
+  const data = await getPeopleData(demo);
+  return <PeopleDirectory people={data.people} demo={demo} directoryError={data.directoryError} memoriesError={data.memoriesError} />;
+}
