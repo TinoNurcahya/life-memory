@@ -1,31 +1,65 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useId, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import { addActivityEntity } from "@/app/actions/activities";
+import styles from "./EntityControls.module.css";
 
-export function EntityControls({ detailId }: { detailId: string }) {
+interface EntityControlsProps {
+  detailId: string;
+  disabled?: boolean;
+  onPendingChange?: (pending: boolean) => void;
+}
+
+export function EntityControls({ detailId, disabled = false, onPendingChange }: EntityControlsProps) {
   const router = useRouter();
+  const id = useId();
   const [kind, setKind] = useState<"people" | "places" | "topics">("people");
   const [name, setName] = useState("");
-  const [message, setMessage] = useState("");
+  const [feedback, setFeedback] = useState<{ error: boolean; text: string } | null>(null);
   const [pending, startTransition] = useTransition();
   const submit = () => {
-    const val = name.trim();
-    if (!val) return;
+    const value = name.trim();
+    if (!value || disabled || pending) return;
+    setFeedback(null);
+    onPendingChange?.(true);
     startTransition(async () => {
-      const result = await addActivityEntity(detailId, kind, val);
-      if (result.success) {
+      try {
+        const result = await addActivityEntity(detailId, kind, value);
+        if (!result.success) {
+          setFeedback({ error: true, text: result.error });
+          return;
+        }
         setName("");
-        setMessage("Added");
-        toast.success(`Added "${val}" to memory.`);
+        setFeedback({ error: false, text: `Added ${value}.` });
         router.refresh();
-      } else {
-        setMessage(result.error);
-        toast.error(result.error);
+      } catch {
+        setFeedback({ error: true, text: "Could not add this detail. Check your connection and try again." });
+      } finally {
+        onPendingChange?.(false);
       }
     });
   };
-  return <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-hairline/50 pt-3"><span className="text-[10px] uppercase tracking-wider text-muted">Add entity</span><select value={kind} onChange={(event) => setKind(event.target.value as typeof kind)} className="rounded border border-hairline bg-surface-subdued px-2 py-1 text-[11px] text-muted"><option value="people">Person</option><option value="places">Place</option><option value="topics">Topic</option></select><input value={name} onChange={(event) => setName(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") submit(); }} placeholder="Name" className="min-w-28 flex-1 rounded border border-hairline bg-surface-subdued px-2 py-1 text-[11px] outline-none focus:border-brand" /><button type="button" disabled={pending || !name.trim()} onClick={submit} className="rounded bg-brand px-2.5 py-1 text-[11px] text-white disabled:opacity-50">{pending ? "Adding…" : "Add"}</button>{message && <span className="text-[10px] text-muted">{message}</span>}</div>;
+
+  return (
+    <form className={styles.form} onSubmit={(event) => { event.preventDefault(); submit(); }}>
+      <div className={styles.fields}>
+        <label htmlFor={`${id}-kind`} className={styles.kind}>
+          Add detail
+          <select id={`${id}-kind`} value={kind} disabled={disabled || pending} onChange={(event) => setKind(event.target.value as typeof kind)}>
+            <option value="people">Person</option>
+            <option value="places">Place</option>
+            <option value="topics">Topic</option>
+          </select>
+        </label>
+        <label htmlFor={`${id}-name`} className={styles.name}>
+          Name
+          <input id={`${id}-name`} value={name} maxLength={120} disabled={disabled || pending} onChange={(event) => setName(event.target.value)} placeholder="Enter a name" />
+        </label>
+        <button type="submit" disabled={disabled || pending || !name.trim()}>{pending ? "Adding…" : "Add"}</button>
+      </div>
+      {pending && <p className={styles.feedback} role="status">Adding detail…</p>}
+      {feedback && !pending && <p className={`${styles.feedback} ${feedback.error ? styles.error : ""}`} role={feedback.error ? "alert" : "status"}>{feedback.text}</p>}
+    </form>
+  );
 }

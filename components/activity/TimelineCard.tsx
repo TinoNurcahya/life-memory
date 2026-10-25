@@ -1,63 +1,191 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useId, useOptimistic, useRef, useState, useTransition, type KeyboardEvent } from "react";
 import { useRouter } from "next/navigation";
-import { MapPin, Tag, User, AlertTriangle, X } from "lucide-react";
+import Link from "next/link";
+import { X } from "lucide-react";
 import { removeActivityEntity, updateActivityCategory } from "@/app/actions/activities";
 import type { TimelineItem } from "@/lib/queries/activities";
 import type { ActivityCategory } from "@/types/database";
 import { formatArchiveDate } from "@/lib/utils/dates";
-import Link from "next/link";
 import { EntityControls } from "@/components/activity/EntityControls";
 import { MemoryImageGrid } from "@/components/activity/MemoryImageGrid";
+import styles from "./TimelineCard.module.css";
 
 const categories: ActivityCategory[] = ["career", "social", "health", "learning", "leisure", "routine", "other"];
+const entityKinds = ["people", "places", "topics"] as const;
+type Feedback = { error: boolean; text: string } | null;
 
-export function TimelineCard({ item, demo = false, editorial = false, index = 0 }: { item: TimelineItem; demo?: boolean; editorial?: boolean; index?: number }) {
+export function TimelineCard({ item, demo = false, index = 0 }: { item: TimelineItem; demo?: boolean; editorial?: boolean; index?: number }) {
   const router = useRouter();
-  const [category, setCategory] = useState(item.category ?? "other");
+  const panelId = useId();
+  const editButton = useRef<HTMLButtonElement>(null);
+  const [editing, setEditing] = useState(false);
+  const [feedback, setFeedback] = useState<Feedback>(null);
+  const [entityPending, setEntityPending] = useState(false);
+  const [category, setCategory] = useOptimistic(item.category ?? "other");
   const [isPending, startTransition] = useTransition();
-  const remove = (kind: "people" | "places" | "topics", id: string) => {
-    if (demo) return;
-    startTransition(async () => { await removeActivityEntity(item.id, kind, id); router.refresh(); });
-  };
-  const changeCategory = (value: ActivityCategory) => {
-    if (demo) return;
-    setCategory(value);
-    startTransition(async () => { await updateActivityCategory(item.id, value); router.refresh(); });
-  };
-  const retry = () => {
-    if (demo) return;
+  const busy = isPending || entityPending;
+  const linkSuffix = demo ? "?demo=jimmy" : "";
+
+  const remove = (kind: typeof entityKinds[number], id: string, name: string) => {
+    if (demo || busy) return;
+    setFeedback(null);
     startTransition(async () => {
-      await fetch("/api/extract", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ activityId: item.activityId }) });
-      router.refresh();
+      try {
+        const result = await removeActivityEntity(item.id, kind, id);
+        if (!result.success) {
+          setFeedback({ error: true, text: result.error });
+          return;
+        }
+        setFeedback({ error: false, text: `Removed ${name}.` });
+        router.refresh();
+      } catch {
+        setFeedback({ error: true, text: "Could not remove this detail. Try again." });
+      }
     });
   };
-  const linkSuffix = demo ? "?demo=jimmy" : "";
-  return <article className={editorial ? "lm-dashboard-timeline-card" : "timeline-row"} data-index={index}>
-    <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
-      <time dateTime={item.occurredAt} className="font-semibold text-foreground">{formatArchiveDate(item.occurredAt)}</time>
-      {item.status === "PENDING" ? <span className="animate-pulse rounded-full border border-brand/20 bg-brand/10 px-2.5 py-1 text-brand">Extracting…</span> : item.status === "FAILED" ? (demo ? <span className="rounded-full border border-red-500/20 bg-red-500/10 px-2.5 py-1 text-red-700 dark:text-red-300">Extraction failed</span> : <button type="button" onClick={retry} disabled={isPending} className="rounded-full border border-red-500/20 bg-red-500/10 px-2.5 py-1 text-red-700 hover:underline disabled:opacity-50 dark:text-red-300">Retry extraction</button>) : null}
-    </div>
-    <div className="mt-2 flex flex-wrap items-center gap-2">
-      <select aria-label="Activity category" value={category} disabled={demo || isPending || item.status === "PENDING"} onChange={(event) => changeCategory(event.target.value as ActivityCategory)} className="rounded-lg border border-hairline bg-surface-subdued px-2.5 py-1.5 text-xs font-medium uppercase tracking-wider text-muted outline-none focus:border-brand">
-        {categories.map((value) => <option key={value} value={value}>{value}</option>)}
-      </select>
-      {item.eventStatus && item.eventStatus !== "completed" && <span className="rounded-full border border-amber-500/20 bg-amber-500/10 px-2 py-1 text-xs uppercase text-amber-700 dark:text-amber-300">{item.eventStatus}</span>}
-      {item.isFirstTime && <span className="rounded-full border border-amber-500/20 bg-amber-500/10 px-2 py-1 text-xs text-amber-700 dark:text-amber-300">First time</span>}
-      {item.needsReview && <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/20 bg-amber-500/10 px-2 py-1 text-xs text-amber-700 dark:text-amber-300"><AlertTriangle className="h-3 w-3" />Needs review</span>}
-    </div>
-    <div className="timeline-row__content">
-      <p className="font-serif text-lg leading-relaxed text-foreground/90">{item.summary}</p>
-      {item.imageUrls && item.imageUrls.length > 0 && (
+
+  const changeCategory = (value: ActivityCategory) => {
+    if (demo || busy) return;
+    setFeedback(null);
+    startTransition(async () => {
+      setCategory(value);
+      try {
+        const result = await updateActivityCategory(item.id, value);
+        if (!result.success) {
+          setFeedback({ error: true, text: result.error });
+          return;
+        }
+        setFeedback({ error: false, text: "Category updated." });
+        router.refresh();
+      } catch {
+        setFeedback({ error: true, text: "Could not update the category. Try again." });
+      }
+    });
+  };
+
+  const retry = () => {
+    if (demo || busy) return;
+    setFeedback(null);
+    startTransition(async () => {
+      try {
+        const response = await fetch("/api/extract", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ activityId: item.activityId }),
+        });
+        const result = await response.json().catch(() => null);
+        if (!response.ok || result?.success !== true) {
+          setFeedback({ error: true, text: result?.error || "Extraction failed. Try again." });
+          return;
+        }
+        setFeedback({ error: false, text: "Memory details updated." });
+        router.refresh();
+      } catch {
+        setFeedback({ error: true, text: "Could not retry extraction. Check your connection and try again." });
+      }
+    });
+  };
+
+  const closeEditor = () => {
+    setEditing(false);
+    editButton.current?.focus();
+  };
+  const handleEditorKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+    if (editing && event.key === "Escape") {
+      event.preventDefault();
+      event.stopPropagation();
+      closeEditor();
+    }
+  };
+
+  return (
+    <article
+      id={item.id}
+      className={`timeline-entry ${styles.entry}`}
+      data-index={index}
+      data-memory-id={item.id}
+    >
+      <div className={styles.content}>
+        <div className={styles.copy}>
+          <p className={`timeline-entry__story ${styles.story}`}>{item.summary}</p>
+          <div className={styles.context}>
+            <span className={styles.category}>{category}</span>
+            {entityKinds.map((kind) => item[kind].map((entity) => (
+              <Link key={`${kind}-${entity.id}`} href={`/${kind}/${entity.id}${linkSuffix}`}>
+                {entity.name}
+              </Link>
+            )))}
+          </div>
+          {(item.status !== "RESOLVED" || item.eventStatus && item.eventStatus !== "completed" || item.isFirstTime || item.needsReview) && (
+            <div className={styles.statuses}>
+              {item.status === "PENDING" && <span role="status">Extracting…</span>}
+              {item.status === "FAILED" && <span className={styles.warning}>Extraction failed</span>}
+              {item.eventStatus && item.eventStatus !== "completed" && <span className={styles.eventStatus}>{item.eventStatus}</span>}
+              {item.isFirstTime && <span>First time</span>}
+              {item.needsReview && <span className={styles.warning}>Needs review</span>}
+            </div>
+          )}
+        </div>
         <MemoryImageGrid compact images={item.imageUrls} summary={item.summary} date={formatArchiveDate(item.occurredAt)} />
+      </div>
+
+      {!demo && item.status === "FAILED" && (
+        <button type="button" className={styles.textButton} onClick={retry} disabled={busy}>
+          {isPending ? "Retrying extraction…" : "Retry extraction"}
+        </button>
       )}
-    </div>
-    {(item.people.length || item.places.length || item.topics.length) > 0 && <div className="mt-3 flex flex-wrap gap-2 border-t border-hairline/50 pt-2.5">
-      {item.people.map((entity) => <span key={entity.id} className="inline-flex items-center gap-1 rounded-full border border-hairline bg-surface-subdued px-2.5 py-1 text-xs text-foreground"><User className="h-3 w-3 text-brand" /><Link href={`/people/${entity.id}${linkSuffix}`} className="hover:text-brand hover:underline">{entity.name}</Link>{!demo && <button type="button" aria-label={`Remove ${entity.name}`} onClick={() => remove("people", entity.id)}><X className="h-3 w-3 text-muted" /></button>}</span>)}
-      {item.places.map((entity) => <span key={entity.id} className="inline-flex items-center gap-1 rounded-md border border-hairline bg-surface-subdued px-2.5 py-1 text-xs text-foreground"><MapPin className="h-3 w-3 text-brand" /><Link href={`/places/${entity.id}${linkSuffix}`} className="hover:text-brand hover:underline">{entity.name}</Link>{!demo && <button type="button" aria-label={`Remove ${entity.name}`} onClick={() => remove("places", entity.id)}><X className="h-3 w-3 text-muted" /></button>}</span>)}
-      {item.topics.map((entity) => <span key={entity.id} className="inline-flex items-center gap-1 rounded-md border border-brand/20 bg-brand/5 px-2.5 py-1 text-xs text-brand"><Tag className="h-3 w-3" /><Link href={`/topics/${entity.id}${linkSuffix}`} className="hover:underline">{entity.name}</Link>{!demo && <button type="button" aria-label={`Remove ${entity.name}`} onClick={() => remove("topics", entity.id)}><X className="h-3 w-3 text-muted" /></button>}</span>)}
-    </div>}
-    {!demo && item.status === "RESOLVED" && <EntityControls detailId={item.id} />}
-  </article>;
+      {!demo && item.status === "RESOLVED" && (
+        <>
+          <button
+            ref={editButton}
+            type="button"
+            className={styles.textButton}
+            aria-expanded={editing}
+            aria-controls={panelId}
+            onClick={() => setEditing((value) => !value)}
+            onKeyDown={handleEditorKeyDown}
+          >
+            {editing ? "Close details" : "Edit details"}
+          </button>
+          {editing && (
+            <div
+              id={panelId}
+              className={styles.editor}
+              role="group"
+              aria-label="Edit memory details"
+              aria-busy={busy}
+              onKeyDown={handleEditorKeyDown}
+            >
+              <label className={styles.field}>
+                Category
+                <select value={category} disabled={busy} onChange={(event) => changeCategory(event.target.value as ActivityCategory)}>
+                  {categories.map((value) => <option key={value} value={value}>{value[0].toUpperCase() + value.slice(1)}</option>)}
+                </select>
+              </label>
+              {entityKinds.map((kind) => item[kind].length > 0 && (
+                <div key={kind} className={styles.entityGroup}>
+                  <p className={styles.entityLabel}>{kind[0].toUpperCase() + kind.slice(1)}</p>
+                  <ul className={styles.entityList}>
+                    {item[kind].map((entity) => (
+                      <li key={entity.id}>
+                        <span>{entity.name}</span>
+                        <button type="button" disabled={busy} aria-label={`Remove ${entity.name}`} onClick={() => remove(kind, entity.id, entity.name)}>
+                          <X size={16} aria-hidden="true" />
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+              <EntityControls detailId={item.id} disabled={busy} onPendingChange={setEntityPending} />
+            </div>
+          )}
+        </>
+      )}
+      {isPending && <p className={styles.feedback} role="status">{item.status === "FAILED" ? "Extracting memory details…" : "Saving details…"}</p>}
+      {feedback && !isPending && <p className={`${styles.feedback} ${feedback.error ? styles.error : ""}`} role={feedback.error ? "alert" : "status"}>{feedback.text}</p>}
+    </article>
+  );
 }

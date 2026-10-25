@@ -1,14 +1,56 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState, type ComponentProps } from "react";
+import { createPortal } from "react-dom";
 import { Maximize2 } from "lucide-react";
 import { LightboxModal } from "@/components/shared/LightboxModal";
+import styles from "./MemoryImageGrid.module.css";
 
 interface MemoryImageGridProps {
   images?: string[];
   summary?: string;
   date?: string;
   compact?: boolean;
+}
+
+// The shell's scrolling viewport is transformed. A portal keeps compact photos
+// anchored to the browser viewport, even when opened far down the timeline.
+function CompactLightbox(props: ComponentProps<typeof LightboxModal>) {
+  const container = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const root = container.current;
+    const controls = () => Array.from(root?.querySelectorAll<HTMLElement>("a[href], button:not(:disabled)") ?? []);
+    const focusStart = () => (root?.querySelector<HTMLButtonElement>("button") ?? controls()[0])?.focus();
+    focusStart();
+
+    const keepFocus = (event: FocusEvent) => {
+      if (event.target instanceof Node && !root?.contains(event.target)) focusStart();
+    };
+    const trapTab = (event: KeyboardEvent) => {
+      if (event.key !== "Tab") return;
+      const targets = controls();
+      const first = targets[0];
+      const last = targets[targets.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last?.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first?.focus();
+      }
+    };
+    document.addEventListener("focusin", keepFocus);
+    root?.addEventListener("keydown", trapTab);
+    return () => {
+      document.removeEventListener("focusin", keepFocus);
+      root?.removeEventListener("keydown", trapTab);
+      if (previousFocus?.isConnected) previousFocus.focus({ preventScroll: true });
+    };
+  }, []);
+
+  return createPortal(<div ref={container} className={styles.lightbox}><LightboxModal {...props} /></div>, document.body);
 }
 
 export function MemoryImageGrid({ images, summary, date, compact = false }: MemoryImageGridProps) {
@@ -30,7 +72,7 @@ export function MemoryImageGrid({ images, summary, date, compact = false }: Memo
         <button
           type="button"
           onClick={() => openLightbox(0)}
-          className="memory-image-compact group relative shrink-0 overflow-hidden rounded-lg border border-hairline/80 bg-surface-subdued"
+          className={`memory-image-compact ${styles.compact}`}
           aria-label={`Open ${count} ${count === 1 ? "memory photo" : "memory photos"}`}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -38,21 +80,19 @@ export function MemoryImageGrid({ images, summary, date, compact = false }: Memo
             src={images[0]}
             alt={summary || "Memory photo"}
             loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            className={styles.image}
           />
-          <span className="absolute inset-0 flex items-end justify-between bg-gradient-to-t from-black/60 via-transparent to-transparent p-1.5 opacity-0 transition-opacity group-hover:opacity-100">
-            <Maximize2 className="h-3 w-3 text-white" />
-            {count > 1 && <span className="text-xs font-medium text-white">{count}</span>}
-          </span>
+          {count > 1 && <span className={styles.count}>{count} photos</span>}
         </button>
-        <LightboxModal
+        {lightboxOpen && <CompactLightbox
+          labels={{ close: "Close photo", previous: "Previous photo", next: "Next photo", openImage: "Open full image" }}
           images={images}
           initialIndex={activePhotoIndex}
           isOpen={lightboxOpen}
           onClose={() => setLightboxOpen(false)}
           caption={summary}
           date={date}
-        />
+        />}
       </>
     );
   }
