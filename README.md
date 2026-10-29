@@ -918,7 +918,7 @@ On the **Supabase Free Tier**, projects are automatically paused if they do not 
 - **Workflow File**: [`.github/workflows/keep-alive.yml`](.github/workflows/keep-alive.yml)
 - **Schedule**: Runs automatically every 3 days at 04:00 UTC (`0 4 */3 * *`).
 - **Mechanism**: The workflow pings the health endpoint [`/api/health`](app/api/health/route.ts), which executes a query to the Supabase database, resetting the 7-day inactivity timer.
-- **60-Day Limit Bypass**: Equipped with `gautamkrishnar/keepalive-workflow@v2` so that GitHub's 60-day scheduled workflow suspension rule is automatically bypassed.
+- **60-Day Limit Bypass**: Equipped with an automated native Git keepalive check that commits a timestamp to `.github/.keepalive` only if repository inactivity approaches 45 days, preventing GitHub's 60-day scheduled workflow suspension rule without spamming commit history.
 - **Manual Trigger**: Can be manually triggered at any time via the **Actions** tab on GitHub (*Run workflow*).
 - **Diagnostics**: Run `npm run test:supabase` to test your connection and table status locally.
 

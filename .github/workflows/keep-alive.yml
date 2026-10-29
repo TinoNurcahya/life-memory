@@ -41,4 +41,21 @@ jobs:
           fi
 
       - name: Keep GitHub Actions Active (Bypass 60-day inactivity limit)
-        uses: gautamkrishnar/keepalive-workflow@v2
+        run: |
+          LAST_COMMIT_TIME=$(git log -1 --format=%ct)
+          CURRENT_TIME=$(date +%s)
+          DAYS_SINCE_LAST_COMMIT=$(( (CURRENT_TIME - LAST_COMMIT_TIME) / 86400 ))
+          echo "Days since last commit: $DAYS_SINCE_LAST_COMMIT"
+
+          if [ "$DAYS_SINCE_LAST_COMMIT" -ge 45 ]; then
+            echo "Repository has had no commits for $DAYS_SINCE_LAST_COMMIT days (approaching 60-day limit)."
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.io"
+            date -u +"%Y-%m-%dT%H:%M:%SZ" > .github/.keepalive
+            git add .github/.keepalive
+            git commit -m "chore: refresh scheduled workflow inactivity timer [skip ci]"
+            git push origin HEAD:${{ github.ref_name }}
+          else
+            echo "Last commit was $DAYS_SINCE_LAST_COMMIT days ago (< 45 days). No commit needed."
+          fi
+
