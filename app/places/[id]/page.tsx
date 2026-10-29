@@ -1,11 +1,27 @@
 import { notFound } from "next/navigation";
-import { EntityDetail } from "@/components/directory/EntityDetail";
-import { getEntityDetail, getEntityDirectory } from "@/lib/queries/entities";
+import { PlaceDetail } from "@/components/places/PlaceDetail";
+import { PlacesUnavailable } from "@/components/places/PlacesUnavailable";
+import { getPlacesData } from "@/lib/queries/places";
 
-export default async function PlacePage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ demo?: string }> }) {
-  const demo = (await searchParams).demo === "jimmy";
-  const result = await getEntityDetail("places", (await params).id, demo);
-  if (!result.entity) notFound();
-  const directory = await getEntityDirectory("places", demo);
-  return <EntityDetail kind="places" entity={result.entity} memories={result.memories} candidates={directory.items} demo={demo} />;
+export default async function PlacePage({
+  params, searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ demo?: string }>;
+}) {
+  const [{ id }, search] = await Promise.all([params, searchParams]);
+  const demo = search.demo === "jimmy";
+  const data = await getPlacesData(demo);
+  if (data.directoryError) return <PlacesUnavailable demo={demo} />;
+  const place = data.places.find(item => item.place.id === id)?.place;
+  if (!place) notFound();
+  return (
+    <PlaceDetail
+      place={place}
+      memories={data.memoriesByPlace.get(id) ?? []}
+      candidates={data.places.map(item => item.place)}
+      demo={demo}
+      memoriesError={data.memoriesError}
+    />
+  );
 }

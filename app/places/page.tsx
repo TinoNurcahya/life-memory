@@ -1,4 +1,8 @@
-import { EntityDirectory } from "@/components/directory/EntityDirectory";
-import { getEntityDirectory } from "@/lib/queries/entities";
+import { PlacesDirectory } from "@/components/places/PlacesDirectory";
+import { getPlacesData } from "@/lib/queries/places";
 
-export default async function PlacesPage({ searchParams }: { searchParams: Promise<{ demo?: string }> }) { const demo = (await searchParams).demo === "jimmy"; const result = await getEntityDirectory("places", demo); return <EntityDirectory kind="places" items={result.items} demo={demo} />; }
+export default async function PlacesPage({ searchParams }: { searchParams: Promise<{ demo?: string }> }) {
+  const demo = (await searchParams).demo === "jimmy";
+  const data = await getPlacesData(demo);
+  return <PlacesDirectory places={data.places} demo={demo} directoryError={data.directoryError} memoriesError={data.memoriesError} />;
+}
