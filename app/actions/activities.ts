@@ -101,126 +101,17 @@ export async function getOrGenerateMonthlyReflection(
   isDemo = false,
   forceRegenerate = false
 ): Promise<ActionResult<import("@/lib/reflection/monthly").FormattedMonthlyEssay>> {
-  const { JIMMY_DEMO_ITEMS } = await import("@/lib/demo/jimmy");
-  const { timelineToAnalytics } = await import("@/lib/analytics/adapters");
-  const {
-    curateReflectionEvidence,
-    ValidateReflection,
-    buildDeterministicMonthlyReflection,
-    renumberGlobalFootnotes,
-  } = await import("@/lib/reflection/monthly");
-  const { generateMonthlyReflection } = await import("@/lib/ai/reflection");
-  const { getArchiveData } = await import("@/lib/queries/activities");
-
-  // 1. Gather raw activities
-  let rawItems;
-  let userId = "demo";
-
-  if (isDemo) {
-    rawItems = JIMMY_DEMO_ITEMS;
-  } else {
-    const supabase = await createClient();
-    const { data: userData } = await supabase.auth.getUser();
-    if (!userData.user) return { success: false, error: "Please sign in to view reflections.", code: "UNAUTHORIZED" };
-    userId = userData.user.id;
-
-    // Check database cache first if not forced
-    if (!forceRegenerate) {
-      const { data: cached } = await supabase
-        .from("insights")
-        .select("*")
-        .eq("user_id", userId)
-        .eq("type", "reflection")
-        .filter("metadata->>month", "eq", targetMonth)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-
-      if (cached?.metadata && typeof cached.metadata === "object" && "formatted" in cached.metadata) {
-        return { success: true, data: cached.metadata.formatted as import("@/lib/reflection/monthly").FormattedMonthlyEssay };
-      }
-    }
-
-    const archive = await getArchiveData();
-    rawItems = archive.items;
+  // Legacy callers retain their result contract. Reading never generates or writes.
+  if (!forceRegenerate) {
+    const { getReflectionData } = await import("@/lib/queries/reflection");
+    const result = await getReflectionData(targetMonth, isDemo);
+    if (result.error) return { success: false, error: result.error, code: "DATABASE_ERROR" };
+    if (!result.essay) return { success: false, error: "Belum ada memori selesai pada bulan ini.", code: "NOT_FOUND" };
+    return { success: true, data: result.essay };
   }
-
-  // 2. Curate evidence pool
-  const analyticsItems = timelineToAnalytics(rawItems);
-  const payload = curateReflectionEvidence(analyticsItems, targetMonth);
-
-  if (payload.evidence_pool.length === 0) {
-    return { success: false, error: "No completed memories found for this month to reflect upon.", code: "NOT_FOUND" };
-  }
-
-  // 3. Generate reflection with 3-tier cascade
-  let essayResult!: import("@/lib/reflection/monthly").FormattedMonthlyEssay;
-
-  let generated = false;
-  if (process.env.GEMINI_API_KEY) {
-    try {
-      const aiResult = await generateMonthlyReflection(payload);
-      if (ValidateReflection(payload, aiResult.reflection)) {
-        const { formattedParagraphs, bibliography } = renumberGlobalFootnotes(
-          aiResult.reflection.paragraphs,
-          payload.evidence_pool
-        );
-
-        essayResult = {
-          month: payload.month,
-          title: aiResult.reflection.title,
-          paragraphs: formattedParagraphs,
-          key_themes: aiResult.reflection.key_themes,
-          source: "gemini",
-          modelUsed: aiResult.modelUsed,
-          bibliography,
-        };
-        generated = true;
-      }
-    } catch {
-      // Fall through to deterministic fallback
-    }
-  }
-
-  if (!generated) {
-    const fallback = buildDeterministicMonthlyReflection(payload);
-    const { formattedParagraphs, bibliography } = renumberGlobalFootnotes(
-      fallback.paragraphs,
-      payload.evidence_pool
-    );
-
-    essayResult = {
-      month: payload.month,
-      title: fallback.title,
-      paragraphs: formattedParagraphs,
-      key_themes: fallback.key_themes,
-      source: "deterministic",
-      bibliography,
-    };
-  }
-
-  // 4. Cache to insights table for authenticated users
-  if (!isDemo && userId !== "demo") {
-    const supabase = await createClient();
-    await supabase.from("insights").insert({
-      user_id: userId,
-      type: "reflection",
-      title: essayResult.title,
-      description: essayResult.paragraphs.map((p) => p.text).join("\n\n"),
-      evidence: essayResult.bibliography.map((b) => ({
-        activity_detail_id: b.evidenceId,
-        occurred_at: b.evidence.date,
-        snippet: b.evidence.summary,
-      })),
-      metadata: {
-        month: targetMonth,
-        formatted: essayResult,
-        modelUsed: essayResult.modelUsed ?? "deterministic",
-      },
-    });
-  }
-
-  return { success: true, data: essayResult };
+  const { generateReflection } = await import("@/app/actions/reflection");
+  const result = await generateReflection(targetMonth, isDemo);
+  return result.success ? { success: true, data: result.data.essay } : result;
 }
 
 export async function deleteUserAccountAndMemories(confirmationWord: string): Promise<ActionResult> {

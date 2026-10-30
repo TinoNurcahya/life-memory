@@ -1,0 +1,85 @@
+.page { width: 100%; max-width: 1200px; margin-inline: auto; padding: 32px 36px 64px; font-family: var(--font-inter), sans-serif; color: var(--color-text-foreground); }
+.page :where(button, input), .dialog button { font: inherit; }
+.page :where(button, a, input):focus-visible, .dialog :where(button, a):focus-visible { outline: 2px solid var(--color-primary); outline-offset: 4px; }
+.page button, .dialog button { cursor: pointer; }
+.page button:disabled { cursor: default; opacity: .45; }
+.intro { margin-bottom: 28px; }
+.heading { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px 20px; }
+.heading h1 { font-size: clamp(36px, 4.4vw, 60px); line-height: 1.12; letter-spacing: -.055em; font-weight: 500; }
+.heading > span { color: var(--color-text-muted); font-size: 13px; }
+.intro > p { margin-top: 12px; color: var(--color-text-muted); font-size: 14px; line-height: 1.6; }
+.toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px 24px; border-block: 1px solid var(--color-border-hairline); padding-block: 12px; }
+.monthNav { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.monthNav > :is(a, button), .monthNav form button { display: inline-grid; place-items: center; flex: none; width: 44px; height: 44px; color: var(--color-text-muted); }
+.monthNav form { display: flex; align-items: center; min-width: 0; }
+.monthNav input { box-sizing: border-box; min-width: 0; width: 180px; min-height: 44px; border: 1px solid var(--color-border-strong); border-radius: 4px; background: var(--color-canvas); color: var(--color-text-foreground); padding: 8px 10px; font-size: 13px; }
+:global(.dark) .monthNav input { color-scheme: dark; }
+.generate { min-height: 44px; padding: 10px 16px; border: 1px solid var(--color-border-strong); border-radius: 4px; font-size: 13px !important; color: var(--color-text-foreground); }
+.monthNav :is(a,button):hover:not(:disabled), .generate:hover:not(:disabled) { background: var(--color-surface-subdued); }
+.monthMeta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 20px; margin-top: 12px; font-size: 12px; line-height: 1.65; color: var(--color-text-muted); }
+.monthMeta p:first-child { color: var(--color-text-foreground); }
+.monthMeta span { color: var(--color-text-muted); }
+.notice { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 20px; margin-top: 22px; padding: 12px 16px; border-left: 2px solid var(--color-accent-gold); background: var(--color-surface-subdued); font-size: 13px; line-height: 1.65; }
+.notice p { flex: 1 1 250px; }
+.notice button, .empty :is(button,a) { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; min-width: 44px; font-size: 13px; text-decoration: underline; text-underline-offset: 4px; }
+.essay { max-width: 760px; margin: 48px auto 0; }
+.essayType { color: var(--color-text-muted); font-size: 12px; line-height: 1.5; }
+.essayHeader h2 { margin-top: 16px; max-width: 28ch; font-family: var(--font-newsreader), Georgia, serif; font-size: clamp(34px, 3.6vw, 48px); line-height: 1.12; font-weight: 400; letter-spacing: -.035em; overflow-wrap: anywhere; }
+.themes { margin-top: 22px; color: var(--color-text-muted); font-size: 12px; line-height: 1.8; overflow-wrap: anywhere; }
+.themes > span { display: inline-block; margin-right: 14px; color: var(--color-text-foreground); }
+.prose { margin-top: 34px; }
+.paragraph + .paragraph { margin-top: 28px; }
+.paragraph > p { font-family: var(--font-newsreader), Georgia, serif; font-size: clamp(23px, 2.2vw, 27px); line-height: 1.55; letter-spacing: -.01em; overflow-wrap: anywhere; white-space: pre-wrap; }
+.citation { display: inline; margin-inline: 3px; font-family: var(--font-inter), sans-serif; font-size: 12px; vertical-align: super; color: var(--color-primary); text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
+.paragraphSources { display: flex; flex-wrap: wrap; gap: 4px 22px; margin-top: 5px; }
+.paragraphSources button { display: inline-flex; align-items: center; gap: 5px; min-height: 44px; min-width: 44px; color: var(--color-text-muted); font-size: 12px; }
+.paragraphSources button:hover { color: var(--color-text-foreground); text-decoration: underline; text-underline-offset: 4px; }
+.essayFooter { margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--color-border-hairline); }
+.essayFooter p { max-width: 68ch; color: var(--color-text-muted); font-size: 12px; line-height: 1.8; }
+.sources { margin-top: 42px; }
+.sources > h2 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 16px; margin-bottom: 8px; font-size: 20px; font-weight: 500; letter-spacing: -.025em; }
+.sources h2 > span { color: var(--color-text-muted); font-size: 12px; font-weight: 400; letter-spacing: 0; }
+.sources ol { list-style: none; padding: 0; margin: 0; }
+.sources li { display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 12px; padding-block: 22px; border-bottom: 1px solid var(--color-border-hairline); scroll-margin-top: 24px; }
+.sources li:target { outline: 1px solid var(--color-border-strong); outline-offset: 8px; }
+.sourceIndex { color: var(--color-text-muted); font-size: 12px; padding-top: 2px; }
+.sourceMeta { display: flex; flex-wrap: wrap; gap: 6px 16px; color: var(--color-text-muted); font-size: 12px; line-height: 1.7; }
+.sourceSummary { margin-top: 10px; font-size: 14px; line-height: 1.75; overflow-wrap: anywhere; }
+.sources li a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin-top: 5px; color: var(--color-text-muted); font-size: 12px; }
+.sources li a:hover { color: var(--color-text-foreground); text-decoration: underline; text-underline-offset: 4px; }
+.empty { max-width: 760px; margin: 44px auto 0; padding-block: 16px 32px; }
+.empty h2 { font-size: 28px; line-height: 1.25; font-weight: 500; letter-spacing: -.035em; overflow-wrap: anywhere; }
+.empty p { max-width: 56ch; margin: 14px 0; color: var(--color-text-muted); font-size: 14px; line-height: 1.75; }
+.emptyActions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 24px; }
+.dialog { position: fixed; inset: 0 0 0 auto; margin: 0 0 0 auto; width: min(580px, 100%); height: 100dvh; max-height: 100dvh; max-width: 100%; padding: 0; border: 0; border-left: 1px solid var(--color-border-strong); background: var(--color-canvas); color: var(--color-text-foreground); font-family: var(--font-inter), sans-serif; }
+.dialog::backdrop { background: rgb(0 0 0 / .4); }
+.dialogLayout { display: flex; flex-direction: column; height: 100%; min-height: 0; }
+.dialogHeader { display: flex; flex: none; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 24px; border-bottom: 1px solid var(--color-border-hairline); }
+.dialogHeader h2 { color: var(--color-text-muted); font-size: 13px; font-weight: 400; line-height: 1.6; }
+.dialogHeader button { display: grid; place-items: center; flex: none; width: 44px; height: 44px; color: inherit; }
+.dialogScroll { padding: 30px 32px 40px; overflow-y: auto; overscroll-behavior: contain; }
+.dialogScroll > time { font-size: 12px; color: var(--color-text-muted); }
+.dialogScroll > blockquote { margin-top: 18px; font-family: var(--font-newsreader), Georgia, serif; font-size: 28px; line-height: 1.45; letter-spacing: -.02em; white-space: pre-wrap; overflow-wrap: anywhere; }
+.sourceContext { margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--color-border-hairline); font-size: 13px; line-height: 1.7; }
+.sourceContext > div { display: grid; grid-template-columns: 60px minmax(0,1fr); gap: 16px; margin-top: 8px; }
+.sourceContext dt { color: var(--color-text-muted); }
+.sourceContext dd { overflow-wrap: anywhere; }
+.dialogScroll > a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin-top: 24px; color: var(--color-text-foreground); font-size: 13px; text-decoration: underline; text-underline-offset: 4px; }
+@media (max-width: 1023px) { .page { padding-inline: 28px; } }
+@media (max-width: 767px) {
+  .page { padding: 26px 20px 48px; }
+  .heading { column-gap: 16px; }
+  .monthNav { gap: 2px; }
+  .monthNav input { width: 170px; }
+  .monthMeta { flex-direction: column; }
+  .essay { margin-top: 34px; }
+  .essayHeader h2 { margin-top: 12px; }
+  .prose { margin-top: 28px; }
+  .paragraph + .paragraph { margin-top: 22px; }
+  .sources { margin-top: 34px; }
+  .sources li { gap: 6px; }
+  .dialog { inset: auto 0 0; margin: auto 0 0; width: 100%; height: 85dvh; max-height: 85dvh; border-left: 0; border-top: 1px solid var(--color-border-strong); }
+  .dialogHeader { padding: 8px 16px; }
+  .dialogScroll { padding: 24px 20px max(32px, env(safe-area-inset-bottom)); }
+}
+@media (max-width: 359px) { .page { padding-inline: 16px; } .monthNav input { width: 144px; padding-inline: 6px; } .monthNav { gap: 0; } .sourceContext > div { gap: 8px; } }
