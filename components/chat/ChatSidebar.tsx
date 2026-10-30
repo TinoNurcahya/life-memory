@@ -1,22 +1,13 @@
 "use client";
 
-import { MessageSquare, Plus, Trash2, PanelLeftClose, PanelLeft } from "lucide-react";
+import { useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { Plus, Search, Trash2, X } from "lucide-react";
+import { dashboardSans, dashboardSerif } from "@/components/dashboard/fonts";
+import styles from "./Chat.module.css";
 
-export interface ChatSessionSummary {
-  id: string;
-  title: string;
-  updatedAt: string;
-}
-
-export function ChatSidebar({
-  sessions,
-  activeSessionId,
-  onSelectSession,
-  onNewChat,
-  onDeleteSession,
-  isOpen,
-  onToggleOpen,
-}: {
+export interface ChatSessionSummary { id: string; title: string; updatedAt: string }
+interface Props {
   sessions: ChatSessionSummary[];
   activeSessionId: string | null;
   onSelectSession: (id: string) => void;
@@ -24,114 +15,95 @@ export function ChatSidebar({
   onDeleteSession: (id: string) => void;
   isOpen: boolean;
   onToggleOpen: () => void;
-}) {
-  return (
-    <>
-      {/* Mobile Backdrop */}
-      {isOpen && (
-        <div
-          onClick={onToggleOpen}
-          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-xs md:hidden"
-          aria-hidden="true"
-        />
-      )}
+  busy?: boolean;
+  error?: string | null;
+  onRetry?: () => void;
+  deletingId?: string | null;
+}
 
-      {/* Sidebar Container */}
-      <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-hairline/80 bg-surface transition-transform duration-300 ease-in-out md:static md:translate-x-0 ${
-          isOpen ? "translate-x-0" : "-translate-x-full md:w-0 md:overflow-hidden md:border-r-0"
-        }`}
-      >
-        {/* Sidebar Header */}
-        <div className="flex items-center justify-between border-b border-hairline/60 p-3.5">
-          <button
-            type="button"
-            onClick={onNewChat}
-            className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-brand/30 bg-brand/10 py-2 px-3 text-xs font-mono font-medium text-brand transition hover:bg-brand/20 shadow-2xs"
-          >
-            <Plus className="h-3.5 w-3.5" />
-            <span>Obrolan Baru</span>
-          </button>
-          <button
-            type="button"
-            onClick={onToggleOpen}
-            title="Tutup Panel Riwayat"
-            aria-label="Tutup Panel Riwayat"
-            className="ml-2 rounded-lg p-2 text-muted hover:bg-surface-subdued hover:text-foreground transition"
-          >
-            <PanelLeftClose className="h-4 w-4" />
-          </button>
+function HistoryDialog({ sessions, activeSessionId, onSelectSession, onNewChat, onDeleteSession, onToggleOpen, busy, error, onRetry, deletingId }: Props) {
+  const root = useRef<HTMLDivElement>(null);
+  const [query, setQuery] = useState("");
+  const fold = (value: string) => value.normalize("NFKD").replace(/\p{M}/gu, "").toLocaleLowerCase("id-ID");
+  const visible = sessions.filter(session => fold(session.title).includes(fold(query.trim())))
+    .sort((a, b) => (Date.parse(b.updatedAt) || 0) - (Date.parse(a.updatedAt) || 0) || a.id.localeCompare(b.id));
+
+  useLayoutEffect(() => {
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const shell = document.querySelector<HTMLElement>(".lm-vault-shell--dashboard");
+    const previousInert = shell?.inert ?? false;
+    const previousOverflow = document.body.style.overflow;
+    if (shell) shell.inert = true;
+    document.body.style.overflow = "hidden";
+    const first = () => root.current?.querySelector<HTMLButtonElement>("[data-chat-history-close]");
+    first()?.focus({ preventScroll: true });
+    const focusInside = (event: FocusEvent) => {
+      if (event.target instanceof Node && !root.current?.contains(event.target)) first()?.focus({ preventScroll: true });
+    };
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault(); event.stopPropagation(); onToggleOpen();
+      }
+      if ((event.ctrlKey || event.metaKey) && ["k", "b"].includes(event.key.toLowerCase())) {
+        event.preventDefault(); event.stopPropagation();
+      }
+      if (event.key !== "Tab") return;
+      const controls = Array.from(root.current?.querySelectorAll<HTMLElement>("button:not(:disabled), input") ?? []).filter(e => e.getClientRects().length);
+      const start = controls[0], end = controls.at(-1);
+      if (event.shiftKey && document.activeElement === start) { event.preventDefault(); end?.focus(); }
+      else if (!event.shiftKey && document.activeElement === end) { event.preventDefault(); start?.focus(); }
+    };
+    document.addEventListener("focusin", focusInside);
+    document.addEventListener("keydown", handleKey, true);
+    return () => {
+      document.removeEventListener("focusin", focusInside);
+      document.removeEventListener("keydown", handleKey, true);
+      if (shell) shell.inert = previousInert;
+      document.body.style.overflow = previousOverflow;
+      if (previousFocus?.isConnected) previousFocus.focus({ preventScroll: true });
+    };
+  }, [onToggleOpen]);
+
+  return createPortal(
+    <div className={["lm-vault-shell--dashboard", dashboardSans.variable, dashboardSerif.variable, styles.historyLayer].join(" ")}
+      onMouseDown={event => { if (event.target === event.currentTarget) onToggleOpen(); }}>
+      <div ref={root} role="dialog" aria-modal="true" aria-labelledby="chat-history-title" className={styles.history} data-chat-history>
+        <header className={styles.historyHeader}>
+          <h2 id="chat-history-title">Riwayat</h2>
+          <button type="button" className={styles.iconButton} onClick={onToggleOpen} aria-label="Tutup riwayat" data-chat-history-close><X size={20} aria-hidden="true" /></button>
+        </header>
+        <div className={styles.historyTools}>
+          <button type="button" className={styles.historyNew} disabled={busy} onClick={onNewChat}><Plus size={18} aria-hidden="true" /> Obrolan baru</button>
+          <label className={styles.historySearch}>
+            <Search size={17} aria-hidden="true" /><span className={styles.srOnly}>Cari percakapan</span>
+            <input type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="Cari percakapan" />
+          </label>
         </div>
-
-        {/* Sessions List */}
-        <div className="flex-1 overflow-y-auto p-2 space-y-1">
-          <p className="px-2 pt-2 pb-1 text-[10px] font-mono uppercase tracking-wider text-muted">
-            Riwayat Percakapan
-          </p>
-
-          {sessions.length === 0 ? (
-            <div className="py-8 text-center px-4">
-              <MessageSquare className="mx-auto h-6 w-6 text-muted/40 mb-2" />
-              <p className="text-xs text-muted">Belum ada percakapan lampau.</p>
-              <p className="text-[11px] text-muted/70 mt-1">Mulai obrolan baru untuk mencatat kenangan.</p>
-            </div>
-          ) : (
-            sessions.map((session) => {
-              const isActive = session.id === activeSessionId;
-              return (
-                <div
-                  key={session.id}
-                  className={`group relative flex items-center justify-between rounded-xl px-3 py-2.5 text-xs transition cursor-pointer ${
-                    isActive
-                      ? "border border-brand/30 bg-brand/10 text-brand font-medium shadow-2xs"
-                      : "text-foreground/80 hover:bg-surface-subdued hover:text-foreground"
-                  }`}
-                  onClick={() => onSelectSession(session.id)}
-                >
-                  <div className="flex items-center gap-2.5 min-w-0 pr-6">
-                    <MessageSquare className={`h-3.5 w-3.5 shrink-0 ${isActive ? "text-brand" : "text-muted"}`} />
-                    <span className="truncate">{session.title}</span>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onDeleteSession(session.id);
-                    }}
-                    title="Hapus sesi ini"
-                    aria-label="Hapus sesi ini"
-                    className="absolute right-2 opacity-0 group-hover:opacity-100 rounded p-1 text-muted hover:text-red-500 hover:bg-surface transition"
-                  >
-                    <Trash2 className="h-3 w-3" />
-                  </button>
-                </div>
-              );
-            })
-          )}
+        {error && <div className={styles.historyNotice} role="alert"><p>{error}</p>{onRetry && <button type="button" className={styles.textButton} onClick={onRetry} disabled={busy}>Coba lagi</button>}</div>}
+        <div className={styles.historyScroll}>
+          {visible.length ? <ul className={styles.sessionList}>
+            {visible.map(session => {
+              const date = new Date(session.updatedAt);
+              return <li key={session.id} className={styles.sessionRow} data-active={session.id === activeSessionId}>
+                <button type="button" className={styles.sessionSelect} disabled={busy} aria-current={session.id === activeSessionId ? "true" : undefined}
+                  onClick={() => onSelectSession(session.id)} data-chat-session={session.id}>
+                  <span>{session.title}</span>
+                  <time dateTime={Number.isNaN(date.getTime()) ? undefined : session.updatedAt}>{Number.isNaN(date.getTime()) ? "Tanggal belum tersedia" : new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short", year: "numeric" }).format(date)}</time>
+                </button>
+                <button type="button" className={styles.sessionDelete} disabled={busy || Boolean(deletingId)} onClick={() => onDeleteSession(session.id)}
+                  aria-label={(deletingId === session.id ? "Menghapus " : "Hapus percakapan ") + session.title} data-chat-delete={session.id}>
+                  <Trash2 size={16} aria-hidden="true" />
+                </button>
+              </li>;
+            })}
+          </ul> : <div className={styles.historyEmpty}><p>{query ? "Percakapan tidak ditemukan." : "Belum ada percakapan tersimpan."}</p>{query && <button type="button" className={styles.textButton} onClick={() => { setQuery(""); root.current?.querySelector("input")?.focus(); }}>Hapus pencarian</button>}</div>}
         </div>
-
-        {/* Sidebar Footer */}
-        <div className="border-t border-hairline/60 p-3 text-center">
-          <p className="text-[10px] font-mono text-muted/70">
-            {sessions.length} sesi percakapan tersimpan
-          </p>
-        </div>
-      </aside>
-
-      {/* Floating Toggle Button when Sidebar is closed on Desktop */}
-      {!isOpen && (
-        <button
-          type="button"
-          onClick={onToggleOpen}
-          title="Buka Riwayat Obrolan"
-          aria-label="Buka Riwayat Obrolan"
-          className="fixed top-16 left-4 z-20 hidden md:flex items-center gap-1.5 rounded-full border border-hairline bg-surface/90 px-3 py-1.5 text-xs font-mono text-muted shadow-md hover:bg-surface-subdued hover:text-foreground backdrop-blur-md transition"
-        >
-          <PanelLeft className="h-3.5 w-3.5" />
-          <span>Riwayat</span>
-        </button>
-      )}
-    </>
+        <p className={styles.historyCount} role="status">{query ? visible.length + " dari " : ""}{sessions.length} percakapan</p>
+      </div>
+    </div>, document.body,
   );
+}
+
+export function ChatSidebar(props: Props) {
+  return props.isOpen ? <HistoryDialog {...props} /> : null;
 }

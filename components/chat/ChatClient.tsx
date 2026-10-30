@@ -1,553 +1,422 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useLayoutEffect, useTransition, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  ArrowLeft,
-  MessageSquare,
-  Loader2,
-  Send,
-  Bot,
-  User,
-  Sun,
-  Moon,
-  BookmarkPlus,
-  PanelLeft,
-} from "lucide-react";
-import { toast } from "sonner";
-import { useTheme } from "@/lib/experience/theme-context";
+import { ArrowDown, ArrowUpRight, BookmarkPlus, Check, History, Plus, Send } from "lucide-react";
 import { ChatSidebar, type ChatSessionSummary } from "./ChatSidebar";
+import { ChatMessageContent } from "./ChatMessageContent";
+import { chatHref, formatChatTime, isMessage, isUuid, parseMessages, parseSessions, sortSessions, type MessageItem } from "@/lib/chat/model";
+import type { TimelineItem } from "@/lib/queries/activities";
+import styles from "./Chat.module.css";
 
-export interface MessageItem {
-  id: string;
-  role: "user" | "assistant";
-  content: string;
-  createdAt: string;
-}
+export type { MessageItem } from "@/lib/chat/model";
 
-const QUICK_PROMPTS = [
-  "Kapan terakhir ketemu Ethan dan di mana?",
-  "Rangkum ritme aktivitasku minggu ini",
-  "Apa hal baru yang pertama kali aku coba bulan ini?",
-  "Catat ini: Ngopi sore santai sambil baca buku",
+const EMPTY_SESSIONS: ChatSessionSummary[] = [];
+const EMPTY_MESSAGES: MessageItem[] = [];
+const PROMPTS = [
+  "Apa yang paling sering kucatat belakangan ini?",
+  "Rangkum aktivitasku minggu ini.",
+  "Apa hal baru yang pernah kucoba?",
 ];
+type SaveState = { status: "pending" | "saved" | "error"; error?: string; href?: string };
 
-const PRE_SEEDED_DEMO_SESSION: ChatSessionSummary = {
-  id: "demo-session-ethan",
-  title: "Refleksi Kolaborasi Capstone & Ethan",
-  updatedAt: new Date(Date.now() - 3600000 * 2).toISOString(),
-};
-
-const PRE_SEEDED_DEMO_MESSAGES: MessageItem[] = [
-  {
-    id: "demo-msg-1",
-    role: "user",
-    content: "Kapan terakhir ketemu Ethan dan apa yang kita bicarakan?",
-    createdAt: new Date(Date.now() - 3600000 * 2).toISOString(),
-  },
-  {
-    id: "demo-msg-2",
-    role: "assistant",
-    content:
-      "Berdasarkan catatanmu pada **15 Oktober 2026**, kamu terakhir kali bertemu dan berkolaborasi dengan Ethan saat kalian melakukan *pair-debugging* untuk mengatasi masalah *timeout* pada bagian *backend*.\n\nMomen membedah dan menyelesaikan kendala teknis bersama rekan setim seperti itu sering kali terasa intens sekaligus melegakan. Bagaimana dinamika kerjamu dengan Ethan waktu itu—apakah kolaborasi tersebut membuat proses pemecahan masalah terasa lebih ringan?",
-    createdAt: new Date(Date.now() - 3600000 * 2 + 2000).toISOString(),
-  },
-];
-
-function makeUserMessage(content: string): MessageItem {
-  return {
-    id: `usr-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-    role: "user",
-    content,
-    createdAt: new Date().toISOString(),
-  };
-}
-
-function createNewSession(isDemo: boolean, query: string): ChatSessionSummary {
-  const currentSessionId = isDemo ? `demo-session-${Date.now()}` : `sess-${Date.now()}`;
-  const title = query.length > 36 ? query.slice(0, 36) + "…" : query;
-  return {
-    id: currentSessionId,
-    title,
-    updatedAt: new Date().toISOString(),
-  };
+function rememberDemoNote(item: TimelineItem) {
+  const raw = sessionStorage.getItem("extra_demo_memories");
+  let existing: TimelineItem[] = [];
+  try {
+    const parsed: unknown = raw ? JSON.parse(raw) : [];
+    if (Array.isArray(parsed)) existing = parsed.filter(value => value && typeof value.id === "string");
+  } catch { /* Keep the newly saved item even if an older cache is malformed. */ }
+  sessionStorage.setItem("extra_demo_memories", JSON.stringify([item, ...existing.filter(value => value.id !== item.id)]));
 }
 
 export function ChatClient({
-  isDemo,
-  initialSessions = [],
-  initialMessages = [],
-  initialSessionId = null,
+  isDemo, initialSessions = EMPTY_SESSIONS, initialMessages = EMPTY_MESSAGES,
+  initialSessionId = null, requestedSessionId = null, startNew = false,
+  initialSessionsError = null, initialMessagesError = null, initialHasOlderMessages = false,
 }: {
   isDemo: boolean;
   initialSessions?: ChatSessionSummary[];
   initialMessages?: MessageItem[];
   initialSessionId?: string | null;
+  requestedSessionId?: string | null;
+  startNew?: boolean;
+  initialSessionsError?: string | null;
+  initialMessagesError?: string | null;
+  initialHasOlderMessages?: boolean;
 }) {
   const router = useRouter();
-  const { theme, mounted, toggleTheme } = useTheme();
-
-  // Sidebar toggle state
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-
-  // Sessions state
-  const [sessions, setSessions] = useState<ChatSessionSummary[]>(() => {
-    if (isDemo && typeof window !== "undefined") {
-      try {
-        const stored = localStorage.getItem("jimmy_chat_sessions");
-        if (stored) {
-          const parsed = JSON.parse(stored) as ChatSessionSummary[];
-          if (parsed.length > 0) return parsed;
-        }
-      } catch {
-        // ignore
-      }
-      return [PRE_SEEDED_DEMO_SESSION];
-    }
-    return initialSessions.length ? initialSessions : [];
+  const [navigationPending, startNavigation] = useTransition();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const toggleSidebar = useCallback(() => setSidebarOpen(value => !value), []);
+  const [state, setState] = useState({
+    sessions: initialSessions, activeSessionId: initialSessionId,
+    messages: initialMessages, messagesError: initialMessagesError,
   });
-
-  // Active session
-  const [activeSessionId, setActiveSessionId] = useState<string | null>(() => {
-    if (isDemo) {
-      if (initialSessionId) return initialSessionId;
-      return PRE_SEEDED_DEMO_SESSION.id;
-    }
-    return initialSessionId || (initialSessions[0]?.id ?? null);
-  });
-
-  // Active messages
-  const [messages, setMessages] = useState<MessageItem[]>(() => {
-    if (isDemo) {
-      if (initialSessionId === "demo-session-ethan" || (!initialSessionId && sessions[0]?.id === "demo-session-ethan")) {
-        return PRE_SEEDED_DEMO_MESSAGES;
-      }
-      if (typeof window !== "undefined" && initialSessionId) {
-        try {
-          const stored = localStorage.getItem(`jimmy_chat_msg_${initialSessionId}`);
-          if (stored) return JSON.parse(stored);
-        } catch {
-          // ignore
-        }
-      }
-      return PRE_SEEDED_DEMO_MESSAGES;
-    }
-    return initialMessages;
-  });
-
+  const [hydrated, setHydrated] = useState(!isDemo);
+  const [storageWarning, setStorageWarning] = useState<string | null>(null);
   const [input, setInput] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [savingMsgId, setSavingMsgId] = useState<string | null>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [saveStates, setSaveStates] = useState<Record<string, SaveState>>({});
+  const [newReply, setNewReply] = useState(false);
+  const [savedNotice, setSavedNotice] = useState<string | null>(null);
+  const transcript = useRef<HTMLElement>(null);
+  const textarea = useRef<HTMLTextAreaElement>(null);
+  const alive = useRef(true);
+  const sendLock = useRef(false);
+  const deleteLock = useRef(false);
+  const saveLocks = useRef(new Set<string>());
+  const controllers = useRef(new Set<AbortController>());
+  const nearBottom = useRef(true);
+  const didHydrate = useRef(false);
+  const storageFailed = useRef(false);
 
-  const backLink = isDemo ? "/dashboard?demo=jimmy" : "/dashboard";
-
-  // Auto-scroll on new messages
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [messages, isLoading]);
-
-  // Persist demo sessions to localStorage
-  useEffect(() => {
-    if (isDemo && typeof window !== "undefined") {
-      try {
-        localStorage.setItem("jimmy_chat_sessions", JSON.stringify(sessions));
-      } catch {
-        // ignore
-      }
-    }
-  }, [sessions, isDemo]);
-
-  // Persist demo messages for active session
-  useEffect(() => {
-    if (isDemo && activeSessionId && typeof window !== "undefined") {
-      try {
-        localStorage.setItem(`jimmy_chat_msg_${activeSessionId}`, JSON.stringify(messages));
-      } catch {
-        // ignore
-      }
-    }
-  }, [messages, activeSessionId, isDemo]);
-
-  const handleSelectSession = useCallback((sessionId: string) => {
-    setActiveSessionId(sessionId);
-    if (isDemo) {
-      if (sessionId === "demo-session-ethan") {
-        setMessages(PRE_SEEDED_DEMO_MESSAGES);
-      } else if (typeof window !== "undefined") {
-        try {
-          const stored = localStorage.getItem(`jimmy_chat_msg_${sessionId}`);
-          setMessages(stored ? JSON.parse(stored) : []);
-        } catch {
-          setMessages([]);
-        }
-      }
-    }
-  }, [isDemo]);
-
-  const handleNewChat = useCallback(() => {
-    setActiveSessionId(null);
-    setMessages([]);
-    setTimeout(() => textareaRef.current?.focus(), 50);
+    alive.current = true;
+    const requests = controllers.current;
+    return () => { alive.current = false; requests.forEach(controller => controller.abort()); };
   }, []);
 
-  const handleDeleteSession = async (sessionId: string) => {
-    setSessions((prev) => prev.filter((s) => s.id !== sessionId));
-
-    if (isDemo && typeof window !== "undefined") {
+  // Server and first client render use the same props. Local demo history is read
+  // only after hydration, and no persistence effect can overwrite it beforehand.
+  useEffect(() => {
+    if (didHydrate.current || !isDemo) return;
+    let cancelled = false;
+    queueMicrotask(() => {
+      if (cancelled) return;
+      didHydrate.current = true;
       try {
-        localStorage.removeItem(`jimmy_chat_msg_${sessionId}`);
+        const raw = localStorage.getItem("jimmy_chat_sessions");
+        const stored = parseSessions(raw);
+        const sessions = stored ?? initialSessions;
+        const preferred = requestedSessionId || initialSessionId;
+        const id = startNew ? null : (preferred && sessions.some(session => session.id === preferred) ? preferred : requestedSessionId ? requestedSessionId : sessions[0]?.id ?? null);
+        const sessionExists = !id || sessions.some(session => session.id === id);
+        const rawMessages = id ? localStorage.getItem("jimmy_chat_msg_" + id) : null;
+        const cachedMessages = parseMessages(rawMessages);
+        const messagesError = !sessionExists ? "Percakapan ini tidak ditemukan. Pilih percakapan lain dari riwayat."
+          : rawMessages !== null && cachedMessages === null ? "Pesan demo tersimpan tidak dapat dibaca. Kamu bisa membuka percakapan lain atau memulai yang baru." : null;
+        setState({ sessions, activeSessionId: id,
+          messages: messagesError || !id ? [] : cachedMessages ?? (id === initialSessionId ? initialMessages : []), messagesError });
+        if (raw !== null && stored === null) setStorageWarning("Riwayat demo tersimpan tidak dapat dibaca. Contoh percakapan ditampilkan kembali.");
       } catch {
-        // ignore
+        storageFailed.current = true;
+        setStorageWarning("Penyimpanan browser tidak tersedia. Percakapan demo hanya bertahan selama halaman ini terbuka.");
       }
-    } else {
-      try {
-        await fetch(`/api/chat/sessions?id=${sessionId}`, { method: "DELETE" });
-      } catch {
-        // ignore
-      }
-    }
+      setHydrated(true);
+    });
+    return () => { cancelled = true; };
+  }, [isDemo, initialSessionId, initialSessions, initialMessages, requestedSessionId, startNew]);
 
-    if (activeSessionId === sessionId) {
-      handleNewChat();
+  useEffect(() => {
+    if (!isDemo || !hydrated || storageFailed.current) return;
+    try {
+      localStorage.setItem("jimmy_chat_sessions", JSON.stringify(state.sessions));
+      if (state.activeSessionId && !state.messagesError) {
+        localStorage.setItem("jimmy_chat_msg_" + state.activeSessionId, JSON.stringify(state.messages));
+      }
+    } catch {
+      storageFailed.current = true;
+      queueMicrotask(() => { if (alive.current) setStorageWarning("Riwayat demo tidak dapat disimpan di browser ini. Percakapan yang terbuka tetap tersedia."); });
     }
-    toast.success("Sesi obrolan dihapus.");
+  }, [isDemo, hydrated, state]);
+
+  useLayoutEffect(() => {
+    if (textarea.current) {
+      textarea.current.style.height = "auto";
+      textarea.current.style.height = Math.min(160, textarea.current.scrollHeight) + "px";
+    }
+  }, [input]);
+
+  useEffect(() => {
+    if (startNew && hydrated) textarea.current?.focus({ preventScroll: true });
+  }, [startNew, hydrated]);
+
+  useLayoutEffect(() => {
+    if (nearBottom.current && transcript.current) transcript.current.scrollTop = transcript.current.scrollHeight;
+  }, [state.messages, sending, hydrated]);
+
+  const saving = Object.values(saveStates).some(value => value.status === "pending");
+  const busy = sending || navigationPending || deletingId !== null || saving || !hydrated;
+  const canCompose = hydrated && !initialSessionsError && !state.messagesError && !navigationPending;
+  const activeTitle = state.sessions.find(session => session.id === state.activeSessionId)?.title ?? "Percakapan baru";
+  const guarded = () => sendLock.current || deleteLock.current || saveLocks.current.size > 0 || navigationPending || !hydrated;
+  const retryLoad = () => startNavigation(() => router.refresh());
+  const updateUrl = (id: string | null, isNew = false) => window.history.replaceState(window.history.state, "", chatHref(isDemo, id, isNew));
+
+  const selectSession = (id: string) => {
+    if (guarded()) return;
+    setSidebarOpen(false);
+    if (id === state.activeSessionId) return;
+    startNavigation(() => router.push(chatHref(isDemo, id), { scroll: false }));
   };
 
-  const handleSend = async (textToSend?: string) => {
-    const query = (textToSend || input).trim();
-    if (!query || isLoading) return;
-
-    const userMessage = makeUserMessage(query);
-    setMessages((prev) => [...prev, userMessage]);
+  const newChat = () => {
+    if (guarded()) return;
+    setSidebarOpen(false);
+    setSendError(null);
+    setSavedNotice(null);
+    setDeleteError(null);
     setInput("");
-    setIsLoading(true);
+    setState(previous => ({ ...previous, activeSessionId: null, messages: [], messagesError: null }));
+    nearBottom.current = true;
+    setNewReply(false);
+    updateUrl(null, true);
+    requestAnimationFrame(() => textarea.current?.focus({ preventScroll: true }));
+  };
 
-    // Determine or create session ID
-    let currentSessionId = activeSessionId;
-    if (!currentSessionId) {
-      const newSession = createNewSession(isDemo, query);
-      currentSessionId = newSession.id;
-      setActiveSessionId(currentSessionId);
-      setSessions((prev) => [newSession, ...prev]);
-    }
-
+  const removeSession = async (id: string) => {
+    if (guarded()) return;
+    const session = state.sessions.find(item => item.id === id);
+    if (!session || !window.confirm('Hapus percakapan "' + session.title + '"? Pesan dalam percakapan ini akan dihapus.')) return;
+    deleteLock.current = true;
+    setDeletingId(id);
+    setDeleteError(null);
+    const controller = new AbortController();
+    controllers.current.add(controller);
     try {
-      const history = messages.slice(-6).map((m) => ({
-        role: m.role,
-        content: m.content,
+      if (!isDemo) {
+        const response = await fetch("/api/chat/sessions?id=" + encodeURIComponent(id), { method: "DELETE", signal: controller.signal });
+        const data = await response.json();
+        if (!response.ok || !data.success) throw new Error("Percakapan belum berhasil dihapus. Coba lagi.");
+      }
+      if (!alive.current) return;
+      if (isDemo) {
+        try { localStorage.removeItem("jimmy_chat_msg_" + id); }
+        catch { setStorageWarning("Perubahan riwayat tidak dapat disimpan di browser ini."); }
+      }
+      const removedActive = state.activeSessionId === id;
+      setState(previous => ({
+        ...previous, sessions: previous.sessions.filter(item => item.id !== id),
+        ...(removedActive ? { activeSessionId: null, messages: [], messagesError: null } : {}),
       }));
-
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          message: query,
-          history,
-          demo: isDemo ? "jimmy" : undefined,
-          sessionId: currentSessionId,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok || !data.success) {
-        throw new Error(data.error || "Gagal mendapatkan respon dari AI.");
+      if (removedActive) {
+        setInput(""); setSendError(null); setSavedNotice(null); updateUrl(null, true);
       }
-
-      setMessages((prev) => [...prev, data.message]);
-
-      // If auto-save was triggered on the backend
-      if (data.savedItem && isDemo && typeof window !== "undefined") {
-        try {
-          const stored = sessionStorage.getItem("extra_demo_memories");
-          const existing = stored ? JSON.parse(stored) : [];
-          sessionStorage.setItem("extra_demo_memories", JSON.stringify([data.savedItem, ...existing]));
-          toast.success("Catatan otomatis tersimpan ke Timeline!", {
-            action: {
-              label: "Lihat Timeline",
-              onClick: () => router.push("/timeline?demo=jimmy"),
-            },
-          });
-        } catch {
-          // ignore
-        }
-      }
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Terjadi kesalahan saat berbincang.");
+    } catch {
+      if (alive.current) setDeleteError("Percakapan belum berhasil dihapus. Coba lagi.");
     } finally {
-      setIsLoading(false);
-      setTimeout(() => textareaRef.current?.focus(), 50);
+      controllers.current.delete(controller);
+      deleteLock.current = false;
+      if (alive.current) setDeletingId(null);
     }
   };
 
-  const handleSaveToTimeline = async (msgId: string, content: string) => {
-    setSavingMsgId(msgId);
+  const send = async () => {
+    const query = input.trim();
+    if (!query || query.length > 2000 || guarded() || !canCompose) return;
+    sendLock.current = true;
+    const returnToComposer = document.activeElement === textarea.current || document.activeElement?.closest("form")?.contains(textarea.current) === true;
+    setSending(true); setSendError(null); setSavedNotice(null); setInput(""); setNewReply(false);
+    nearBottom.current = true;
+    const userMessage: MessageItem = { id: "user-" + crypto.randomUUID(), role: "user", content: query, createdAt: new Date().toISOString() };
+    const previousMessages = state.messages;
+    setState(previous => ({ ...previous, messages: [...previous.messages, userMessage] }));
+    const controller = new AbortController();
+    controllers.current.add(controller);
+    let sessionId = state.activeSessionId;
     try {
-      const res = await fetch("/api/chat/save-note", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          text: content,
-          demo: isDemo ? "jimmy" : undefined,
-        }),
-      });
-
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        throw new Error(data.error || "Gagal menyimpan catatan.");
-      }
-
-      if (data.isDemo && data.item && typeof window !== "undefined") {
-        try {
-          const stored = sessionStorage.getItem("extra_demo_memories");
-          const existing = stored ? JSON.parse(stored) : [];
-          sessionStorage.setItem("extra_demo_memories", JSON.stringify([data.item, ...existing]));
-        } catch {
-          // ignore
+      if (!sessionId) {
+        const title = query.length > 70 ? query.slice(0, 70) + "…" : query;
+        let session: ChatSessionSummary;
+        if (isDemo) {
+          session = { id: "demo-session-" + crypto.randomUUID(), title, updatedAt: new Date().toISOString() };
+        } else {
+          const response = await fetch("/api/chat/sessions", {
+            method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title }), signal: controller.signal,
+          });
+          const data = await response.json();
+          if (!response.ok || !data.success || !isUuid(data.session?.id)) throw new Error("Percakapan baru belum bisa dibuat.");
+          session = { id: data.session.id, title: typeof data.session.title === "string" ? data.session.title : title,
+            updatedAt: typeof data.session.updated_at === "string" && Number.isFinite(Date.parse(data.session.updated_at)) ? data.session.updated_at : new Date().toISOString() };
         }
+        if (!alive.current) return;
+        sessionId = session.id;
+        setState(previous => ({ ...previous, activeSessionId: session.id, sessions: sortSessions([session, ...previous.sessions.filter(item => item.id !== session.id)]) }));
+        updateUrl(session.id);
       }
-
-      toast.success(`Catatan "${data.summary}" berhasil disimpan ke Timeline!`, {
-        action: {
-          label: "Buka Timeline",
-          onClick: () => router.push(isDemo ? "/timeline?demo=jimmy" : "/timeline"),
-        },
+      const response = await fetch("/api/chat", {
+        method: "POST", headers: { "Content-Type": "application/json" }, signal: controller.signal,
+        body: JSON.stringify({ message: query, history: previousMessages.slice(-6).map(({ role, content }) => ({ role, content })), demo: isDemo ? "jimmy" : undefined, sessionId }),
       });
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Gagal menyimpan catatan.");
+      const data = await response.json();
+      if (!response.ok || !data.success || !isMessage(data.message) || data.message.role !== "assistant") throw new Error("Jawaban belum dapat dimuat.");
+      if (!alive.current) return;
+      const updatedAt = new Date().toISOString();
+      setState(previous => ({ ...previous, messages: [...previous.messages, data.message],
+        sessions: sortSessions(previous.sessions.map(session => session.id === sessionId ? { ...session, updatedAt } : session)) }));
+      if (!nearBottom.current) setNewReply(true);
+      if (isDemo && data.savedItem && typeof data.savedItem.id === "string") {
+        try {
+          rememberDemoNote(data.savedItem);
+          setSavedNotice("/timeline?demo=jimmy#" + encodeURIComponent(data.savedItem.id));
+          setSaveStates(previous => ({ ...previous, [userMessage.id]: { status: "saved", href: "/timeline?demo=jimmy#" + encodeURIComponent(data.savedItem.id) } }));
+        } catch { setStorageWarning("Catatan demo belum dapat disimpan di browser ini."); }
+      }
+    } catch {
+      if (!alive.current) return;
+      setState(previous => ({ ...previous, messages: previous.messages.filter(message => message.id !== userMessage.id) }));
+      setInput(query);
+      setSendError(/catat|simpan/i.test(query)
+        ? "Jawaban belum diterima. Pesan dikembalikan ke draf; periksa timeline sebelum mengirim ulang permintaan menyimpan catatan."
+        : "Jawaban belum diterima. Pesanmu kembali ke draf dan bisa dikirim lagi.");
     } finally {
-      setSavingMsgId(null);
+      controllers.current.delete(controller);
+      sendLock.current = false;
+      if (alive.current) {
+        setSending(false);
+        if (returnToComposer && document.activeElement === document.body) requestAnimationFrame(() => {
+          if (alive.current && document.activeElement === document.body) textarea.current?.focus({ preventScroll: true });
+        });
+      }
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
+  const saveMessage = async (message: MessageItem) => {
+    if (saveLocks.current.has(message.id) || saveStates[message.id]?.status === "saved" || sending || navigationPending) return;
+    saveLocks.current.add(message.id);
+    setSaveStates(previous => ({ ...previous, [message.id]: { status: "pending" } }));
+    const controller = new AbortController();
+    controllers.current.add(controller);
+    try {
+      const response = await fetch("/api/chat/save-note", {
+        method: "POST", headers: { "Content-Type": "application/json" }, signal: controller.signal,
+        body: JSON.stringify({ text: message.content, demo: isDemo ? "jimmy" : undefined }),
+      });
+      const data = await response.json();
+      if (!response.ok || !data.success) throw new Error("Catatan belum berhasil disimpan.");
+      if (!alive.current) return;
+      let href = isDemo ? "/timeline?demo=jimmy" : "/timeline";
+      if (isDemo) {
+        if (!data.item || typeof data.item.id !== "string") throw new Error("Catatan demo belum tersedia.");
+        rememberDemoNote(data.item);
+        href += "#" + encodeURIComponent(data.item.id);
+      } else if (typeof data.detailId === "string") href += "#" + encodeURIComponent(data.detailId);
+      setSaveStates(previous => ({ ...previous, [message.id]: { status: "saved", href } }));
+    } catch {
+      if (alive.current) setSaveStates(previous => ({ ...previous, [message.id]: { status: "error", error: "Catatan belum berhasil disimpan. Periksa timeline sebelum mencoba lagi." } }));
+    } finally {
+      controllers.current.delete(controller);
+      saveLocks.current.delete(message.id);
     }
   };
 
-  const activeSessionTitle = sessions.find((s) => s.id === activeSessionId)?.title || "Obrolan Baru";
+  const jumpLatest = useCallback(() => {
+    nearBottom.current = true;
+    transcript.current?.scrollTo({ top: transcript.current.scrollHeight, behavior: "auto" });
+    setNewReply(false);
+  }, []);
 
   return (
-    <div className="flex h-full w-full overflow-hidden bg-canvas text-foreground">
-      {/* Session History Sidebar */}
-      <ChatSidebar
-        sessions={sessions}
-        activeSessionId={activeSessionId}
-        onSelectSession={handleSelectSession}
-        onNewChat={handleNewChat}
-        onDeleteSession={handleDeleteSession}
-        isOpen={sidebarOpen}
-        onToggleOpen={() => setSidebarOpen((prev) => !prev)}
-      />
-
-      {/* Main Conversation Area */}
-      <div className="flex flex-1 flex-col h-full overflow-hidden">
-        {/* Top Navigation Header */}
-        <header className="flex h-14 shrink-0 items-center justify-between border-b border-hairline/80 bg-surface/90 px-4 backdrop-blur-md sm:px-6">
-          <div className="flex items-center gap-3 min-w-0">
-            <button
-              type="button"
-              onClick={() => setSidebarOpen((prev) => !prev)}
-              title="Toggle Riwayat Obrolan"
-              aria-label="Toggle Riwayat Obrolan"
-              className="rounded-lg p-2 text-muted hover:bg-surface-subdued hover:text-foreground transition md:hidden"
-            >
-              <PanelLeft className="h-4 w-4" />
-            </button>
-
-            <Link
-              href={backLink}
-              className="inline-flex items-center gap-1.5 text-xs font-mono text-muted hover:text-foreground transition shrink-0"
-            >
-              <ArrowLeft className="h-3.5 w-3.5" /> Dashboard
-            </Link>
-
-            <div className="hidden h-4 w-px bg-hairline sm:block shrink-0" />
-
-            <div className="flex items-center gap-2 min-w-0">
-              <span className="font-serif text-sm font-medium truncate max-w-[220px] sm:max-w-md">
-                {activeSessionTitle}
-              </span>
-              {isDemo && (
-                <span className="hidden sm:inline-block rounded-full border border-brand/20 bg-brand/10 px-2 py-0.5 text-[10px] font-mono uppercase text-brand shrink-0">
-                  Demo Jimmy
-                </span>
-              )}
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 shrink-0">
-            {messages.length > 0 && (
-              <button
-                type="button"
-                onClick={handleNewChat}
-                title="Mulai Obrolan Baru"
-                className="inline-flex items-center gap-1 rounded-lg border border-hairline bg-surface px-2.5 py-1 text-xs font-mono text-muted hover:text-foreground hover:bg-surface-subdued transition"
-              >
-                <span>+ Baru</span>
-              </button>
-            )}
-            <button
-              type="button"
-              onClick={toggleTheme}
-              aria-label="Toggle theme"
-              className="rounded-lg p-2 text-muted hover:bg-surface-subdued hover:text-foreground transition"
-            >
-              {mounted && theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-            </button>
-          </div>
-        </header>
-
-        {/* Conversation Stream */}
-        <main
-          ref={scrollRef}
-          className="flex-1 overflow-y-auto px-4 py-6 sm:px-8 max-w-3xl w-full mx-auto"
-        >
-          {messages.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-brand/30 bg-brand/10 text-brand shadow-xs">
-                <MessageSquare className="h-7 w-7" />
-              </div>
-              <h1 className="mt-5 font-serif text-2xl font-medium sm:text-3xl">
-                Sahabat Jurnal Memori-mu
-              </h1>
-              <p className="mt-2 max-w-md text-sm text-muted leading-relaxed">
-                Tanyakan apa saja tentang perjalanan hidup, aktivitas, orang-orang terdekat, atau tempat favoritmu. Kamu juga bisa langsung meminta: <em>&quot;Catat ini: ...&quot;</em> untuk menambah catatan baru.
-              </p>
-
-              {/* Quick Prompt Chips */}
-              <div className="mt-8 w-full">
-                <p className="font-mono text-xs uppercase tracking-wider text-muted mb-3">
-                  Pertanyaan Cepat
-                </p>
-                <div className="grid gap-2 sm:grid-cols-2">
-                  {QUICK_PROMPTS.map((prompt, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => handleSend(prompt)}
-                      className="flex items-center gap-2 rounded-xl border border-hairline bg-surface p-3 text-left text-xs text-foreground/90 transition hover:border-brand/40 hover:bg-surface-subdued hover:text-brand shadow-2xs"
-                    >
-                      <MessageSquare className="h-3.5 w-3.5 shrink-0 text-brand/70" />
-                      <span>{prompt}</span>
-                    </button>
-                  ))}
+    <section className={styles.page} data-chat-page data-chat-client data-chat-ready={hydrated} aria-busy={navigationPending}>
+      <header className={styles.toolbar}>
+        <div className={styles.toolbarTitle}>
+          <h1>Ask Memory</h1>
+          <p title={activeTitle}>{activeTitle}</p>
+        </div>
+        <div className={styles.toolbarActions}>
+          <button type="button" className={styles.textButton} data-chat-history-toggle aria-expanded={sidebarOpen} aria-haspopup="dialog" onClick={() => setSidebarOpen(true)}>
+            <History size={17} aria-hidden="true" /><span>Riwayat</span>
+          </button>
+          <button type="button" className={styles.textButton} data-chat-new disabled={busy} onClick={newChat}>
+            <Plus size={17} aria-hidden="true" /><span>Obrolan baru</span>
+          </button>
+        </div>
+      </header>
+      <div className={styles.workspace}>
+        <ChatSidebar sessions={state.sessions} activeSessionId={state.activeSessionId}
+          onSelectSession={selectSession} onNewChat={newChat} onDeleteSession={removeSession}
+          isOpen={sidebarOpen} onToggleOpen={toggleSidebar}
+          busy={busy} error={deleteError ?? initialSessionsError} onRetry={initialSessionsError ? retryLoad : undefined} deletingId={deletingId} />
+        <div className={styles.chat}>
+          <main ref={transcript} className={styles.transcript} data-chat-transcript onScroll={() => {
+            const element = transcript.current;
+            if (!element) return;
+            nearBottom.current = element.scrollHeight - element.scrollTop - element.clientHeight < 80;
+            if (nearBottom.current) setNewReply(false);
+          }}>
+            <div className={styles.readingColumn}>
+              {storageWarning && <p className={styles.notice} role="status">{storageWarning}</p>}
+              {(initialSessionsError || state.messagesError) ? (
+                <div className={styles.notice} role="alert" data-chat-error>
+                  <p>{initialSessionsError || state.messagesError}</p>
+                  <button type="button" className={styles.textButton} disabled={navigationPending} onClick={retryLoad}>Coba lagi</button>
                 </div>
+              ) : state.messages.length === 0 ? (
+                <div className={styles.empty}>
+                  <p className={styles.eyebrow}>Dari catatanmu</p>
+                  <h2>Apa yang ingin kamu ingat?</h2>
+                  <p>Cari kembali sebuah momen, lihat pola kecil, atau ceritakan sesuatu yang baru.</p>
+                  <div className={styles.prompts} aria-label="Contoh pertanyaan">
+                    {PROMPTS.map(prompt => <button key={prompt} type="button" className={styles.prompt} data-chat-prompt disabled={!canCompose || busy}
+                      onClick={() => { setInput(prompt); textarea.current?.focus({ preventScroll: true }); }}>
+                      <span>{prompt}</span><ArrowUpRight size={17} aria-hidden="true" />
+                    </button>)}
+                  </div>
+                </div>
+              ) : (
+                <>
+                  {initialHasOlderMessages && <p className={styles.status}>Menampilkan 50 pesan terakhir dari percakapan ini.</p>}
+                  <ol className={styles.conversation} role="log" aria-label="Isi percakapan" aria-live="polite" aria-relevant="additions">
+                    {state.messages.map(message => {
+                      const save = saveStates[message.id];
+                      return <li key={message.id} className={[styles.message, message.role === "user" ? styles.userMessage : styles.assistantMessage].join(" ")}
+                        data-chat-message={message.id} data-role={message.role}>
+                        <p className={styles.messageLabel}>{message.role === "user" ? "Kamu" : "Life Memory"}</p>
+                        <div className={styles.messageBody}><ChatMessageContent content={message.content} /></div>
+                        <div className={styles.messageActions}>
+                          {save?.status === "saved" ? (
+                            <Link href={save.href ?? (isDemo ? "/timeline?demo=jimmy" : "/timeline")} className={styles.savedLabel} data-chat-saved={message.id}>
+                              <Check size={15} aria-hidden="true" /> Tersimpan · Lihat catatan
+                            </Link>
+                          ) : (
+                            <button type="button" className={styles.saveButton} data-chat-save={message.id}
+                              disabled={save?.status === "pending" || sending || navigationPending || message.content.length > 10000}
+                              onClick={() => saveMessage(message)}>
+                              <BookmarkPlus size={15} aria-hidden="true" />{save?.status === "pending" ? "Menyimpan…" : "Simpan ke catatan"}
+                            </button>
+                          )}
+                          <time className={styles.messageTime} dateTime={message.createdAt}>{formatChatTime(message.createdAt)}</time>
+                        </div>
+                        {save?.status === "error" && <p className={styles.notice} role="alert" data-chat-error>{save.error}</p>}
+                      </li>;
+                    })}
+                  </ol>
+                </>
+              )}
+              {sending && <p className={styles.status} role="status" data-chat-status>Sedang membaca catatanmu…</p>}
+              {navigationPending && <p className={styles.status} role="status">Membuka percakapan…</p>}
+              {savedNotice && <p className={styles.status} role="status"><Link href={savedNotice}>Catatan tersimpan. Lihat di timeline <ArrowUpRight size={14} aria-hidden="true" /></Link></p>}
+            </div>
+          </main>
+          {newReply && <button type="button" className={styles.jumpLatest} onClick={jumpLatest}><ArrowDown size={16} aria-hidden="true" /> Jawaban baru</button>}
+          <footer className={styles.composer}>
+            <div className={styles.composerInner}>
+              {sendError && <p className={styles.notice} role="alert" data-chat-error>{sendError}</p>}
+              <form className={styles.composerForm} onSubmit={event => { event.preventDefault(); void send(); }}>
+                <label htmlFor="chat-message" className={styles.srOnly}>Pesan untuk Life Memory</label>
+                <textarea id="chat-message" ref={textarea} className={styles.composerInput} rows={1} maxLength={2000}
+                  data-chat-composer value={input} disabled={!canCompose || sending || deletingId !== null}
+                  placeholder="Tanyakan sesuatu dari catatanmu…" aria-describedby="chat-composer-hint"
+                  onChange={event => setInput(event.target.value)} onKeyDown={event => {
+                    if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing && event.keyCode !== 229) {
+                      event.preventDefault(); void send();
+                    }
+                  }} />
+                <button type="submit" className={styles.sendButton} aria-label="Kirim pesan" disabled={!canCompose || busy || !input.trim()}><Send size={18} aria-hidden="true" /></button>
+              </form>
+              <div className={styles.composerMeta}>
+                <p id="chat-composer-hint">Enter untuk kirim · Shift+Enter untuk baris baru. <span>Untuk menyimpan momen, tulis “Catat ini: …”.</span></p>
+                {input.length >= 1800 && <span className={styles.count} aria-live="polite">{input.length}/2000</span>}
               </div>
             </div>
-          ) : (
-            <div className="space-y-6 pb-4">
-              {messages.map((msg) => (
-                <div
-                  key={msg.id}
-                  className={`flex gap-3 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-                >
-                  {msg.role === "assistant" && (
-                    <div className="flex h-8 w-8 shrink-0 select-none items-center justify-center rounded-full border border-brand/30 bg-brand/10 text-brand mt-0.5">
-                      <Bot className="h-4 w-4" />
-                    </div>
-                  )}
-
-                  <div
-                    className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed sm:max-w-[78%] ${
-                      msg.role === "user"
-                        ? "rounded-tr-xs bg-brand text-white shadow-xs"
-                        : "rounded-tl-xs border border-hairline bg-surface text-foreground shadow-2xs"
-                    }`}
-                  >
-                    <div className="whitespace-pre-wrap font-sans">{msg.content}</div>
-
-                    <div className="mt-2.5 flex items-center justify-between gap-3 border-t border-hairline/40 pt-1.5">
-                      <button
-                        type="button"
-                        onClick={() => handleSaveToTimeline(msg.id, msg.content)}
-                        disabled={savingMsgId === msg.id}
-                        className={`inline-flex items-center gap-1.5 text-[11px] font-mono transition ${
-                          msg.role === "user"
-                            ? "text-white/80 hover:text-white"
-                            : "text-brand hover:underline"
-                        }`}
-                      >
-                        <BookmarkPlus className="h-3.5 w-3.5" />
-                        <span>{savingMsgId === msg.id ? "Menyimpan…" : "Simpan ke Catatan"}</span>
-                      </button>
-
-                      <span
-                        className={`block text-[10px] font-mono opacity-60 ${
-                          msg.role === "user" ? "text-white/80" : "text-muted"
-                        }`}
-                      >
-                        {new Date(msg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                      </span>
-                    </div>
-                  </div>
-
-                  {msg.role === "user" && (
-                    <div className="flex h-8 w-8 shrink-0 select-none items-center justify-center rounded-full border border-hairline bg-surface-subdued text-muted mt-0.5">
-                      <User className="h-4 w-4" />
-                    </div>
-                  )}
-                </div>
-              ))}
-
-              {isLoading && (
-                <div className="flex gap-3 justify-start">
-                  <div className="flex h-8 w-8 shrink-0 select-none items-center justify-center rounded-full border border-brand/30 bg-brand/10 text-brand mt-0.5">
-                    <Loader2 className="h-4 w-4 animate-spin text-brand" />
-                  </div>
-                  <div className="max-w-[80%] rounded-2xl rounded-tl-xs border border-hairline bg-surface p-4 text-xs text-muted shadow-2xs">
-                    <span className="inline-flex items-center gap-2">
-                      <span className="h-2 w-2 rounded-full bg-brand animate-ping" />
-                      Gemini sedang membaca memorimu dan merenungkannya…
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-        </main>
-
-        {/* Sticky Bottom Input Bar */}
-        <footer className="shrink-0 border-t border-hairline/80 bg-surface/95 p-3 backdrop-blur-md sm:p-4">
-          <div className="mx-auto max-w-3xl">
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSend();
-              }}
-              className="flex items-end gap-2 rounded-2xl border border-hairline bg-canvas p-1.5 focus-within:border-brand/60 focus-within:ring-1 focus-within:ring-brand/40 shadow-xs"
-            >
-              <textarea
-                ref={textareaRef}
-                rows={1}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Tanyakan kenanganmu atau ketik 'Catat ini: ...' untuk menambah catatan"
-                className="max-h-32 min-h-[38px] flex-1 resize-none bg-transparent px-3 py-2 text-sm text-foreground outline-none placeholder:text-muted/60"
-              />
-              <button
-                type="submit"
-                disabled={!input.trim() || isLoading}
-                aria-label="Kirim pesan"
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand text-white transition hover:bg-brand-hover disabled:opacity-40 disabled:hover:bg-brand"
-              >
-                <Send className="h-4 w-4" />
-              </button>
-            </form>
-            <p className="mt-2 text-center text-[11px] font-mono text-muted/70">
-              Tekan Enter untuk kirim · Gunakan tombol &quot;Simpan ke Catatan&quot; untuk memasukkan percakapan ke Timeline
-            </p>
-          </div>
-        </footer>
+          </footer>
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
