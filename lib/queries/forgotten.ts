@@ -1,4 +1,4 @@
-﻿import type { SupabaseClient } from "@supabase/supabase-js";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import type { TimelineItem } from "./activities.ts";
 import { isGenericPlace } from "../utils/normalization.ts";
 
@@ -15,6 +15,11 @@ const hasAnchor = (item: TimelineItem) => anchorKeys(item).length > 0;
 const matchesAnchor = (item: TimelineItem, anchors: Set<string>) => anchorKeys(item).some((anchor) => anchors.has(anchor));
 
 export function selectForgottenCandidate(items: TimelineItem[], asOf = new Date()): ForgottenCandidate | null {
+  const all = selectAllForgottenCandidates(items, asOf);
+  return all.length > 0 ? all[0] : null;
+}
+
+export function selectAllForgottenCandidates(items: TimelineItem[], asOf = new Date()): ForgottenCandidate[] {
   const today = dateOnly(asOf);
   const candidates = items
     .filter((item) => item.eventStatus === "completed" && daysBetween(today, item.occurredAt) >= 14 && hasAnchor(item))
@@ -25,8 +30,13 @@ export function selectForgottenCandidate(items: TimelineItem[], asOf = new Date(
       const anchorLastOccurredAt = anchorMentions.reduce((latest, item) => item.occurredAt > latest ? item.occurredAt : latest, candidate.occurredAt);
       return { candidate, anchorLastOccurredAt };
     });
-  const match = candidates.find(({ anchorLastOccurredAt }) => daysBetween(today, anchorLastOccurredAt) >= 21);
-  return match ? { ...match.candidate, daysAgo: daysBetween(today, match.anchorLastOccurredAt), anchorLastOccurredAt: match.anchorLastOccurredAt } : null;
+  return candidates
+    .filter(({ anchorLastOccurredAt }) => daysBetween(today, anchorLastOccurredAt) >= 21)
+    .map(({ candidate, anchorLastOccurredAt }) => ({
+      ...candidate,
+      daysAgo: daysBetween(today, anchorLastOccurredAt),
+      anchorLastOccurredAt,
+    }));
 }
 
 export async function getForgottenMemory(supabase: SupabaseClient, userId: string, asOf = new Date()) {
