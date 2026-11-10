@@ -1,0 +1,111 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  overflow: hidden;
+  color: var(--color-text-foreground);
+  cursor: pointer;
+}
+
+.clippedLayer {
+  position: absolute;
+  inset: 0;
+  will-change: clip-path;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--color-canvas);
+}
+
+.stage {
+  position: absolute;
+  inset: 0;
+}
+
+.photo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: clamp(220px, 22vw, 360px);
+  height: calc(clamp(220px, 22vw, 360px) * 1.25);
+  object-fit: cover;
+  border-radius: 2px;
+  box-shadow: 0 24px 60px -24px rgb(20 16 10 / 0.35), 0 2px 6px rgb(20 16 10 / 0.08);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.windowFrame {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 6;
+  pointer-events: none;
+  border-radius: 2px;
+  border: 1px solid color-mix(in srgb, var(--color-text-foreground) 22%, transparent);
+  box-shadow:
+    0 24px 60px -24px rgb(20 16 10 / 0.45),
+    inset 0 0 0 1px color-mix(in srgb, var(--color-canvas) 35%, transparent);
+  opacity: 0;
+  will-change: width, height, opacity;
+}
+
+.wordmark,
+.counter,
+.hint {
+  position: absolute;
+  z-index: 10;
+  line-height: 1;
+}
+
+.wordmark {
+  top: 28px;
+  left: 32px;
+  font-family: var(--font-newsreader), Georgia, serif;
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
+}
+
+.wordmark span {
+  margin-left: 2px;
+  color: var(--color-primary);
+}
+
+.counter {
+  right: 32px;
+  bottom: 28px;
+  font-family: var(--font-newsreader), Georgia, serif;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 400;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+}
+
+.counterTotal {
+  color: var(--color-text-faint);
+  font-size: 0.4em;
+  letter-spacing: 0;
+}
+
+.hint {
+  top: 32px;
+  right: 32px;
+  color: var(--color-text-faint);
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 767px) {
+  .photo {
+    width: 56vw;
+    height: calc(56vw * 1.25);
+  }
+
+  .wordmark { top: 20px; left: 20px; }
+  .counter { right: 20px; bottom: 20px; }
+  .hint { top: 24px; right: 20px; }
+}

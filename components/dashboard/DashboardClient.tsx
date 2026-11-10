@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowRight, ArrowUpRight, X } from "lucide-react";
 import { QuickLogger } from "@/components/activity/QuickLogger";
 import { DashboardTraceRow } from "@/components/dashboard/DashboardTraceRow";
+import { DashboardEntrance } from "@/components/dashboard/DashboardEntrance";
 import { EvidenceDrawer } from "@/components/insights/EvidenceDrawer";
 import { VaultShell } from "@/components/layout/VaultShell";
 import { generateDeterministicInsights, insightToRecord } from "@/lib/analytics/insights";
@@ -19,6 +20,28 @@ import { dashboardSans, dashboardSerif } from "./fonts";
 import "./dashboard.css";
 
 const dashboardFonts = dashboardSans.variable + " " + dashboardSerif.variable;
+const ENTRANCE_FALLBACK_PHOTOS = [
+  "/images/library/two-cups-table.webp",
+  "/images/library/morning-train-window.webp",
+  "/images/library/street-after-rain.webp",
+  "/images/library/notebook-hands.webp",
+];
+
+// Latest 3 completed memory photos, topped up with curated library images.
+// Card 04 is the transparent window frame that reveals the live dashboard.
+function pickEntrancePhotos(items: TimelineItem[]) {
+  const picked: string[] = [];
+  for (const item of items) {
+    const src = item.eventStatus === "completed" ? item.imageUrls?.[0] : undefined;
+    if (src && !picked.includes(src)) picked.push(src);
+    if (picked.length === 3) break;
+  }
+  for (const src of ENTRANCE_FALLBACK_PHOTOS) {
+    if (picked.length === 3) break;
+    if (!picked.includes(src)) picked.push(src);
+  }
+  return picked.reverse();
+}
 
 function getGreeting(name: string) {
   const hour = new Date().getHours();
@@ -41,6 +64,12 @@ export default function DashboardClient({
   const [optimisticItems, setOptimisticItems] = useState<TimelineItem[]>([]);
   const [selectedInsight, setSelectedInsight] = useState<Insight | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [entered, setEntered] = useState(false);
+  // Chosen once per mount from server data so the stack never reshuffles mid-animation.
+  const [entrancePhotos] = useState(() => pickEntrancePhotos(
+    [...initialData.items].sort((a, b) => b.occurredAt.localeCompare(a.occurredAt)),
+  ));
+  const finishEntrance = useCallback(() => setEntered(true), []);
 
   useEffect(() => {
     if (isDemo) {
@@ -121,6 +150,7 @@ export default function DashboardClient({
 
   return (
     <VaultShell title="Your memories" isDemo={isDemo} userName={userName} items={items}>
+      {!entered && <DashboardEntrance photos={entrancePhotos} onDone={finishEntrance} />}
       <main className="dashboard-page">
         <header className="dashboard-intro">
           <div>

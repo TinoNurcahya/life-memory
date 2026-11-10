@@ -24,12 +24,12 @@ Instead of functioning as another AI diary or productivity dashboard, Life Memor
 
 Life Memory is specified across a rigorous, mutually synchronized suite of 6 companion documents:
 
-* **[PRD.md](./PRD.md)** — Product Requirements Document (Core Loop, Hero Moments, 9-Point DoD, Functional Specs)
-* **[AI_SPEC.md](./AI_SPEC.md)** — AI Architecture, Structured Extraction Schemas, Reflection Citation Validator & Golden Benchmark
-* **[DESIGN.md](./DESIGN.md)** — Design System, Declarative CSS Variables, WCAG AA Contrast Matrix & ASCII Wireframes
-* **[DATABASE.md](./DATABASE.md)** — Production Relational Data Model (10 Tables, 3 Reactive Views) & Persona Jimmy Seed Dataset
-* **[ARCHITECTURE.md](./ARCHITECTURE.md)** — Technical Architecture, Next.js 15 Demarcation, Complete DDL & TypeScript Types
-* **[SPRINT.md](./SPRINT.md)** — 10-Sprint Execution Roadmap (Oct 20 – Dec 21, 2026)
+* **[PRD.md](./doc/PRD.md)** — Product Requirements Document (Core Loop, Hero Moments, 9-Point DoD, Functional Specs)
+* **[AI_SPEC.md](./doc/AI_SPEC.md)** — AI Architecture, Structured Extraction Schemas, Reflection Citation Validator & Golden Benchmark
+* **[DESIGN.md](./doc/DESIGN.md)** — Design System, Declarative CSS Variables, WCAG AA Contrast Matrix & ASCII Wireframes
+* **[DATABASE.md](./doc/DATABASE.md)** — Production Relational Data Model (10 Tables, 3 Reactive Views) & Persona Jimmy Seed Dataset
+* **[ARCHITECTURE.md](./doc/ARCHITECTURE.md)** — Technical Architecture, Next.js 15 Demarcation, Complete DDL & TypeScript Types
+* **[SPRINT.md](./doc/SPRINT.md)** — 10-Sprint Execution Roadmap (Oct 20 – Dec 21, 2026)
 
 ---
 
@@ -71,6 +71,68 @@ REFLECT
  ↓
 REMEMBER
 ```
+
+---
+
+## 📸 Product Showcase & Responsive Preview
+
+All 18 application routes are captured across **Desktop (`1440×900`)** and **Responsive Mobile (`390×844`)** viewports in both **Light Mode (`Warm Paper`)** and **Dark Mode (`Quiet Night`)** inside [`./doc/screenshot/`](./doc/screenshot/).
+
+### 1. Editorial Landing & Playing-Card Fan Entrance (`/`, `/dashboard`)
+
+| Landing — Light Mode | Landing — Dark Mode |
+| :---: | :---: |
+| ![Landing Desktop Light](./doc/screenshot/landing-desktop-light.png) | ![Landing Desktop Dark](./doc/screenshot/landing-desktop-dark.png) |
+
+| Archive Fan Entrance (`04 / 04` Window Card) — Light | Archive Fan Entrance (`04 / 04` Window Card) — Dark |
+| :---: | :---: |
+| ![Dashboard Entrance Desktop Light](./doc/screenshot/dashboard-entrance-desktop-light.png) | ![Dashboard Entrance Desktop Dark](./doc/screenshot/dashboard-entrance-desktop-dark.png) |
+
+### 2. Dashboard Workspace — Desktop & Responsive Mobile (`/dashboard`)
+
+| Desktop — Light Mode (`1440×900`) | Desktop — Dark Mode (`1440×900`) |
+| :---: | :---: |
+| ![Dashboard Desktop Light](./doc/screenshot/dashboard-desktop-light.png) | ![Dashboard Desktop Dark](./doc/screenshot/dashboard-desktop-dark.png) |
+
+| Mobile — Light (`390×844`) | Mobile — Dark (`390×844`) | Entrance Mobile — Light | Entrance Mobile — Dark |
+| :---: | :---: | :---: | :---: |
+| <img src="./doc/screenshot/dashboard-mobile-light.png" width="210" alt="Dashboard Mobile Light" /> | <img src="./doc/screenshot/dashboard-mobile-dark.png" width="210" alt="Dashboard Mobile Dark" /> | <img src="./doc/screenshot/dashboard-entrance-mobile-light.png" width="210" alt="Dashboard Entrance Mobile Light" /> | <img src="./doc/screenshot/dashboard-entrance-mobile-dark.png" width="210" alt="Dashboard Entrance Mobile Dark" /> |
+
+### 3. Timeline Feed & Visual Calendar (`/timeline`, `/calendar`)
+
+| Timeline Feed — Desktop (Light) | Visual Calendar — Desktop (Dark) |
+| :---: | :---: |
+| ![Timeline Desktop Light](./doc/screenshot/timeline-desktop-light.png) | ![Calendar Desktop Dark](./doc/screenshot/calendar-desktop-dark.png) |
+
+| Timeline — Mobile (Light) | Timeline — Mobile (Dark) | Calendar — Mobile (Light) | Calendar — Mobile (Dark) |
+| :---: | :---: | :---: | :---: |
+| <img src="./doc/screenshot/timeline-mobile-light.png" width="210" alt="Timeline Mobile Light" /> | <img src="./doc/screenshot/timeline-mobile-dark.png" width="210" alt="Timeline Mobile Dark" /> | <img src="./doc/screenshot/calendar-mobile-light.png" width="210" alt="Calendar Mobile Light" /> | <img src="./doc/screenshot/calendar-mobile-dark.png" width="210" alt="Calendar Mobile Dark" /> |
+
+### 4. Life Constellations — People, Places & Topics (`/people`, `/places`, `/topics`)
+
+| People — Desktop (Light) | Places — Desktop (Dark) | Topics — Desktop (Light) |
+| :---: | :---: | :---: |
+| ![People Desktop Light](./doc/screenshot/people-desktop-light.png) | ![Places Desktop Dark](./doc/screenshot/places-desktop-dark.png) | ![Topics Desktop Light](./doc/screenshot/topics-desktop-light.png) |
+
+| People — Mobile (Light) | Places — Mobile (Dark) | Topics — Mobile (Light) | Topics — Mobile (Dark) |
+| :---: | :---: | :---: | :---: |
+| <img src="./doc/screenshot/people-mobile-light.png" width="210" alt="People Mobile Light" /> | <img src="./doc/screenshot/places-mobile-dark.png" width="210" alt="Places Mobile Dark" /> | <img src="./doc/screenshot/topics-mobile-light.png" width="210" alt="Topics Mobile Light" /> | <img src="./doc/screenshot/topics-mobile-dark.png" width="210" alt="Topics Mobile Dark" /> |
+
+### 5. Memory Intelligence — Ask Memory, Insights, Reflection & Forgotten Memory (`/chat`, `/insights`, `/reflection`, `/forgot-this`)
+
+| Ask Memory (`/chat`) — Light | Pattern Insights (`/insights`) — Dark |
+| :---: | :---: |
+| ![Ask Memory Desktop Light](./doc/screenshot/chat-desktop-light.png) | ![Pattern Insights Desktop Dark](./doc/screenshot/insights-desktop-dark.png) |
+
+| Monthly Reflection (`/reflection`) — Dark | Forgotten Memory (`/forgot-this`) — Light |
+| :---: | :---: |
+| ![Monthly Reflection Desktop Dark](./doc/screenshot/reflection-desktop-dark.png) | ![Forgotten Memory Desktop Light](./doc/screenshot/forgot-this-desktop-light.png) |
+
+| Ask Memory — Mobile | Pattern Insights — Mobile | Monthly Reflection — Mobile | Forgotten Memory — Mobile |
+| :---: | :---: | :---: | :---: |
+| <img src="./doc/screenshot/chat-mobile-light.png" width="210" alt="Ask Memory Mobile Light" /> | <img src="./doc/screenshot/insights-mobile-dark.png" width="210" alt="Pattern Insights Mobile Dark" /> | <img src="./doc/screenshot/reflection-mobile-light.png" width="210" alt="Monthly Reflection Mobile Light" /> | <img src="./doc/screenshot/forgot-this-mobile-dark.png" width="210" alt="Forgotten Memory Mobile Dark" /> |
+
+> 📂 **Full 72-Screenshot Archive**: Browse all 18 routes (`landing`, `dashboard-entrance`, `dashboard`, `timeline`, `calendar`, `people`, `places`, `topics`, `chat`, `insights`, `reflection`, `forgot-this`, `settings`, `faq`, `about`, `sitemap`, `login`, `register`) across Desktop & Mobile in Light & Dark Mode inside [`./doc/screenshot/`](./doc/screenshot/).
 
 ---
 
