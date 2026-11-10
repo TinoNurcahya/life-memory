@@ -41,14 +41,14 @@ The central idea behind Life Memory is simple:
 
 A user can simply write:
 
-> "Worked until 5, had dinner with Raka in Malioboro, bought a React book, then studied until 10."
+> "Worked until 5, had dinner with Noah in Greenwich Village, bought a React book, then studied until 10."
 
 Life Memory uses AI to understand the entry and extract meaningful information such as:
 
 * Work activity
 * Social activity
-* Person: Raka
-* Place: Malioboro
+* Person: Noah
+* Place: Greenwich Village
 * New object/experience: React book
 * Learning activity
 * Approximate time
@@ -189,7 +189,7 @@ They simply describe what happened.
 Example:
 
 ```text
-Today I worked from 8 until 5, met Dimas after work,
+Today I worked from 8 until 5, met Ethan after work,
 and we discussed my new project at a coffee shop.
 ```
 
@@ -204,7 +204,7 @@ The AI analyzes each entry and extracts structured, atomic information using Goo
 Example input:
 
 ```text
-Today I worked from 8 until 5, met Dimas after work, and we discussed my new project at Blank Street Coffee.
+Today I worked from 8 until 5, met Ethan after work, and we discussed my new project at Blank Street Coffee.
 ```
 
 Extracted structure (`ActivityExtractionSchema`):
@@ -226,14 +226,14 @@ Extracted structure (`ActivityExtractionSchema`):
       "is_first_time": false
     },
     {
-      "summary": "Met Dimas at Blank Street Coffee and discussed new project",
-      "source_text": "met Dimas after work, and we discussed my new project at Blank Street Coffee",
+      "summary": "Met Ethan at Blank Street Coffee and discussed new project",
+      "source_text": "met Ethan after work, and we discussed my new project at Blank Street Coffee",
       "category": "social",
       "day_offset": 0,
       "time_of_day": "afternoon",
       "time_hint": "after work",
       "event_status": "completed",
-      "people": ["Dimas"],
+      "people": ["Ethan"],
       "places": ["Blank Street Coffee"],
       "topics": ["new project"],
       "is_first_time": false
@@ -277,7 +277,7 @@ The same principle applies to public venues.
 
 Life Memory identifies:
 
-* Frequently visited places (excluding generic domestic dwellings like "kosan" or "office")
+* Frequently visited places (excluding generic domestic dwellings like "apartment" or "office")
 * First visits (`is_first_time: true`)
 * Recent visits
 * Venue visit trends
@@ -337,7 +337,7 @@ Life Memory compares adjacent calendar months (Month A vs. Month B):
 * **Two-Step Verification:**
   1. The activity is $\ge 14$ days old (`WHERE event_status = 'completed'`).
   2. The anchor entity (person or place) has not appeared in any *other* activity for $\ge 21$ days.
-* **Factual Copy Integrity:** Copy displays *"Belum pernah kamu sebut lagi sejak N hari yang lalu"* calculated strictly from the entity's true last recorded appearance date.
+* **Factual Copy Integrity:** Copy displays *"Quiet for N days"* calculated strictly from the entity's true last recorded appearance date.
 * **Privacy Controls:** Includes `[ Don't surface this again ]` for sensitive memories (stored via `insights.is_suppressed`).
 
 ---
@@ -360,6 +360,25 @@ Solves the hackathon cold-start evaluation problem:
 * Pre-loaded with **40 authentic activity logs** (44 atomic activity details) for Jimmy (NYU CS senior & freelance developer).
 * Dynamic relative dates (`CURRENT_DATE - INTERVAL 'N days'`) guarantee that S-14 memory reveals (*"29 days ago"*) remain 100% mathematically exact regardless of when judges evaluate the app in December 2026.
 * Consumes **$0$ LLM API calls** during demo browsing.
+
+---
+
+## 13. Visual Calendar (`/calendar`)
+
+A monthly photographic archive grid that maps completed memories onto calendar days:
+
+* Displays daily memory cover photography, active-day counts, and category color indicators.
+* Supports month-by-month navigation and category filtering (`All`, `Career`, `Social`, `Health`, `Learning`, `Leisure`, `Routine`).
+* Selecting any active day reveals the full chronological breakdown of moments recorded on that date.
+
+---
+
+## 14. Ask Memory (`/chat`)
+
+An evidence-grounded conversational interface for querying your personal archive in natural language:
+
+* Answers questions such as *"Who did I spend the most time with this month?"* or *"What have I been learning lately?"* strictly using verified activity records.
+* Every answer is accompanied by a **Supporting Memories** rail citing the exact dates, categories, and entities used to form the response.
 
 ---
 
@@ -502,7 +521,7 @@ To prevent cache desynchronization under backdated entries, edits, and retries, 
 * **`v_places_with_stats`**: Computes `visit_count`, `first_visit_at`, and `last_visit_at` dynamically (`WHERE event_status = 'completed'`).
 * **`v_topics_with_stats`**: Computes `activity_count`, `first_seen_at`, and `last_seen_at` dynamically (`WHERE event_status = 'completed'`).
 
-*For complete DDL, index definitions, foreign key cascades, and RLS policies, refer to **[DATABASE.md](./DATABASE.md)** and **[ARCHITECTURE.md](./ARCHITECTURE.md) §5**.*
+*For complete DDL, index definitions, foreign key cascades, and RLS policies, refer to **[DATABASE.md](./doc/DATABASE.md)** and **[ARCHITECTURE.md](./doc/ARCHITECTURE.md) §5**.*
 
 ---
 
@@ -546,65 +565,90 @@ The AI does not invent events. Every observation cites factual source rows (`act
 ```text
 life-memory/
 ├── app/
-│   ├── (auth)/
-│   │   ├── login/page.tsx
-│   │   └── register/page.tsx
-│   ├── (dashboard)/
-│   │   ├── layout.tsx
-│   │   ├── dashboard/page.tsx
-│   │   ├── timeline/page.tsx
-│   │   ├── people/page.tsx
-│   │   ├── places/page.tsx
-│   │   ├── topics/page.tsx
-│   │   ├── insights/page.tsx
-│   │   ├── reflections/page.tsx
-│   │   ├── forgotten/page.tsx
-│   │   └── settings/page.tsx
-│   ├── api/
-│   │   └── extract/route.ts
-│   ├── layout.tsx
-│   └── globals.css
+│   ├── page.tsx                  # Editorial landing page with IntroLoader & chapters
+│   ├── dashboard/                # Main workspace & playing-card fan window entrance
+│   ├── timeline/                 # Chronological timeline feed & search/category filter
+│   ├── calendar/                 # Monthly visual photographic calendar grid
+│   ├── people/                   # People constellation directory & detail views
+│   ├── places/                   # Places constellation directory & venue history
+│   ├── topics/                   # Topics & skills constellation directory
+│   ├── chat/                     # Ask Memory — evidence-backed conversational Q&A
+│   ├── insights/                 # Pattern Insights (First-times, recurrence, trends)
+│   ├── reflection/               # Monthly Reflection with footnote citation drawer
+│   ├── forgot-this/              # Forgotten Memory (S-14 deterministic reveal)
+│   ├── settings/                 # Archive export, account & preference controls
+│   ├── faq/                      # Frequently Asked Questions
+│   ├── about/                    # Product philosophy & editorial background
+│   ├── sitemap/                  # Complete route & constellation index
+│   ├── login/ & register/        # Supabase authentication flows
+│   ├── api/                      # Extraction, reflection, chat, insights & health APIs
+│   └── globals.css               # Design tokens (Warm Paper / Quiet Night)
 ├── components/
-│   ├── ui/
-│   ├── activity/
-│   │   ├── QuickLogger.tsx
-│   │   ├── TimelineCard.tsx
-│   │   └── EntityReviewDrawer.tsx
-│   ├── timeline/
-│   ├── insights/
-│   │   ├── InsightCard.tsx
-│   │   └── EvidenceDrawer.tsx
-│   ├── people/
-│   ├── places/
-│   ├── reflection/
-│   └── layout/
+│   ├── dashboard/                # DashboardClient, DashboardEntrance, QuickLogger, etc.
+│   ├── landing/                  # ArchiveHero, ArchiveChapters, ArchiveNavigation
+│   ├── experience/               # IntroLoader, MemoryField, SmoothScroll
+│   ├── layout/                   # AppShell, Sidebar, GlobalCommandSearch
+│   ├── timeline/                 # TimelineCard, TimelineFeed, EntityReviewDrawer
+│   ├── calendar/                 # CalendarView
+│   ├── people/ places/ topics/   # Constellation cards & detail drawers
+│   ├── chat/                     # MemoryChatView & supporting evidence cards
+│   ├── insights/                 # InsightsView & EvidenceDrawer
+│   ├── reflection/               # ReflectionView & footnote citations
+│   └── forgotten/                # ForgottenMemoryCard & S-14 archive grid
 ├── lib/
-│   ├── ai/
-│   │   ├── client.ts
-│   │   ├── extraction.ts
-│   │   └── reflection.ts
-│   ├── analytics/
-│   │   ├── first-time.ts
-│   │   ├── recurrence.ts
-│   │   ├── changes.ts
-│   │   ├── stats.ts
-│   │   └── scoring.ts
-│   ├── supabase/
-│   │   ├── client.ts
-│   │   ├── server.ts
-│   │   └── middleware.ts
-│   └── utils/
-│       ├── normalization.ts
-│       └── dates.ts
-├── types/
-│   ├── database.ts
-│   ├── ai.ts
-│   └── domain.ts
-├── middleware.ts
-├── tailwind.config.ts
+│   ├── ai/                       # Gemini extraction, reflection, chat & thematic photos
+│   ├── analytics/                # Deterministic first-time, recurrence, change & S-14 math
+│   ├── data/                     # Server queries, demo persona dataset & mutations
+│   ├── experience/               # ThemeProvider (Light/Dark) & motion utilities
+│   ├── supabase/                 # Browser & server Supabase SSR clients
+│   └── validations/              # Zod schemas & deterministic citation validators
+├── doc/
+│   ├── screenshot/               # 72 desktop & mobile light/dark route screenshots
+│   └── *.md                      # PRD, AI_SPEC, DESIGN, DATABASE, ARCHITECTURE, SPRINT
+├── scripts/                      # Verification, unit test & evaluation benchmark suites
+├── supabase/migrations/          # Complete PostgreSQL DDL, reactive views & RLS policies
+├── proxy.ts                      # Next.js 16 request proxy & session boundary
 ├── next.config.ts
-├── package.json
-└── README.md
+└── package.json
+```
+
+---
+
+# ⚡ Getting Started & Verification Suite
+
+### 1. Install Dependencies
+
+```bash
+npm install
+```
+
+### 2. Configure Environment Variables (`.env.local`)
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+GEMINI_API_KEY=your_gemini_api_key
+```
+
+*(Note: 1-Click Fictional Demo Mode at `/dashboard?demo=jimmy` works out of the box with zero external API calls).*
+
+### 3. Run the Development Server
+
+```bash
+npm run dev
+```
+
+Open `http://localhost:3000` in your browser.
+
+### 4. Verification & Automated Test Commands
+
+```bash
+npm run typecheck        # Strict TypeScript verification (0 errors)
+npm run test:smoke       # End-to-end smoke verification
+npm run test:forgotten   # Deterministic S-14 Forgotten Memory unit tests
+npm run test:eval        # AI extraction & reflection benchmark suite
+npm run test:supabase    # Supabase connectivity & schema health check
 ```
 
 ---
@@ -676,7 +720,11 @@ The first working version focuses on the smallest complete experience.
 * [x] Monthly statistics
 * [x] AI-generated reflection
 * [x] Evidence-backed insights
-* [x] "You Probably Forgot This"
+* [x] "You Probably Forgot This" (S-14)
+* [x] Visual Calendar (`/calendar`)
+* [x] Topics & skills constellation (`/topics`)
+* [x] Ask Memory conversational Q&A (`/chat`)
+* [x] Light & Dark editorial themes (`Warm Paper` / `Quiet Night`)
 
 ### Not in MVP
 
@@ -754,14 +802,26 @@ March 28
 Worked on frontend
 
 17:30
-Met Raka
+Met Noah
 
 19:00
-Dinner at Malioboro
+Dinner in Greenwich Village
 
 21:00
 Studied React
 ```
+
+---
+
+## Visual Calendar
+
+Monthly photographic calendar grid displaying daily completed memories, active days, and category filters.
+
+---
+
+## Ask Memory
+
+Conversational memory search that answers natural-language questions about your past strictly using cited activity records.
 
 ---
 
@@ -948,28 +1008,29 @@ Instead:
 
 # 📋 Definition of Done
 
-The canonical 9-point MVP Definition of Done is formally governed in **[PRD.md §20](./PRD.md#20-definition-of-done)**. A release candidate is accepted only when all 9 criteria pass with $\ge 90\%$ evaluation benchmark coverage, instant <100ms logging, multi-tenant RLS isolation, deterministic S-14 reveal, and footnote-grounded monthly reflection.
+The canonical 9-point MVP Definition of Done is formally governed in **[PRD.md §20](./doc/PRD.md#20-definition-of-done)**. A release candidate is accepted only when all 9 criteria pass with $\ge 90\%$ evaluation benchmark coverage, instant <100ms logging, multi-tenant RLS isolation, deterministic S-14 reveal, and footnote-grounded monthly reflection.
 
 ---
 
-# 🚧 Current Status
+# ✅ Implementation Status
 
-**Status:** In Development
+**Status:** **100% Implemented (Production-Ready)**
 
-### Product
+All product specifications, deterministic analytics engines, AI pipelines, responsive editorial UI routes, and automated verification suites have been **100% implemented and verified**.
 
-* [x] Product concept
-* [x] Problem definition
-* [x] Product positioning
-* [x] MVP scope
-* [x] Core user flow
-* [x] Technical architecture
-* [x] AI strategy
-* [ ] UI implementation
-* [ ] Backend implementation
-* [ ] AI extraction pipeline
-* [ ] Analytics engine
-* [ ] End-to-end demo
+### Product & Engineering Checklist
+
+* [x] Product concept & editorial design language (`Warm Paper` & `Quiet Night` themes)
+* [x] Problem definition & product positioning
+* [x] Complete 18-route responsive UI implementation (Desktop & Mobile)
+* [x] Playing-card fan window entrance transition (`/dashboard`)
+* [x] Backend implementation (Next.js 16 App Router, Server Actions & Supabase PostgreSQL RLS)
+* [x] AI extraction pipeline (`gemini-3.5-flash-lite` + deterministic substring validator)
+* [x] Deterministic analytics engine (First-Time, Recurrence, Month-over-Month & S-14 Dormancy)
+* [x] Visual Calendar (`/calendar`) & Constellations (`/people`, `/places`, `/topics`)
+* [x] Ask Memory conversational Q&A (`/chat`) with cited supporting memories
+* [x] Footnote-grounded Monthly Reflection (`/reflection`) with citation validator
+* [x] 1-Click Fictional Demo Mode (`?demo=jimmy`) & end-to-end automated test suite
 
 ---
 
