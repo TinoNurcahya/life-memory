@@ -7,9 +7,15 @@
   font-family: var(--font-inter), sans-serif;
 }
 .page :where(button, input, select) { font: inherit; font-size: 14px; }
-.page :where(button, a, input, select, summary):focus-visible {
+.page :where(button, a, summary):focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 4px;
+}
+.search input:is(:focus, :focus-visible),
+.sort select:is(:focus, :focus-visible),
+.mergeControls select:is(:focus, :focus-visible) {
+  outline: none !important;
+  border-color: var(--color-text-foreground);
 }
 .page button, .page summary, .page select { cursor: pointer; }
 .page button:disabled, .page select:disabled { opacity: .6; cursor: not-allowed; }

@@ -132,6 +132,16 @@ All 18 application routes are captured across **Desktop (`1440×900`)** and **Re
 | :---: | :---: | :---: | :---: |
 | <img src="./doc/screenshot/chat-mobile-light.png" width="210" alt="Ask Memory Mobile Light" /> | <img src="./doc/screenshot/insights-mobile-dark.png" width="210" alt="Pattern Insights Mobile Dark" /> | <img src="./doc/screenshot/reflection-mobile-light.png" width="210" alt="Monthly Reflection Mobile Light" /> | <img src="./doc/screenshot/forgot-this-mobile-dark.png" width="210" alt="Forgotten Memory Mobile Dark" /> |
 
+### 6. Editorial Settings & Data Sovereignty (`/settings`)
+
+| Settings & Data — Desktop (Light) | Settings & Data — Desktop (Dark) |
+| :---: | :---: |
+| ![Settings Desktop Light](./doc/screenshot/settings-desktop-light.png) | ![Settings Desktop Dark](./doc/screenshot/settings-desktop-dark.png) |
+
+| Settings & Data — Mobile (`390×844` Light) | Settings & Data — Mobile (`390×844` Dark) |
+| :---: | :---: |
+| <img src="./doc/screenshot/settings-mobile-light.png" width="210" alt="Settings Mobile Light" /> | <img src="./doc/screenshot/settings-mobile-dark.png" width="210" alt="Settings Mobile Dark" /> |
+
 > 📂 **Full 72-Screenshot Archive**: Browse all 18 routes (`landing`, `dashboard-entrance`, `dashboard`, `timeline`, `calendar`, `people`, `places`, `topics`, `chat`, `insights`, `reflection`, `forgot-this`, `settings`, `faq`, `about`, `sitemap`, `login`, `register`) across Desktop & Mobile in Light & Dark Mode inside [`./doc/screenshot/`](./doc/screenshot/).
 
 ---
@@ -724,7 +734,8 @@ The first working version focuses on the smallest complete experience.
 * [x] Visual Calendar (`/calendar`)
 * [x] Topics & skills constellation (`/topics`)
 * [x] Ask Memory conversational Q&A (`/chat`)
-* [x] Light & Dark editorial themes (`Warm Paper` / `Quiet Night`)
+* [x] Light & Dark editorial themes (`Warm Paper` / `Quiet Night`) with circular iris `ViewTransition`
+* [x] Editorial Settings & JSON Data Sovereignty export (`/settings`)
 
 ### Not in MVP
 
@@ -852,6 +863,12 @@ A personal index of places appearing in the user's memories.
 
 ---
 
+## Topics
+
+A personal index of recurring topics, skills, and creative projects extracted from the user's activity logs.
+
+---
+
 ## Reflection
 
 A generated narrative explaining what happened during a specific period.
@@ -863,6 +880,12 @@ A generated narrative explaining what happened during a specific period.
 The **You Probably Forgot This** experience.
 
 This is designed to make users explore older activity rather than only viewing recent entries.
+
+---
+
+## Settings & Data
+
+A 2-column editorial index (`01 — Visual Theme`, `02 — Account & Session`, `03 — Data Sovereignty`) featuring tactile paper theme swatches (`Warm Paper`, `Quiet Night`, `System Default`), live archive inventory metrics, and one-click JSON data export.
 
 ---
 

@@ -8,9 +8,13 @@
 
 .calendar { min-width: 0; }
 .calendar :where(button, select, a) { -webkit-tap-highlight-color: transparent; }
-.calendar :where(button, select, a):focus-visible {
+.calendar :where(button, a):focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 4px;
+}
+.calendar select:is(:focus, :focus-visible) {
+  outline: none !important;
+  border-color: var(--color-text-foreground);
 }
 .calendar button { font: inherit; cursor: pointer; }
 

@@ -50,10 +50,14 @@
   font-family: inherit;
 }
 
-.lm-vault-shell--dashboard :where(a, button, input, textarea):focus-visible,
+.lm-vault-shell--dashboard :where(a, button):focus-visible,
 .dashboard-evidence :where(a, button):focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 3px;
+}
+
+.lm-vault-shell--dashboard :where(input, textarea, select):is(:focus, :focus-visible) {
+  outline: none !important;
 }
 
 .dashboard-page {

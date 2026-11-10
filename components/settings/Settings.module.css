@@ -692,8 +692,8 @@
 }
 
 .modalInput:focus {
-  outline: 2px solid var(--color-text-foreground);
-  outline-offset: 1px;
+  outline: none !important;
+  border-color: var(--color-text-foreground);
 }
 
 .modalActions {

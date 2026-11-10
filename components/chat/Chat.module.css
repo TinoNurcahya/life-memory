@@ -3,7 +3,7 @@
 .workspace { flex: 1; min-height: 0; overflow: hidden; }
 .chat { display: flex; flex-direction: column; height: 100%; min-height: 0; min-width: 0; overflow: hidden; }
 .page :where(button,input,textarea), .history :where(button,input) { font: inherit; }
-.page :where(button,a,input,textarea,pre):focus-visible, .history :where(button,input):focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; }
+.page :where(button,a,pre):focus-visible, .history button:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; }
 .page button, .history button { cursor: pointer; }
 .page button:disabled, .history button:disabled { opacity: .5; cursor: not-allowed; }
 .toolbar { display: flex; justify-content: space-between; align-items: center; flex: none; gap: 16px; min-height: 72px; padding: 12px 36px; border-bottom: 1px solid var(--color-border-hairline); }
@@ -45,9 +45,9 @@
 .jumpLatest { display: block; flex: none; min-height: 44px; align-self: center; padding: 8px 16px; border: 1px solid var(--color-border-strong); border-radius: 5px; background: var(--color-canvas); color: var(--color-text-foreground); font-size: 12px !important; }
 .composer { flex: none; padding: 16px 36px max(14px,env(safe-area-inset-bottom)); background: var(--color-canvas); }
 .composerInner { max-width: 780px; margin-inline: auto; }
-.composerForm { display: flex; align-items: flex-end; gap: 8px; min-width: 0; border: 1px solid var(--color-border-strong); padding: 8px; border-radius: 8px; background: var(--color-canvas); }
-.composerForm:focus-within { border-color: var(--color-primary); }
-.composerInput { flex: 1; min-width: 0; min-height: 44px; max-height: 160px; resize: none; border: 0; border-radius: 0; padding: 10px 8px; background: transparent; color: var(--color-text-foreground); font-size: 16px !important; line-height: 24px !important; outline-offset: -2px !important; }
+.composerForm { display: flex; align-items: flex-end; gap: 8px; min-width: 0; border: 1px solid var(--color-border-strong); padding: 8px; border-radius: 8px; background: var(--color-canvas); transition: border-color 160ms ease; }
+.composerForm:focus-within { border-color: var(--color-text-foreground); }
+.composerInput { flex: 1; min-width: 0; min-height: 44px; max-height: 160px; resize: none; border: 0; border-radius: 0; padding: 10px 8px; background: transparent; color: var(--color-text-foreground); font-size: 16px !important; line-height: 24px !important; outline: none !important; }
 .composerInput::placeholder { color: var(--color-text-muted); opacity: 1; }
 .sendButton { display: grid; place-items: center; flex: none; min-width: 44px; min-height: 44px; border-radius: 5px; background: var(--color-text-foreground); color: var(--color-canvas); }
 .composerMeta { display: flex; justify-content: space-between; gap: 16px; margin-top: 9px; color: var(--color-text-muted); font-size: 11px; line-height: 1.5; }

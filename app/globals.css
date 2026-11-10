@@ -171,6 +171,12 @@ input {
   outline-offset: 4px;
 }
 
+input:is(:focus, :focus-visible),
+textarea:is(:focus, :focus-visible),
+select:is(:focus, :focus-visible) {
+  outline: none !important;
+}
+
 section[id] {
   scroll-margin-top: 5rem;
 }

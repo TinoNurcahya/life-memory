@@ -84,9 +84,13 @@
 }
 .textButton:hover:not(:disabled) { color: var(--color-text-foreground); }
 
-.entry :where(a, button, input, select):focus-visible {
+.entry :where(a, button):focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 3px;
+}
+.entry :where(input, select, textarea):is(:focus, :focus-visible) {
+  outline: none !important;
+  border-color: var(--color-text-foreground);
 }
 .entry button:disabled, .entry input:disabled, .entry select:disabled {
   cursor: default;

@@ -13,9 +13,14 @@
 }
 
 .timeline-page :where(button, input, select) { font: inherit; font-size: 14px; }
-.timeline-page :where(a, button, input, select):focus-visible {
+.timeline-page :where(a, button):focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 3px;
+}
+.timeline-search input:is(:focus, :focus-visible),
+.timeline-category select:is(:focus, :focus-visible) {
+  outline: none !important;
+  border-color: var(--color-text-foreground);
 }
 .timeline-page button:disabled { opacity: 0.55; cursor: not-allowed; }
 
