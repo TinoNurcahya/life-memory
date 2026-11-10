@@ -242,8 +242,8 @@ export function VaultSidebar({
         </Link>
         <button
           type="button"
-          className={styles.navItem}
-          onClick={toggleTheme}
+          className={cn(styles.navItem, styles.themeNavItem)}
+          onClick={(e) => toggleTheme(e)}
           aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
           onMouseEnter={(e) => showTooltip(isDark ? "Light mode" : "Dark mode", e)}
           onMouseLeave={hideTooltip}

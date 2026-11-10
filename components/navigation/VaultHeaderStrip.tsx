@@ -55,14 +55,14 @@ export function VaultHeaderStrip({
         </button>
         <button
           type="button"
-          onClick={toggleTheme}
+          onClick={(e) => toggleTheme(e)}
           aria-label={`Switch to ${mounted && resolvedTheme === "dark" ? "light" : "dark"} mode`}
-          className={styles.iconButton}
+          className={styles.themeToggleButton}
         >
           {mounted && resolvedTheme === "dark" ? (
-            <Sun size={18} aria-hidden="true" />
+            <Sun size={16} aria-hidden="true" />
           ) : (
-            <Moon size={18} aria-hidden="true" />
+            <Moon size={16} aria-hidden="true" />
           )}
         </button>
       </div>

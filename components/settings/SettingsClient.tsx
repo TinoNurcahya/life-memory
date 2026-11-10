@@ -11,15 +11,15 @@ import {
   ShieldCheck,
   AlertTriangle,
   CheckCircle2,
-  User,
-  Database,
   Trash2,
   LogOut,
+  ArrowUpRight,
 } from "lucide-react";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { useTheme } from "@/lib/experience/theme-context";
 import { deleteUserAccountAndMemories } from "@/app/actions/activities";
+import styles from "./Settings.module.css";
 
 interface SettingsClientProps {
   user: {
@@ -28,10 +28,21 @@ interface SettingsClientProps {
     fullName: string | null;
     createdAt?: string;
   };
+  stats?: {
+    activities: number;
+    people: number;
+    places: number;
+    topics: number;
+    firstTimes: number;
+  };
   isDemo?: boolean;
 }
 
-export function SettingsClient({ user, isDemo = false }: SettingsClientProps) {
+export function SettingsClient({
+  user,
+  stats = { activities: 48, people: 5, places: 7, topics: 8, firstTimes: 20 },
+  isDemo = false,
+}: SettingsClientProps) {
   const router = useRouter();
   const { theme, resolvedTheme, setTheme } = useTheme();
   const [isDeleting, startDeleteTransition] = useTransition();
@@ -40,6 +51,8 @@ export function SettingsClient({ user, isDemo = false }: SettingsClientProps) {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const exportUrl = isDemo ? "/api/export?demo=jimmy" : "/api/export";
+  const displayName = user.fullName || (isDemo ? "Jimmy" : "Life Memory Archivist");
+  const initial = displayName.trim().charAt(0).toUpperCase() || "A";
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
@@ -88,246 +101,349 @@ export function SettingsClient({ user, isDemo = false }: SettingsClientProps) {
   };
 
   return (
-    <div className="mx-auto max-w-3xl pb-16">
-      {/* Page Header */}
-      <header className="mb-10">
-        <p className="font-mono text-xs uppercase tracking-wider text-muted">
-          Configuration & Data Sovereignty · S-15
-        </p>
-        <h1 className="mt-2 font-serif text-3xl sm:text-4xl font-normal tracking-tight text-foreground">
-          Settings
-        </h1>
-        <p className="mt-2 text-sm text-muted">
-          Manage your interface appearance, export your full personal life archive, and review privacy commitments.
-        </p>
+    <main className={styles.page} data-settings-page lang="en">
+      {/* Editorial Header */}
+      <header className={styles.intro}>
+        <div className={styles.heading}>
+          <h1>Settings &amp; Data</h1>
+          <span>
+            {stats.activities} {stats.activities === 1 ? "memory" : "memories"} indexed
+          </span>
+        </div>
+        <div className={styles.introBottom}>
+          <p>
+            Manage your reading environment, export your complete personal life archive, and review data sovereignty commitments.
+          </p>
+          <div className={styles.leadMeta}>
+            <span>Active theme: {resolvedTheme === "dark" ? "Quiet Night" : "Warm Paper"}</span>
+            <span>100% portable JSON schema</span>
+          </div>
+        </div>
       </header>
 
-      <div className="space-y-8">
-        {/* 1. Account Profile Card */}
-        <section className="rounded-3xl border border-hairline bg-surface p-6 sm:p-8 shadow-xs">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-4">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-hairline bg-surface-subdued text-brand">
-                <User className="h-7 w-7" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h2 className="font-serif text-xl font-medium text-foreground">
-                    {user.fullName || (isDemo ? "Jimmy (Demo)" : "Life Memory Archivist")}
-                  </h2>
-                  <span className="rounded-full bg-surface-subdued px-2.5 py-0.5 font-mono text-[10px] text-muted">
-                    {isDemo ? "Demo User" : "Private Cloud"}
-                  </span>
+      <div className={styles.sections}>
+        {/* 01 · Account & Session */}
+        <section className={styles.sectionRow} aria-labelledby="settings-account">
+          <div className={styles.sectionMeta}>
+            <span className={styles.sectionIndex}>01 · Identity</span>
+            <h2 id="settings-account" className={styles.sectionTitle}>
+              Account &amp; Session
+            </h2>
+            <p className={styles.sectionDesc}>
+              Your active archive profile and authentication session boundary.
+            </p>
+          </div>
+
+          <div className={styles.sectionContent}>
+            <div className={styles.card}>
+              <div className={styles.profileRow}>
+                <div className={styles.profileIdentity}>
+                  <div className={styles.avatar} aria-hidden="true">
+                    {initial}
+                  </div>
+                  <div className={styles.profileText}>
+                    <div className={styles.profileNameRow}>
+                      <span className={styles.profileName}>{displayName}</span>
+                      <span className={styles.statusPill}>
+                        <span className={styles.statusDot} />
+                        {isDemo ? "Fictional Demo" : "Private Archive"}
+                      </span>
+                    </div>
+                    <span className={styles.profileEmail}>
+                      {user.email || (isDemo ? "jimmy.demo@example.com" : "Authenticated Session")}
+                    </span>
+                  </div>
                 </div>
-                <p className="mt-0.5 font-mono text-xs text-muted">
-                  {user.email || (isDemo ? "jimmy.demo@example.com" : "Signed-in User")}
-                </p>
-              </div>
-            </div>
 
-            <button
-              type="button"
-              onClick={handleLogout}
-              disabled={isLoggingOut}
-              className="inline-flex items-center justify-center gap-2 rounded-xl border border-hairline bg-surface-subdued/80 px-4 py-2 font-mono text-xs text-muted transition hover:border-red-500/40 hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400 self-start sm:self-auto disabled:opacity-50"
-            >
-              <LogOut className="h-3.5 w-3.5" />
-              <span>{isLoggingOut ? "Keluar..." : isDemo ? "Keluar Demo" : "Log out"}</span>
-            </button>
-          </div>
-        </section>
-
-        {/* 2. Appearance & Theme (Light / Dark / System) */}
-        <section className="rounded-3xl border border-hairline bg-surface p-6 sm:p-8 shadow-xs">
-          <div className="mb-5 flex items-center justify-between">
-            <div>
-              <p className="font-mono text-xs uppercase tracking-wider text-muted">Interface Theme · FR-12</p>
-              <h2 className="mt-1 font-serif text-xl font-medium text-foreground">Appearance</h2>
-              <p className="mt-1 text-xs text-muted">
-                Choose between warm linen light mode, deep obsidian dark mode, or follow your operating system.
-              </p>
-            </div>
-            <span className="hidden font-mono text-[11px] text-muted sm:inline">
-              Active: <strong className="capitalize text-foreground">{resolvedTheme}</strong>
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-            {/* Light Mode Card */}
-            <button
-              type="button"
-              onClick={() => setTheme("light")}
-              className={`flex flex-col items-start rounded-2xl border p-4 text-left transition-all ${
-                theme === "light"
-                  ? "border-brand bg-brand/5 shadow-xs"
-                  : "border-hairline bg-surface-subdued/40 hover:border-brand/40"
-              }`}
-            >
-              <div className="flex w-full items-center justify-between">
-                <Sun className="h-5 w-5 text-amber-600" />
-                {theme === "light" && <CheckCircle2 className="h-4 w-4 text-brand" />}
-              </div>
-              <span className="mt-3 font-serif text-base font-medium text-foreground">Light</span>
-              <span className="mt-0.5 text-xs text-muted">Warm alabaster paper</span>
-            </button>
-
-            {/* Dark Mode Card */}
-            <button
-              type="button"
-              onClick={() => setTheme("dark")}
-              className={`flex flex-col items-start rounded-2xl border p-4 text-left transition-all ${
-                theme === "dark"
-                  ? "border-brand bg-brand/5 shadow-xs"
-                  : "border-hairline bg-surface-subdued/40 hover:border-brand/40"
-              }`}
-            >
-              <div className="flex w-full items-center justify-between">
-                <Moon className="h-5 w-5 text-indigo-400" />
-                {theme === "dark" && <CheckCircle2 className="h-4 w-4 text-brand" />}
-              </div>
-              <span className="mt-3 font-serif text-base font-medium text-foreground">Dark</span>
-              <span className="mt-0.5 text-xs text-muted">Deep obsidian luxury</span>
-            </button>
-
-            {/* System Mode Card */}
-            <button
-              type="button"
-              onClick={() => setTheme("system")}
-              className={`flex flex-col items-start rounded-2xl border p-4 text-left transition-all ${
-                theme === "system"
-                  ? "border-brand bg-brand/5 shadow-xs"
-                  : "border-hairline bg-surface-subdued/40 hover:border-brand/40"
-              }`}
-            >
-              <div className="flex w-full items-center justify-between">
-                <Laptop className="h-5 w-5 text-muted" />
-                {theme === "system" && <CheckCircle2 className="h-4 w-4 text-brand" />}
-              </div>
-              <span className="mt-3 font-serif text-base font-medium text-foreground">System</span>
-              <span className="mt-0.5 text-xs text-muted">Follow OS preference</span>
-            </button>
-          </div>
-        </section>
-
-        {/* 3. Data Portability (FR-11) */}
-        <section className="rounded-3xl border border-hairline bg-surface p-6 sm:p-8 shadow-xs">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-1.5 font-mono text-xs uppercase tracking-wider text-muted">
-                <Database className="h-3.5 w-3.5 text-brand" /> Data Sovereignty · FR-11
-              </div>
-              <h2 className="mt-1 font-serif text-xl font-medium text-foreground">Export Your Complete Archive</h2>
-              <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-muted">
-                Download a clean, structured JSON file containing all 10 relational layers: raw notes, extracted memory details, people, places, topics, junctions, and AI insights. You own 100% of your data.
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-6 flex flex-wrap items-center gap-3">
-            <a
-              href={exportUrl}
-              download
-              className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 font-mono text-xs font-medium text-white transition hover:bg-primary-hover shadow-xs"
-            >
-              <Download className="h-4 w-4" />
-              Download Full Archive (JSON)
-            </a>
-
-            <div className="flex items-center gap-2 font-mono text-[11px] text-muted">
-              <span className="rounded-md border border-hairline bg-surface-subdued px-2 py-1">
-                JSON v1.0.0
-              </span>
-              <span>10 Tables Covered</span>
-            </div>
-          </div>
-        </section>
-
-        {/* 4. Privacy & Gemini AI Processing Policy */}
-        <section className="rounded-3xl border border-hairline bg-surface p-6 sm:p-8 shadow-xs">
-          <div className="flex items-start gap-3">
-            <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
-            <div>
-              <h2 className="font-serif text-xl font-medium text-foreground">Privacy & AI Model Commitments</h2>
-              <p className="mt-1.5 text-sm leading-relaxed text-muted">
-                Life Memory processes unstructured personal diary entries through Google Gemini 3.5 Flash-Lite (entity extraction) and Gemini 3.8 Flash (monthly reflections). Under the Google Cloud API terms of service:
-              </p>
-
-              <ul className="mt-3 space-y-2 text-xs text-muted">
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-600" />
-                  <span><strong>Zero Model Training:</strong> Your raw diary text is never used to train or fine-tune Google foundation models.</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-600" />
-                  <span><strong>Ephemeral Processing:</strong> Extraction payloads are held in memory strictly for the duration of inference, then discarded.</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-600" />
-                  <span><strong>Age Eligibility:</strong> Life Memory is strictly designed for individuals 18 years and older.</span>
-                </li>
-              </ul>
-
-              <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-hairline/60 pt-3 text-xs font-mono text-muted">
-                <Link href="/privacy" className="hover:text-foreground transition underline">Privacy Policy</Link>
-                <span>·</span>
-                <Link href="/terms" className="hover:text-foreground transition underline">Terms of Service</Link>
-                <span>·</span>
-                <Link href="/faq" className="hover:text-foreground transition underline">FAQ</Link>
-                <span>·</span>
-                <Link href="/disclaimer" className="hover:text-foreground transition underline">Safety Disclaimer</Link>
-                <span>·</span>
-                <Link href="/sitemap" className="hover:text-foreground transition underline">User Sitemap</Link>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  disabled={isLoggingOut}
+                  className={styles.secondaryBtn}
+                >
+                  <LogOut size={14} aria-hidden="true" />
+                  <span>
+                    {isLoggingOut
+                      ? "Signing out..."
+                      : isDemo
+                        ? "Exit Demo"
+                        : "Sign out"}
+                  </span>
+                </button>
               </div>
             </div>
           </div>
         </section>
 
-        {/* 5. Danger Zone */}
-        <section className="rounded-3xl border border-rose-500/20 bg-rose-500/5 p-6 sm:p-8">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-1.5 font-mono text-xs uppercase tracking-wider text-rose-700 dark:text-rose-400">
-                <AlertTriangle className="h-3.5 w-3.5" /> Danger Zone
-              </div>
-              <h2 className="mt-1 font-serif text-xl font-medium text-rose-950 dark:text-rose-200">
-                Delete Account & All Memories
-              </h2>
-              <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-rose-800/80 dark:text-rose-300/80">
-                Permanently purge your account, profiles, raw activity logs, entity catalogs, and insights. This action is irreversible.
-              </p>
-            </div>
+        {/* 02 · Appearance & Reading Environment */}
+        <section className={styles.sectionRow} aria-labelledby="settings-appearance">
+          <div className={styles.sectionMeta}>
+            <span className={styles.sectionIndex}>02 · Reading Environment</span>
+            <h2 id="settings-appearance" className={styles.sectionTitle}>
+              Appearance
+            </h2>
+            <p className={styles.sectionDesc}>
+              Switch between warm archival paper, quiet obsidian night mode, or follow your system preference.
+            </p>
+          </div>
 
-            {isDemo ? (
-              <span className="shrink-0 rounded-full border border-hairline bg-surface px-3 py-1 font-mono text-[10px] text-muted">
-                Disabled in demo
-              </span>
-            ) : (
+          <div className={styles.sectionContent}>
+            <div className={styles.themeGrid}>
+              {/* Light Mode */}
               <button
                 type="button"
-                onClick={() => setShowDeleteModal(true)}
-                className="shrink-0 rounded-xl border border-rose-500/30 bg-rose-600 px-4 py-2 font-mono text-xs font-medium text-white transition hover:bg-rose-700"
+                onClick={(e) => setTheme("light", e)}
+                aria-pressed={theme === "light"}
+                className={`${styles.themeCard} ${theme === "light" ? styles.themeCardActive : ""}`}
               >
-                Delete Account
+                <div className={`${styles.swatch} ${styles.swatchLight}`} aria-hidden="true">
+                  <div className={styles.swatchHeader}>
+                    <span className={styles.swatchTag}>#F8F6F1</span>
+                    <span className={styles.swatchIconBadge}>
+                      <Sun size={14} />
+                    </span>
+                  </div>
+                  <div className={styles.swatchLines}>
+                    <span className={styles.swatchLineShort} />
+                    <span className={styles.swatchLine} />
+                  </div>
+                </div>
+                <div className={styles.themeHeader}>
+                  <span className={styles.themeName}>Light</span>
+                  {theme === "light" && <span className={styles.themeActiveBadge}>Active</span>}
+                </div>
+                <span className={styles.themeDesc}>Warm archival paper</span>
               </button>
-            )}
+
+              {/* Dark Mode */}
+              <button
+                type="button"
+                onClick={(e) => setTheme("dark", e)}
+                aria-pressed={theme === "dark"}
+                className={`${styles.themeCard} ${theme === "dark" ? styles.themeCardActive : ""}`}
+              >
+                <div className={`${styles.swatch} ${styles.swatchDark}`} aria-hidden="true">
+                  <div className={styles.swatchHeader}>
+                    <span className={styles.swatchTag}>#161615</span>
+                    <span className={styles.swatchIconBadge}>
+                      <Moon size={14} />
+                    </span>
+                  </div>
+                  <div className={styles.swatchLines}>
+                    <span className={styles.swatchLineShort} />
+                    <span className={styles.swatchLine} />
+                  </div>
+                </div>
+                <div className={styles.themeHeader}>
+                  <span className={styles.themeName}>Dark</span>
+                  {theme === "dark" && <span className={styles.themeActiveBadge}>Active</span>}
+                </div>
+                <span className={styles.themeDesc}>Quiet obsidian night</span>
+              </button>
+
+              {/* System Mode */}
+              <button
+                type="button"
+                onClick={(e) => setTheme("system", e)}
+                aria-pressed={theme === "system"}
+                className={`${styles.themeCard} ${theme === "system" ? styles.themeCardActive : ""}`}
+              >
+                <div className={`${styles.swatch} ${styles.swatchSystem}`} aria-hidden="true">
+                  <div className={styles.swatchSystemBar}>
+                    <span className={styles.swatchSystemLeft}>Paper</span>
+                    <span className={`${styles.swatchIconBadge} ${styles.swatchSystemRight}`}>
+                      <Laptop size={13} />
+                    </span>
+                  </div>
+                  <div className={styles.swatchSystemBar}>
+                    <span className={styles.swatchSystemLeft}>Auto</span>
+                    <span className={styles.swatchSystemRight}>Night</span>
+                  </div>
+                </div>
+                <div className={styles.themeHeader}>
+                  <span className={styles.themeName}>System</span>
+                  {theme === "system" && <span className={styles.themeActiveBadge}>Active</span>}
+                </div>
+                <span className={styles.themeDesc}>Follow device appearance</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* 03 · Data Sovereignty & Archive Export */}
+        <section className={styles.sectionRow} aria-labelledby="settings-export">
+          <div className={styles.sectionMeta}>
+            <span className={styles.sectionIndex}>03 · Data Sovereignty</span>
+            <h2 id="settings-export" className={styles.sectionTitle}>
+              Export Your Archive
+            </h2>
+            <p className={styles.sectionDesc}>
+              You own 100% of your memories. Export your entire relational archive at any time as a clean, portable JSON document.
+            </p>
+          </div>
+
+          <div className={styles.sectionContent}>
+            <div className={styles.card}>
+              <div className={styles.inventoryStrip} aria-label="Archive inventory summary">
+                <div className={styles.inventoryItem}>
+                  <span className={styles.inventoryValue}>{stats.activities}</span>
+                  <span className={styles.inventoryLabel}>Memories</span>
+                </div>
+                <div className={styles.inventoryItem}>
+                  <span className={styles.inventoryValue}>{stats.people}</span>
+                  <span className={styles.inventoryLabel}>People</span>
+                </div>
+                <div className={styles.inventoryItem}>
+                  <span className={styles.inventoryValue}>{stats.places}</span>
+                  <span className={styles.inventoryLabel}>Places</span>
+                </div>
+                <div className={styles.inventoryItem}>
+                  <span className={styles.inventoryValue}>{stats.topics}</span>
+                  <span className={styles.inventoryLabel}>Topics</span>
+                </div>
+                <div className={styles.inventoryItem}>
+                  <span className={styles.inventoryValue}>{stats.firstTimes}</span>
+                  <span className={styles.inventoryLabel}>First Times</span>
+                </div>
+              </div>
+
+              <div className={styles.exportRow}>
+                <div className={styles.exportMeta}>
+                  <span className={styles.exportTitle}>Complete Relational Snapshot (JSON v1.0)</span>
+                  <span className={styles.exportSub}>
+                    Includes raw entries, atomic details, people, places, topics, and cited insights.
+                  </span>
+                </div>
+
+                <a href={exportUrl} download className={styles.primaryBtn}>
+                  <Download size={15} aria-hidden="true" />
+                  <span>Download Full Archive (JSON)</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 04 · Privacy & AI Commitments */}
+        <section className={styles.sectionRow} aria-labelledby="settings-privacy">
+          <div className={styles.sectionMeta}>
+            <span className={styles.sectionIndex}>04 · Architecture Guarantees</span>
+            <h2 id="settings-privacy" className={styles.sectionTitle}>
+              Privacy &amp; AI Commitments
+            </h2>
+            <p className={styles.sectionDesc}>
+              How your personal notes are isolated in storage and processed during language extraction.
+            </p>
+          </div>
+
+          <div className={styles.sectionContent}>
+            <div className={styles.card}>
+              <div className={styles.commitmentList}>
+                <div className={styles.commitmentItem}>
+                  <span className={styles.commitmentHead}>
+                    <CheckCircle2 size={14} aria-hidden="true" /> Zero Model Training
+                  </span>
+                  <p className={styles.commitmentBody}>
+                    Your personal notes and extracted memories are never used to train or fine-tune external foundation models.
+                  </p>
+                </div>
+
+                <div className={styles.commitmentItem}>
+                  <span className={styles.commitmentHead}>
+                    <ShieldCheck size={14} aria-hidden="true" /> Ephemeral Inference
+                  </span>
+                  <p className={styles.commitmentBody}>
+                    Payloads sent to Gemini are held strictly for the duration of structured extraction or reflection synthesis.
+                  </p>
+                </div>
+
+                <div className={styles.commitmentItem}>
+                  <span className={styles.commitmentHead}>
+                    <CheckCircle2 size={14} aria-hidden="true" /> Row-Level Isolation
+                  </span>
+                  <p className={styles.commitmentBody}>
+                    Every database table and reactive view enforces strict per-user PostgreSQL Row Level Security policies.
+                  </p>
+                </div>
+              </div>
+
+              <div className={styles.legalLinks}>
+                <span className={styles.legalLabel}>Documentation &amp; Policies</span>
+                <nav className={styles.legalNav} aria-label="Policies and documentation">
+                  <Link href="/privacy" className={styles.legalLink}>
+                    Privacy Policy <ArrowUpRight size={12} aria-hidden="true" />
+                  </Link>
+                  <Link href="/terms" className={styles.legalLink}>
+                    Terms of Service <ArrowUpRight size={12} aria-hidden="true" />
+                  </Link>
+                  <Link href="/faq" className={styles.legalLink}>
+                    FAQ <ArrowUpRight size={12} aria-hidden="true" />
+                  </Link>
+                  <Link href="/disclaimer" className={styles.legalLink}>
+                    Safety Disclaimer <ArrowUpRight size={12} aria-hidden="true" />
+                  </Link>
+                  <Link href="/sitemap" className={styles.legalLink}>
+                    Sitemap <ArrowUpRight size={12} aria-hidden="true" />
+                  </Link>
+                </nav>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 05 · Danger Zone */}
+        <section className={styles.sectionRow} aria-labelledby="settings-danger">
+          <div className={styles.sectionMeta}>
+            <span className={styles.sectionIndex}>05 · Irreversible Action</span>
+            <h2 id="settings-danger" className={styles.sectionTitle}>
+              Delete Archive
+            </h2>
+            <p className={styles.sectionDesc}>
+              Permanently purge your account and all recorded memories from the database.
+            </p>
+          </div>
+
+          <div className={styles.sectionContent}>
+            <div className={styles.dangerCard}>
+              <div className={styles.dangerInfo}>
+                <span className={styles.dangerTitle}>
+                  <AlertTriangle size={15} aria-hidden="true" /> Delete Account &amp; All Memories
+                </span>
+                <p className={styles.dangerDesc}>
+                  Permanently removes your profile, activity logs, constellations, and generated reflections. This action cannot be undone.
+                </p>
+              </div>
+
+              {isDemo ? (
+                <span className={styles.statusPill}>Disabled in demo mode</span>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteModal(true)}
+                  className={styles.dangerBtn}
+                >
+                  <Trash2 size={14} aria-hidden="true" />
+                  <span>Delete Archive &amp; Account</span>
+                </button>
+              )}
+            </div>
           </div>
         </section>
       </div>
 
       {/* Double-Confirmation Modal */}
       {showDeleteModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs">
-          <div className="w-full max-w-md rounded-3xl border border-rose-500/30 bg-surface p-6 shadow-2xl sm:p-8">
-            <div className="flex items-center gap-2 text-rose-600">
-              <AlertTriangle className="h-6 w-6" />
-              <h3 className="font-serif text-2xl font-medium">Are you absolutely sure?</h3>
-            </div>
-            <p className="mt-3 text-sm text-muted">
-              This will permanently delete your account and all associated activities, people, places, topics, and reflection insights.
+        <div className={styles.modalBackdrop} role="dialog" aria-modal="true" aria-labelledby="delete-modal-title">
+          <div className={styles.modalCard}>
+            <h3 id="delete-modal-title" className={styles.modalTitle}>
+              <AlertTriangle size={20} aria-hidden="true" /> Delete your entire archive?
+            </h3>
+            <p className={styles.modalDesc}>
+              This will permanently delete your account and all associated memories, people, places, topics, and reflections.
             </p>
 
-            <div className="mt-5">
-              <label htmlFor="confirm-delete" className="block font-mono text-xs text-muted">
+            <div className={styles.modalField}>
+              <label htmlFor="confirm-delete" className={styles.modalLabel}>
                 Type <strong>DELETE</strong> below to confirm:
               </label>
               <input
@@ -336,11 +452,11 @@ export function SettingsClient({ user, isDemo = false }: SettingsClientProps) {
                 value={confirmInput}
                 onChange={(e) => setConfirmInput(e.target.value)}
                 placeholder="DELETE"
-                className="mt-2 w-full rounded-xl border border-hairline bg-surface-subdued px-3 py-2 font-mono text-sm uppercase text-foreground focus:border-rose-500 focus:outline-hidden"
+                className={styles.modalInput}
               />
             </div>
 
-            <div className="mt-6 flex items-center justify-end gap-3">
+            <div className={styles.modalActions}>
               <button
                 type="button"
                 onClick={() => {
@@ -348,7 +464,7 @@ export function SettingsClient({ user, isDemo = false }: SettingsClientProps) {
                   setConfirmInput("");
                 }}
                 disabled={isDeleting}
-                className="rounded-xl border border-hairline bg-surface px-4 py-2 font-mono text-xs text-muted hover:text-foreground"
+                className={styles.secondaryBtn}
               >
                 Cancel
               </button>
@@ -356,15 +472,15 @@ export function SettingsClient({ user, isDemo = false }: SettingsClientProps) {
                 type="button"
                 onClick={handleDeleteAccount}
                 disabled={confirmInput !== "DELETE" || isDeleting}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-rose-600 px-4 py-2 font-mono text-xs font-medium text-white transition hover:bg-rose-700 disabled:opacity-40"
+                className={styles.dangerBtn}
               >
-                <Trash2 className="h-3.5 w-3.5" />
-                {isDeleting ? "Deleting…" : "Confirm Deletion"}
+                <Trash2 size={14} aria-hidden="true" />
+                <span>{isDeleting ? "Deleting..." : "Confirm Deletion"}</span>
               </button>
             </div>
           </div>
         </div>
       )}
-    </div>
+    </main>
   );
 }

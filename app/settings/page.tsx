@@ -1,4 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
+import { JIMMY_DEMO_ITEMS, JIMMY_DEMO_STATS } from "@/lib/demo/jimmy";
+import { timelineToAnalytics } from "@/lib/analytics/adapters";
+import { detectFirstTimes } from "@/lib/analytics/first-time";
+import { getArchiveData, type ArchiveData } from "@/lib/queries/activities";
 import { SettingsClient } from "@/components/settings/SettingsClient";
 import { VaultShell } from "@/components/layout/VaultShell";
 
@@ -10,10 +14,20 @@ export default async function SettingsPage({
   const params = await searchParams;
   const isDemo = params.demo === "jimmy";
 
+  const archive: ArchiveData = isDemo
+    ? { items: JIMMY_DEMO_ITEMS, stats: JIMMY_DEMO_STATS, error: null }
+    : await getArchiveData();
+
+  const detectedFirstTimes = detectFirstTimes(timelineToAnalytics(archive.items)).length;
+  const stats = {
+    ...archive.stats,
+    firstTimes: detectedFirstTimes || archive.stats.firstTimes,
+  };
+
   let user = {
     id: "demo-jimmy",
-    email: "jimmy.demo@example.com",
-    fullName: "Jimmy",
+    email: "jimmy.demo@example.com" as string | null,
+    fullName: "Jimmy" as string | null,
   };
 
   if (!isDemo) {
@@ -40,10 +54,13 @@ export default async function SettingsPage({
   }
 
   return (
-    <VaultShell title="Settings & Data" isDemo={isDemo} userName={user.fullName}>
-      <main className="min-h-full px-4 py-8 text-foreground sm:px-8 sm:py-10">
-        <SettingsClient user={user} isDemo={isDemo} />
-      </main>
+    <VaultShell
+      title="Settings & Data"
+      isDemo={isDemo}
+      userName={user.fullName}
+      items={archive.items}
+    >
+      <SettingsClient user={user} stats={stats} isDemo={isDemo} />
     </VaultShell>
   );
 }

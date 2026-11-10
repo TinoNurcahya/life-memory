@@ -822,3 +822,30 @@ section[id] {
 .lm-vault-shell--editorial .lm-vault-header .rounded-full {
   border-radius: 2px;
 }
+
+/* Global full-viewport circular iris theme transition */
+html[data-lm-theme-transition="iris"]::view-transition {
+  pointer-events: none;
+}
+html[data-lm-theme-transition="iris"]::view-transition-group(root),
+html[data-lm-theme-transition="iris"]::view-transition-old(root),
+html[data-lm-theme-transition="iris"]::view-transition-new(root) {
+  animation: none;
+}
+html[data-lm-theme-transition="iris"]::view-transition-image-pair(root) {
+  isolation: auto;
+}
+html[data-lm-theme-transition="iris"]::view-transition-old(root),
+html[data-lm-theme-transition="iris"]::view-transition-new(root) {
+  opacity: 1;
+  mix-blend-mode: normal;
+}
+html[data-lm-theme-transition="iris"]::view-transition-old(root) {
+  z-index: 1;
+}
+html[data-lm-theme-transition="iris"]::view-transition-new(root) {
+  z-index: 2;
+}
+html[data-lm-theme-transition="iris"] .lm-vault-shell--dashboard {
+  transition: none !important;
+}
