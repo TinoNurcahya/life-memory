@@ -45,14 +45,14 @@ function validDate(value: string) {
 
 export function formatReflectionMonth(value: string) {
   return validReflectionMonth(value)
-    ? new Intl.DateTimeFormat("id-ID", { month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(`${value}-01T12:00:00Z`))
-    : "Bulan belum tersedia";
+    ? new Intl.DateTimeFormat("en-GB", { month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(`${value}-01T12:00:00Z`))
+    : "Month unavailable";
 }
 
 export function formatReflectionDate(value: string) {
   return validDate(value)
-    ? new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).format(new Date(`${value}T12:00:00Z`))
-    : "Tanggal belum tersedia";
+    ? new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).format(new Date(`${value}T12:00:00Z`))
+    : "Date unavailable";
 }
 
 export function sanitizeReflectionActivities(activities: AnalyticsActivity[]): AnalyticsActivity[] {
@@ -203,11 +203,11 @@ export function buildDeterministicMonthlyReflection(
   for (let index = 0; index < Math.min(pool.length, 6); index += 2) {
     const group = pool.slice(index, index + 2);
     const text = group.map((item, localIndex) =>
-      `Pada ${formatReflectionDate(item.date)}, catatanmu berbunyi: \u201C${quote(item.summary)}\u201D [${localIndex + 1}].`,
+      `On ${formatReflectionDate(item.date)}, your archive records: \u201C${quote(item.summary)}\u201D [${localIndex + 1}].`,
     ).join(" ");
     paragraphs.push({ theme: "rhythm_and_focus", text, evidence_ids: group.map(item => item.id) });
   }
-  return { title: `Catatan ${payload.month}`, paragraphs, key_themes: payload.top_categories.map(item => item.category) };
+  return { title: `Memories of ${payload.month}`, paragraphs, key_themes: payload.top_categories.map(item => item.category) };
 }
 
 /**

@@ -25,8 +25,8 @@ function PersonCard({ item, demo, memoriesError }: { item: PeopleCardData; demo:
       </div>
       <PeopleCover memory={latestMemory} unavailable={memoriesError || (!latestMemory && person.activity_count > 0)} />
       <div className={styles.cardContext}>
-        <span>{person.activity_count} memori</span>
-        <span>{latestMemory ? "Memori · " : person.last_seen_at ? "Terakhir tercatat " : ""}<time dateTime={latestMemory?.occurredAt ?? person.last_seen_at ?? undefined}>{formatPeopleDate(latestMemory?.occurredAt ?? person.last_seen_at)}</time></span>
+        <span>{person.activity_count} {person.activity_count === 1 ? "memory" : "memories"}</span>
+        <span>{latestMemory ? "Memory · " : person.last_seen_at ? "Last recorded " : ""}<time dateTime={latestMemory?.occurredAt ?? person.last_seen_at ?? undefined}>{formatPeopleDate(latestMemory?.occurredAt ?? person.last_seen_at)}</time></span>
       </div>
       {latestMemory && (
         <div className={styles.cardStory}>
@@ -62,36 +62,36 @@ export function PeopleDirectory({
         <header className={styles.intro}>
           <div className={styles.heading}>
             <h1>People</h1>
-            {!directoryError && <span>{people.length} orang</span>}
+            {!directoryError && <span>{people.length} {people.length === 1 ? "person" : "people"}</span>}
           </div>
-          <p>Orang-orang dalam catatanmu.</p>
+          <p>People who appear across your memories.</p>
         </header>
 
         {directoryError ? (
-          <PeopleFeedback>Daftar orang belum bisa dimuat. Coba muat ulang halaman ini.</PeopleFeedback>
+          <PeopleFeedback>The people directory could not be loaded. Try reloading this page.</PeopleFeedback>
         ) : (
           <>
-            {memoriesError && <PeopleFeedback>Cuplikan memori belum bisa dimuat. Nama dan jumlah memori tetap tersedia.</PeopleFeedback>}
+            {memoriesError && <PeopleFeedback>Memory excerpts could not be loaded. Names and memory counts remain available.</PeopleFeedback>}
             {people.length > 0 ? (
               <>
                 <div className={styles.toolbar}>
                   <label className={styles.search}>
-                    <span className="sr-only">Cari nama atau alias</span>
+                    <span className="sr-only">Search name or alias</span>
                     <Search size={18} aria-hidden="true" />
-                    <input ref={searchInput} type="search" placeholder="Cari nama atau alias…" value={query} onChange={event => setQuery(event.target.value)} />
-                    {query && <button type="button" aria-label="Hapus pencarian" onClick={clearSearch}><X size={17} aria-hidden="true" /></button>}
+                    <input ref={searchInput} type="search" placeholder="Search name or alias…" value={query} onChange={event => setQuery(event.target.value)} />
+                    {query && <button type="button" aria-label="Clear search" onClick={clearSearch}><X size={17} aria-hidden="true" /></button>}
                   </label>
                   <label className={styles.sort}>
-                    <span className="sr-only">Urutkan orang</span>
+                    <span className="sr-only">Sort people</span>
                     <select value={sort} onChange={event => setSort(event.target.value as PeopleSort)}>
-                      <option value="recent">Terbaru</option>
-                      <option value="name">Nama A–Z</option>
-                      <option value="count">Jumlah memori</option>
+                      <option value="recent">Most recent</option>
+                      <option value="name">Name A–Z</option>
+                      <option value="count">Most memories</option>
                     </select>
                   </label>
                 </div>
                 <p className={styles.resultCount} role="status" aria-live="polite">
-                  {query.trim() ? visible.length + " dari " + people.length + " orang ditemukan" : "Berdasarkan memori yang sudah terjadi"}
+                  {query.trim() ? visible.length + " of " + people.length + " people found" : "Based on completed memories"}
                 </p>
                 {visible.length ? (
                   <div className={styles.grid}>
@@ -99,17 +99,17 @@ export function PeopleDirectory({
                   </div>
                 ) : (
                   <div className={styles.empty}>
-                    <h2>Nama itu belum ditemukan.</h2>
-                    <p>Coba nama lain atau alias yang pernah kamu catat.</p>
-                    <button type="button" onClick={clearSearch}>Hapus pencarian</button>
+                    <h2>No matching person found.</h2>
+                    <p>Try another name or an alias you have recorded.</p>
+                    <button type="button" onClick={clearSearch}>Clear search</button>
                   </div>
                 )}
               </>
             ) : (
               <div className={styles.empty}>
-                <h2>Belum ada orang yang tercatat.</h2>
-                <p>Orang yang disebut dalam memori selesai akan muncul di sini.</p>
-                <Link href={demo ? "/timeline?demo=jimmy" : "/timeline"}>Buka timeline <ArrowUpRight size={16} aria-hidden="true" /></Link>
+                <h2>No people recorded yet.</h2>
+                <p>People mentioned in completed memories will appear here.</p>
+                <Link href={demo ? "/timeline?demo=jimmy" : "/timeline"}>Open timeline <ArrowUpRight size={16} aria-hidden="true" /></Link>
               </div>
             )}
           </>

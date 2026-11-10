@@ -32,16 +32,16 @@ export interface InsightsModel {
 }
 
 const categories: Record<string, string> = {
-  career: "Karier", social: "Sosial", health: "Kesehatan", learning: "Belajar",
-  leisure: "Waktu luang", routine: "Rutinitas", other: "Lainnya",
+  career: "Career", social: "Social", health: "Health", learning: "Learning",
+  leisure: "Leisure", routine: "Routine", other: "Other",
 };
 const kinds: Record<PatternEntityKind, string> = {
-  category: "Kategori", person: "Orang", place: "Tempat", topic: "Topik",
+  category: "Category", person: "Person", place: "Place", topic: "Topic",
 };
-const dateFormatter = new Intl.DateTimeFormat("id-ID", {
+const dateFormatter = new Intl.DateTimeFormat("en-GB", {
   day: "numeric", month: "short", year: "numeric", timeZone: "UTC",
 });
-const monthFormatter = new Intl.DateTimeFormat("id-ID", {
+const monthFormatter = new Intl.DateTimeFormat("en-GB", {
   month: "long", year: "numeric", timeZone: "UTC",
 });
 
@@ -53,12 +53,12 @@ function validDate(value: string | null | undefined): Date | null {
 
 export function formatInsightDate(value: string | null | undefined): string {
   const date = validDate(value);
-  return date ? dateFormatter.format(date) : "Tanggal belum tersedia";
+  return date ? dateFormatter.format(date) : "Date unavailable";
 }
 
 export function formatInsightMonth(value: string | null | undefined): string {
   const date = value && /^\d{4}-\d{2}$/.test(value) ? validDate(`${value}-01`) : null;
-  return date ? monthFormatter.format(date) : "Bulan belum tersedia";
+  return date ? monthFormatter.format(date) : "Month unavailable";
 }
 
 export function insightTimelineHref(id: string, demo = false): string {
@@ -116,7 +116,7 @@ export function buildInsightsModel(activities: AnalyticsActivity[], asOf: string
       type: "first_time",
       label: labelFor(item.kind, item.label),
       kindLabel: kinds[item.kind],
-      description: `Pertama tercatat dalam arsip pada ${formatInsightDate(item.occurredAt)}.`,
+      description: `First recorded in your archive on ${formatInsightDate(item.occurredAt)}.`,
       period: formatInsightDate(item.occurredAt),
       sortDate: item.occurredAt,
       evidence: [item.evidence],
@@ -131,7 +131,7 @@ export function buildInsightsModel(activities: AnalyticsActivity[], asOf: string
       type: "recurring",
       label: labelFor(item.kind, item.label),
       kindLabel: kinds[item.kind],
-      description: `Muncul dalam ${item.count} memori pada ${formatInsightMonth(item.month)}.`,
+      description: `Appeared in ${item.count} memories in ${formatInsightMonth(item.month)}.`,
       period: formatInsightMonth(item.month),
       sortDate: evidence[0]?.occurredAt ?? `${item.month}-01`,
       evidence,
@@ -150,7 +150,7 @@ export function buildInsightsModel(activities: AnalyticsActivity[], asOf: string
       type: "change",
       label: labelFor("category", item.label),
       kindLabel: kinds.category,
-      description: `${item.previousCount} memori pada ${previousLabel}, menjadi ${item.currentCount} pada ${currentLabel}.`,
+      description: `${item.previousCount} memories in ${previousLabel}, shifting to ${item.currentCount} in ${currentLabel}.`,
       period: `${previousLabel} – ${currentLabel}`,
       sortDate: currentPeriodLastDate ?? `${item.currentMonth}-01`,
       evidence: sortEvidence(item.evidence),

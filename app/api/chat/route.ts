@@ -63,7 +63,7 @@ export async function POST(request: Request) {
         const title = message.slice(0, 36).trim();
         const { data: newSession } = await supabase
           .from("chat_sessions")
-          .insert({ user_id: userId, title: title || "Percakapan Baru" })
+          .insert({ user_id: userId, title: title || "New Conversation" })
           .select("id")
           .single();
         if (newSession) targetSessionId = newSession.id;
@@ -77,7 +77,7 @@ export async function POST(request: Request) {
     }
 
     // Auto-Save Intent Detection
-    const saveIntentPattern = /(?:catat(?:kan)?|tolong catat|simpan ke catatan|buat(?:kan)? catatan|jadikan catatan)\s*[:,\-]?\s*(.+)/i;
+    const saveIntentPattern = /(?:record|save to memory|save as memory|log this|note this|remember this|catat(?:kan)?|tolong catat|simpan ke catatan|buat(?:kan)? catatan|jadikan catatan)\s*[:,\-]?\s*(.+)/i;
     const saveMatch = message.match(saveIntentPattern);
     let savedItem: TimelineItem | null = null;
     let savedSummary: string | null = null;
@@ -211,7 +211,7 @@ export async function POST(request: Request) {
 
     let finalContent = result.content;
     if (savedSummary) {
-      finalContent = `[Catatan berhasil disimpan ke Timeline]\nRingkasan: "${savedSummary}"\n\n` + result.content;
+      finalContent = `[Memory saved to Timeline]\nSummary: "${savedSummary}"\n\n` + result.content;
     }
 
     // In authenticated live mode, save both user and assistant turns

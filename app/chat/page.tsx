@@ -30,18 +30,18 @@ export default async function ChatPage({ searchParams }: {
       const supabase = await createClient();
       const { data: { user }, error: authError } = await supabase.auth.getUser();
       if (authError || !user) {
-        initialSessionsError = "Sesi masuk belum tersedia. Muat ulang untuk membuka percakapan.";
+        initialSessionsError = "Your sign-in session is unavailable. Reload to open your conversations.";
       } else {
         const { data: rows, error } = await supabase.from("chat_sessions")
           .select("id, title, updated_at").eq("user_id", user.id)
           .order("updated_at", { ascending: false });
         if (error) {
-          initialSessionsError = "Riwayat percakapan belum bisa dimuat.";
+          initialSessionsError = "Conversation history could not be loaded.";
         } else {
           initialSessions = (rows ?? []).map(row => ({ id: row.id, title: row.title, updatedAt: row.updated_at }));
           initialSessionId = startNew ? null : requestedSessionId || initialSessions[0]?.id || null;
           if (initialSessionId && !initialSessions.some(session => session.id === initialSessionId)) {
-            initialMessagesError = "Percakapan ini tidak ditemukan. Pilih percakapan lain dari riwayat.";
+            initialMessagesError = "This conversation could not be found. Select another conversation from your history.";
           } else if (initialSessionId) {
             try {
               const { data: messages, error: messagesError } = await supabase.from("chat_messages")
@@ -51,7 +51,7 @@ export default async function ChatPage({ searchParams }: {
                 // Query assistant before user so reversing restores question/answer order.
                 .order("role", { ascending: true }).order("id", { ascending: false }).limit(51);
               if (messagesError) {
-                initialMessagesError = "Pesan percakapan ini belum bisa dimuat.";
+                initialMessagesError = "Messages for this conversation could not be loaded.";
               } else {
                 initialHasOlderMessages = (messages?.length ?? 0) > 50;
                 initialMessages = (messages ?? []).slice(0, 50).reverse().map(message => ({
@@ -60,13 +60,13 @@ export default async function ChatPage({ searchParams }: {
                 }));
               }
             } catch {
-              initialMessagesError = "Pesan percakapan ini belum bisa dimuat.";
+              initialMessagesError = "Messages for this conversation could not be loaded.";
             }
           }
         }
       }
     } catch {
-      initialSessionsError = "Riwayat percakapan belum bisa dimuat.";
+      initialSessionsError = "Conversation history could not be loaded.";
     }
   }
 

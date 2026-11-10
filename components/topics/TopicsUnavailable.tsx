@@ -9,10 +9,10 @@ export function TopicsUnavailable({ demo }: { demo: boolean }) {
     <VaultShell title="Topics" isDemo={demo}>
       <main className={styles.page} data-topics-unavailable>
         <Link href={demo ? "/topics?demo=jimmy" : "/topics"} className={styles.backLink}>
-          <ArrowLeft size={16} aria-hidden="true" /> Semua topik
+          <ArrowLeft size={16} aria-hidden="true" /> All topics
         </Link>
         <header className={styles.intro}><h1>Topics</h1></header>
-        <TopicsFeedback>Informasi topik ini belum bisa dimuat. Coba lagi untuk membuka memorinya.</TopicsFeedback>
+        <TopicsFeedback>Information for this topic could not be loaded. Try again to open its memories.</TopicsFeedback>
       </main>
     </VaultShell>
   );

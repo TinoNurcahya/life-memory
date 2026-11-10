@@ -9,10 +9,10 @@ export function PlacesUnavailable({ demo }: { demo: boolean }) {
     <VaultShell title="Places" isDemo={demo}>
       <main className={styles.page} data-place-unavailable>
         <Link href={demo ? "/places?demo=jimmy" : "/places"} className={styles.backLink}>
-          <ArrowLeft size={16} aria-hidden="true" /> Semua tempat
+          <ArrowLeft size={16} aria-hidden="true" /> All places
         </Link>
         <header className={styles.intro}><h1>Places</h1></header>
-        <PlacesFeedback>Informasi tempat ini belum bisa dimuat. Coba lagi untuk membuka memorinya.</PlacesFeedback>
+        <PlacesFeedback>Information for this place could not be loaded. Try again to open its memories.</PlacesFeedback>
       </main>
     </VaultShell>
   );

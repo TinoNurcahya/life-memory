@@ -39,7 +39,7 @@ export function ChatMessageContent({ content }: { content: string }) {
       const code: string[] = []; index++;
       while (index < lines.length && !/^\s*```/.test(lines[index])) code.push(lines[index++]);
       if (index < lines.length) index++;
-      blocks.push(<pre key={key} tabIndex={0} aria-label="Blok kode"><code>{code.join("\n")}</code></pre>);
+      blocks.push(<pre key={key} tabIndex={0} aria-label="Code block"><code>{code.join("\n")}</code></pre>);
     } else if (/^\s*([-*+] |\d+\. )/.test(line)) {
       const ordered = /^\s*\d+\. /.test(line), entries: ReactNode[] = [];
       const pattern = ordered ? /^\s*\d+\. / : /^\s*[-*+] /;

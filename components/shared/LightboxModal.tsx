@@ -89,7 +89,7 @@ export function LightboxModal({
             download={`life-memory-${date || "photo"}.jpg`}
             target="_blank"
             rel="noreferrer"
-            title={labels?.openImage ?? "Buka gambar penuh"}
+            title={labels?.openImage ?? "Open full image"}
             className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition"
           >
             <Download className="h-4 w-4" />
@@ -97,7 +97,7 @@ export function LightboxModal({
           <button
             type="button"
             onClick={onClose}
-            aria-label={labels?.close ?? "Tutup lightbox"}
+            aria-label={labels?.close ?? "Close lightbox"}
             className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition"
           >
             <X className="h-4 w-4" />
@@ -114,7 +114,7 @@ export function LightboxModal({
               e.stopPropagation();
               handlePrev();
             }}
-            aria-label={labels?.previous ?? "Foto sebelumnya"}
+            aria-label={labels?.previous ?? "Previous photo"}
             className="absolute left-4 top-1/2 -translate-y-1/2 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/25 transition z-10"
           >
             <ChevronLeft className="h-6 w-6" />
@@ -125,7 +125,7 @@ export function LightboxModal({
               e.stopPropagation();
               handleNext();
             }}
-            aria-label={labels?.next ?? "Foto selanjutnya"}
+            aria-label={labels?.next ?? "Next photo"}
             className="absolute right-4 top-1/2 -translate-y-1/2 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/25 transition z-10"
           >
             <ChevronRight className="h-6 w-6" />

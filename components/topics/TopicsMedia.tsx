@@ -65,7 +65,7 @@ function PhotoDialog({ images, summary, date, onClose, onImageError, trigger }: 
       }}>
       <LightboxModal
         images={images} isOpen onClose={onClose} caption={summary} date={date}
-        labels={{ close: "Tutup foto", previous: "Foto sebelumnya", next: "Foto selanjutnya", openImage: "Buka gambar penuh" }}
+        labels={{ close: "Close photo", previous: "Previous photo", next: "Next photo", openImage: "Open full image" }}
       />
     </div>,
     document.body,
@@ -88,18 +88,18 @@ export function TopicsPhoto({ images, summary, date }: { images: string[]; summa
     <>
       <button
         ref={trigger} type="button" className={styles.memoryPhoto} disabled={failed}
-        aria-label={failed ? "Foto tidak dapat dimuat" : "Buka " + availableImages.length + " foto memori: " + summary}
+        aria-label={failed ? "Photo unavailable" : "Open " + availableImages.length + " memory " + (availableImages.length === 1 ? "photo" : "photos") + ": " + summary}
         aria-haspopup="dialog" aria-expanded={open && !failed} onClick={() => setOpen(true)}
       >
-        {failed ? <span className={styles.photoUnavailable}>Foto tidak dapat dimuat.</span> : (
+        {failed ? <span className={styles.photoUnavailable}>Photo could not be loaded.</span> : (
           <>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={src} alt={"Foto dari memori: " + summary} loading="lazy"
+              src={src} alt={"Photo from memory: " + summary} loading="lazy"
               ref={image => { if (image?.complete && image.naturalWidth === 0) markFailed(src); }}
               onError={() => markFailed(src)}
             />
-            <span className={styles.photoHint}>{availableImages.length > 1 ? availableImages.length + " foto" : "Lihat foto"}</span>
+            <span className={styles.photoHint}>{availableImages.length > 1 ? availableImages.length + " photos" : "View photo"}</span>
           </>
         )}
       </button>

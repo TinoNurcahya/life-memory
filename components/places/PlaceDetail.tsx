@@ -28,21 +28,21 @@ export function PlaceDetail({
     <VaultShell title={place.name} isDemo={demo}>
       <main className={styles.page} data-place-detail>
         <Link href={"/places" + suffix} className={styles.backLink}>
-          <ArrowLeft size={16} aria-hidden="true" /> Semua tempat
+          <ArrowLeft size={16} aria-hidden="true" /> All places
         </Link>
         <header className={styles.placeIntro}>
           <p className={styles.eyebrow}>Places</p>
           <h1>{place.name}</h1>
-          {aliases.length > 0 && <p className={styles.aliases}>Juga tercatat sebagai {aliases.join(", ")}</p>}
+          {aliases.length > 0 && <p className={styles.aliases}>Also recorded as {aliases.join(", ")}</p>}
           <div className={styles.placeStats}>
-            <span><strong>{place.activity_count}</strong> memori</span>
-            <span>Pertama tercatat <time dateTime={place.first_seen_at ?? undefined}>{formatPlacesDate(place.first_seen_at)}</time></span>
-            <span>Terakhir <time dateTime={place.last_seen_at ?? undefined}>{formatPlacesDate(place.last_seen_at)}</time></span>
+            <span><strong>{place.activity_count}</strong> {place.activity_count === 1 ? "memory" : "memories"}</span>
+            <span>First recorded <time dateTime={place.first_seen_at ?? undefined}>{formatPlacesDate(place.first_seen_at)}</time></span>
+            <span>Latest <time dateTime={place.last_seen_at ?? undefined}>{formatPlacesDate(place.last_seen_at)}</time></span>
           </div>
         </header>
 
         {memoriesError ? (
-          <PlacesFeedback>Memori tempat ini belum bisa dimuat. Informasi tempat tetap tersedia.</PlacesFeedback>
+          <PlacesFeedback>Memories for this place could not be loaded. Place details remain available.</PlacesFeedback>
         ) : groups.length ? (
           <div className={styles.monthGroups}>
             {groups.map(group => (
@@ -53,7 +53,7 @@ export function PlaceDetail({
                     <article key={memory.id} className={styles.memory} data-place-memory={memory.id}>
                       <div className={styles.memoryMeta}>
                         <time dateTime={memory.occurredAt}>{formatPlacesDate(memory.occurredAt)}</time>
-                        <span>{PLACES_CATEGORIES[memory.category ?? "other"] ?? "Lainnya"}</span>
+                        <span>{PLACES_CATEGORIES[memory.category ?? "other"] ?? "Other"}</span>
                       </div>
                       <div className={styles.memoryContent} data-has-photo={Boolean(memory.imageUrls?.length)}>
                         {!!memory.imageUrls?.length && (
@@ -65,7 +65,7 @@ export function PlaceDetail({
                             <blockquote className={styles.sourceText}>{memory.sourceText}</blockquote>
                           )}
                           <Link href={"/timeline" + suffix + "#" + encodeURIComponent(memory.id)} className={styles.timelineLink}>
-                            Lihat di timeline <ArrowUpRight size={15} aria-hidden="true" />
+                            View in timeline <ArrowUpRight size={15} aria-hidden="true" />
                           </Link>
                         </div>
                       </div>
@@ -77,8 +77,8 @@ export function PlaceDetail({
           </div>
         ) : (
           <div className={styles.empty}>
-            <h2>{place.activity_count ? "Cuplikan memori belum tersedia." : "Belum ada memori selesai."}</h2>
-            <p>Memori yang sudah terjadi dan menyebut {place.name} akan tampil di sini.</p>
+            <h2>{place.activity_count ? "Memory excerpts unavailable." : "No completed memories yet."}</h2>
+            <p>Completed memories mentioning {place.name} will appear here.</p>
           </div>
         )}
         <PlacesManagement place={place} candidates={candidates} demo={demo} />

@@ -54,13 +54,13 @@ export async function loadReflectionPage(
 ): Promise<ReflectionPageData> {
   const { month, invalid } = normalizeReflectionMonth(rawMonth, currentMonth);
   const result: ReflectionPageData = { month, currentMonth, essay: null, completedCount: 0, availableMonths: [], error: null,
-    notice: invalid ? "Bulan tidak valid. Menampilkan bulan ini." : null, hasSavedReflection: false, items: [] };
+    notice: invalid ? "Invalid month. Showing the current month." : null, hasSavedReflection: false, items: [] };
   try {
     const archive = await dependencies.readArchive();
     result.items = archive.items;
     if (archive.error) throw new Error("Archive unavailable");
   } catch {
-    result.error = "Arsip belum berhasil dimuat. Coba lagi untuk membaca refleksi bulan ini.";
+    result.error = "Your archive could not be loaded. Try again to read this month’s reflection.";
     return result;
   }
   const completed = sanitizeReflectionActivities(analytics(result.items));
@@ -80,10 +80,10 @@ export async function loadReflectionPage(
       result.essay = normalized;
       result.hasSavedReflection = true;
     } else {
-      result.notice = "Refleksi tersimpan belum sesuai dengan catatan yang tersedia. Ringkasan catatan ditampilkan; kamu bisa menyusun refleksi kembali.";
+      result.notice = "The saved reflection no longer matches your current memories. Showing a grounded summary; you can regenerate the reflection.";
     }
   } catch {
-    result.notice = "Refleksi tersimpan belum berhasil dimuat. Ringkasan catatan tetap tersedia.";
+    result.notice = "The saved reflection could not be loaded. Your memory summary remains available.";
   }
   return result;
 }
@@ -94,19 +94,19 @@ export async function generateReflectionFromData(
   demo: boolean,
   dependencies: ReflectionDependencies,
 ): Promise<ActionResult<GeneratedReflectionData>> {
-  if (!validReflectionMonth(month)) return { success: false, error: "Pilih bulan yang valid.", code: "INVALID_INPUT" };
+  if (!validReflectionMonth(month)) return { success: false, error: "Select a valid month.", code: "INVALID_INPUT" };
   let items: TimelineItem[];
   try {
     const archive = await dependencies.readArchive();
     if (archive.error) throw new Error("Archive unavailable");
     items = archive.items;
   } catch {
-    return { success: false, error: "Catatan belum berhasil dimuat. Coba lagi sebelum menyusun refleksi.", code: "DATABASE_ERROR" };
+    return { success: false, error: "Your memories could not be loaded. Try again before generating a reflection.", code: "DATABASE_ERROR" };
   }
   const payload = curateReflectionEvidence(analytics(items), month);
-  if (!payload.evidence_pool.length) return { success: false, error: "Belum ada memori selesai pada bulan ini.", code: "NOT_FOUND" };
+  if (!payload.evidence_pool.length) return { success: false, error: "There are no completed memories for this month yet.", code: "NOT_FOUND" };
   const summary = fallback(payload);
-  if (demo) return { success: true, data: { essay: summary, saved: false, notice: "Mode demo menampilkan ringkasan dari catatan contoh." } };
+  if (demo) return { success: true, data: { essay: summary, saved: false, notice: "Demo mode displays a summary from sample memories." } };
   let essay: FormattedMonthlyEssay;
   try {
     if (!dependencies.generate) throw new Error("Generation unavailable");
@@ -116,7 +116,7 @@ export async function generateReflectionFromData(
     essay = { month: payload.month, title: generated.reflection.title, paragraphs: formatted.formattedParagraphs,
       bibliography: formatted.bibliography, key_themes: generated.reflection.key_themes, source: "gemini", modelUsed: generated.modelUsed };
   } catch {
-    return { success: true, data: { essay: summary, saved: false, notice: "Refleksi belum berhasil disusun. Ringkasan catatan tetap ditampilkan; kamu bisa mencoba lagi." } };
+    return { success: true, data: { essay: summary, saved: false, notice: "The reflection could not be generated right now. Showing your grounded summary; you can try again." } };
   }
   try {
     if (!dependencies.save) throw new Error("Persistence unavailable");
@@ -124,6 +124,6 @@ export async function generateReflectionFromData(
     if (saved.error) throw new Error("Persistence failed");
     return { success: true, data: { essay, saved: true, notice: null } };
   } catch {
-    return { success: true, data: { essay, saved: false, notice: "Refleksi sudah disusun, tetapi belum berhasil disimpan. Hasil ini masih bisa dibaca selama halaman tetap terbuka." } };
+    return { success: true, data: { essay, saved: false, notice: "Your reflection was generated, but could not be saved. It remains readable while this page stays open." } };
   }
 }

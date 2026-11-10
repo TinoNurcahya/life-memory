@@ -11,7 +11,7 @@ export function PlacesFeedback({ children }: { children: ReactNode }) {
     <div className={styles.notice} role="alert" aria-busy={pending}>
       <p>{children}</p>
       <button type="button" disabled={pending} onClick={() => startTransition(() => router.refresh())}>
-        {pending ? "Memuat ulang…" : "Coba lagi"}
+        {pending ? "Reloading…" : "Try again"}
       </button>
     </div>
   );

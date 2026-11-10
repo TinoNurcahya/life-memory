@@ -24,21 +24,21 @@ export function PlacesManagement({ place, candidates, demo }: {
 
   const merge = () => {
     if (!target || pending || busy.current) return;
-    if (!window.confirm('Gabungkan "' + place.name + '" ke "' + target.name + '"? Semua memorinya akan dipindahkan dan data tempat "' + place.name + '" akan dihapus permanen.')) return;
+    if (!window.confirm('Merge "' + place.name + '" into "' + target.name + '"? All of its memories will be moved and "' + place.name + '" will be permanently deleted.')) return;
     busy.current = true;
     startTransition(async () => {
       setMessage("");
       try {
         const result = await mergeEntity("places", place.id, target.id);
         if (result.success) {
-          toast.success('Digabungkan ke "' + target.name + '".');
+          toast.success('Merged into "' + target.name + '".');
           router.push("/places");
           router.refresh();
         } else {
           setMessage(result.error);
         }
       } catch {
-        setMessage("Penggabungan gagal. Coba lagi.");
+        setMessage("Merge failed. Please try again.");
       } finally {
         busy.current = false;
       }
@@ -47,21 +47,21 @@ export function PlacesManagement({ place, candidates, demo }: {
 
   return (
     <details className={styles.management} data-places-management>
-      <summary>Pengelolaan</summary>
+      <summary>Manage</summary>
       <div className={styles.managementBody} aria-busy={pending}>
-        <h2>Gabungkan tempat yang sama</h2>
-        <p>Gunakan jika tempat ini tercatat lebih dari sekali. Memori akan dipindahkan ke nama yang kamu pilih.</p>
-        <label htmlFor={selectId}>Gabungkan ke</label>
+        <h2>Merge duplicate place</h2>
+        <p>Use this if the same place was recorded more than once. Memories will be moved to the place you select.</p>
+        <label htmlFor={selectId}>Merge into</label>
         <div className={styles.mergeControls}>
           <select
             id={selectId} value={targetId} disabled={pending}
             onChange={event => { setTargetId(event.target.value); setMessage(""); }}
           >
-            <option value="">Pilih tempat…</option>
+            <option value="">Select place…</option>
             {targets.map(candidate => <option key={candidate.id} value={candidate.id}>{candidate.name}</option>)}
           </select>
           <button type="button" disabled={!target || pending} onClick={merge}>
-            {pending ? "Menggabungkan…" : "Gabungkan"}
+            {pending ? "Merging…" : "Merge"}
           </button>
         </div>
         {message && <p role="alert" className={styles.mergeError}>{message}</p>}

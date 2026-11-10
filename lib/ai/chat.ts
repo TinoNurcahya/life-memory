@@ -15,36 +15,36 @@ export interface ChatResponseResult {
 
 export function buildMemoryContext(items: TimelineItem[]): string {
   if (!items || items.length === 0) {
-    return "Belum ada catatan memori yang tersimpan.";
+    return "No memories have been saved yet.";
   }
 
   // Format into compact, chronological reference lines
   const sorted = [...items].sort((a, b) => a.occurredAt.localeCompare(b.occurredAt));
   const lines = sorted.map((item) => {
-    const peopleStr = item.people && item.people.length ? ` | Orang: ${item.people.map((p) => p.name).join(", ")}` : "";
-    const placesStr = item.places && item.places.length ? ` | Tempat: ${item.places.map((p) => p.name).join(", ")}` : "";
-    const topicsStr = item.topics && item.topics.length ? ` | Topik: ${item.topics.map((t) => t.name).join(", ")}` : "";
-    const firstTimeStr = item.isFirstTime ? " [PERTAMA KALI]" : "";
+    const peopleStr = item.people && item.people.length ? ` | People: ${item.people.map((p) => p.name).join(", ")}` : "";
+    const placesStr = item.places && item.places.length ? ` | Places: ${item.places.map((p) => p.name).join(", ")}` : "";
+    const topicsStr = item.topics && item.topics.length ? ` | Topics: ${item.topics.map((t) => t.name).join(", ")}` : "";
+    const firstTimeStr = item.isFirstTime ? " [FIRST TIME]" : "";
     return `- [${item.occurredAt}] (${item.category}${firstTimeStr}) ${item.summary}${peopleStr}${placesStr}${topicsStr}`;
   });
 
   return lines.join("\n");
 }
 
-const SYSTEM_INSTRUCTION = `Kamu adalah Sahabat Jurnal Interaktif Dua Arah di Life Memory.
-Tugasmu adalah berbincang dengan pengguna mengenai perjalanan hidup, aktivitas, dan kenangannya berdasarkan catatan memori yang disediakan.
+const SYSTEM_INSTRUCTION = `You are the Interactive Two-Way Journal Companion for Life Memory.
+Your role is to converse with the user about their life journey, activities, and memories grounded strictly in the provided memory archive.
 
-Prinsip & Persona:
-1. Nada Suara: Hangat, empatik, introspektif, dan alami dalam bahasa Indonesia. Jangan terdengar seperti robot korporat atau asisten yang kaku.
-2. Grounding Memori:
-   - Gunakan HANYA informasi yang benar-benar tercantum di daftar memori pengguna.
-   - Cantumkan rujukan tanggal konkret dan konteks nyata (misal: "Berdasarkan catatanmu pada 15 Oktober 2026, kamu...").
-   - Jangan pernah mengarang peristiwa, orang, atau tempat yang tidak ada di catatan.
-3. Keterbatasan Informasi:
-   - Jika pengguna menanyakan sesuatu yang tidak ada di catatan, katakan dengan ramah dan jujur: "Aku belum melihat catatan tentang itu di Life Memory-mu. Apakah kamu ingin mencatat momen itu sekarang?"
-4. Fitur Introspektif Dua Arah:
-   - Setelah menjawab pertanyaan pengguna, WAJIB akhiri dengan 1 pertanyaan reflektif yang hangat dan relevan.
-   - Pertanyaan ini bertujuan mengajak pengguna merenungkan makna dari momen tersebut, merasakan emosinya, atau memancing mereka bercerita lebih banyak.`;
+Principles & Persona:
+1. Voice & Tone: Warm, empathetic, introspective, and natural in English. Never sound like a corporate robot or a stiff assistant.
+2. Memory Grounding:
+   - Use ONLY information explicitly present in the user's memory archive.
+   - Cite concrete dates and real context (e.g., "Based on your memory from 15 October 2026, you...").
+   - Never invent events, people, or places that are not in the archive.
+3. Handling Missing Information:
+   - If the user asks about something not in the archive, say warmly and honestly: "I don't see a memory about that in your Life Memory archive yet. Would you like to record that moment now?"
+4. Two-Way Introspective Prompt:
+   - After answering the user's question, ALWAYS conclude with 1 warm, relevant reflective question.
+   - This question should invite the user to reflect on the meaning of that moment, revisit how it felt, or share more of the story.`;
 
 export async function generateChatResponse(params: {
   message: string;
@@ -65,17 +65,17 @@ export async function generateChatResponse(params: {
   const started = Date.now();
 
   const conversationContext = history.length > 0
-    ? history.slice(-6).map((h) => `${h.role === "user" ? "Pengguna" : "Sahabat Memori"}: ${h.content}`).join("\n")
+    ? history.slice(-6).map((h) => `${h.role === "user" ? "User" : "Memory Companion"}: ${h.content}`).join("\n")
     : "";
 
-  const prompt = `Konteks Riwayat Memori Pengguna:
+  const prompt = `User Memory Archive Context:
 ${memoryContext}
 
-${conversationContext ? `Riwayat Percakapan Sebelumnya:\n${conversationContext}\n` : ""}
-Pesan Terkini dari Pengguna:
+${conversationContext ? `Previous Conversation History:\n${conversationContext}\n` : ""}
+Latest Message from User:
 "${message}"
 
-Tolong jawab dengan gaya Sahabat Jurnal Interaktif Dua Arah. Ingat untuk menyertakan pertanyaan refleksi balik di akhir.`;
+Please reply in the voice of the Interactive Two-Way Journal Companion in English. Remember to conclude with a reflective follow-up question.`;
 
   let lastError: unknown = null;
 
@@ -123,16 +123,16 @@ function buildDeterministicFallback(message: string, items: TimelineItem[]): Cha
   if (matched.length > 0) {
     const latest = matched[matched.length - 1];
     return {
-      content: `Aku menemukan catatan yang relevan: pada tanggal ${latest.occurredAt}, kamu mencatat: "${latest.summary}". Apa hal yang paling berkesan bagimu saat momen itu terjadi?`,
+      content: `I found a relevant memory: on ${latest.occurredAt}, you recorded: "${latest.summary}". What stands out most to you about that moment?`,
       modelUsed: "deterministic-fallback",
       latencyMs: 15,
     };
   }
 
   const latestAny = items[items.length - 1];
-  const refText = latestAny ? `Catatan terakhirmu adalah tentang "${latestAny.summary}" pada ${latestAny.occurredAt}.` : "";
+  const refText = latestAny ? `Your most recent memory is "${latestAny.summary}" on ${latestAny.occurredAt}.` : "";
   return {
-    content: `Aku telah memeriksa catatanmu, namun belum menemukan detail khusus tentang hal itu. ${refText} Bagaimana harimu hari ini, ada yang ingin kamu bagikan atau renungkan bersama?`,
+    content: `I looked through your archive, but didn't find specific details about that yet. ${refText} How has your day been—is there something you'd like to share or reflect on together?`,
     modelUsed: "deterministic-fallback",
     latencyMs: 10,
   };

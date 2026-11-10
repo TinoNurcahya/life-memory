@@ -17,8 +17,8 @@ function TopicRow({ item, demo, memoriesError }: { item: TopicsRowData; demo: bo
       <div className={styles.rowIdentity}>
         <h2 id={nameId}>{topic.name}</h2>
         <div className={styles.rowContext}>
-          <span>{topic.activity_count} memori</span>
-          <span>{topic.last_seen_at ? "Terakhir " : ""}<time dateTime={topic.last_seen_at ?? undefined}>{formatTopicsDate(topic.last_seen_at)}</time></span>
+          <span>{topic.activity_count} {topic.activity_count === 1 ? "memory" : "memories"}</span>
+          <span>{topic.last_seen_at ? "Latest " : ""}<time dateTime={topic.last_seen_at ?? undefined}>{formatTopicsDate(topic.last_seen_at)}</time></span>
         </div>
       </div>
       <div className={styles.rowStory}>
@@ -26,8 +26,8 @@ function TopicRow({ item, demo, memoriesError }: { item: TopicsRowData; demo: bo
           <p className={styles.excerpt}>{latestMemory.summary}</p>
         ) : (
           <p className={styles.excerptEmpty}>{memoriesError || topic.activity_count > 0
-            ? "Cuplikan memori belum tersedia."
-            : "Belum ada memori selesai untuk topik ini."}</p>
+            ? "Memory excerpt unavailable."
+            : "No completed memories for this topic yet."}</p>
         )}
         <ArrowUpRight size={22} strokeWidth={1.5} aria-hidden="true" />
       </div>
@@ -54,35 +54,35 @@ export function TopicsDirectory({
         <header className={styles.intro}>
           <div className={styles.heading}>
             <h1>Topics</h1>
-            {!directoryError && <span>{topics.length} topik</span>}
+            {!directoryError && <span>{topics.length} {topics.length === 1 ? "topic" : "topics"}</span>}
           </div>
-          <p>Benang cerita dari catatan sehari-hari.</p>
+          <p>Themes and threads woven through your daily memories.</p>
         </header>
         {directoryError ? (
-          <TopicsFeedback>Daftar topik belum bisa dimuat. Coba muat ulang halaman ini.</TopicsFeedback>
+          <TopicsFeedback>The topics directory could not be loaded. Try reloading this page.</TopicsFeedback>
         ) : (
           <>
-            {memoriesError && <TopicsFeedback>Cuplikan memori belum bisa dimuat. Nama topik dan jumlah memori tetap tersedia.</TopicsFeedback>}
+            {memoriesError && <TopicsFeedback>Memory excerpts could not be loaded. Topic names and memory counts remain available.</TopicsFeedback>}
             {topics.length > 0 ? (
               <>
                 <div className={styles.toolbar}>
                   <div className={styles.search}>
-                    <label className="sr-only" htmlFor="topics-search">Cari topik</label>
+                    <label className="sr-only" htmlFor="topics-search">Search topics</label>
                     <Search size={18} aria-hidden="true" />
-                    <input id="topics-search" ref={searchInput} type="search" placeholder="Cari topik" value={query} onChange={event => setQuery(event.target.value)} />
-                    {query && <button type="button" aria-label="Hapus pencarian" onClick={clearSearch}><X size={17} aria-hidden="true" /></button>}
+                    <input id="topics-search" ref={searchInput} type="search" placeholder="Search topics…" value={query} onChange={event => setQuery(event.target.value)} />
+                    {query && <button type="button" aria-label="Clear search" onClick={clearSearch}><X size={17} aria-hidden="true" /></button>}
                   </div>
                   <label className={styles.sort}>
-                    <span className="sr-only">Urutkan topik</span>
+                    <span className="sr-only">Sort topics</span>
                     <select value={sort} onChange={event => setSort(event.target.value as TopicsSort)}>
-                      <option value="recent">Terbaru</option>
-                      <option value="name">Nama A–Z</option>
-                      <option value="count">Jumlah memori</option>
+                      <option value="recent">Most recent</option>
+                      <option value="name">Name A–Z</option>
+                      <option value="count">Most memories</option>
                     </select>
                   </label>
                 </div>
                 <p className={styles.resultCount} role="status" aria-live="polite">
-                  {query.trim() ? visible.length + " dari " + topics.length + " topik ditemukan" : "Berdasarkan memori yang sudah terjadi"}
+                  {query.trim() ? visible.length + " of " + topics.length + " topics found" : "Based on completed memories"}
                 </p>
                 {visible.length ? (
                   <div className={styles.directoryList}>
@@ -90,17 +90,17 @@ export function TopicsDirectory({
                   </div>
                 ) : (
                   <div className={styles.empty}>
-                    <h2>Topik itu belum ditemukan.</h2>
-                    <p>Coba kata lain dari nama topik yang kamu cari.</p>
-                    <button type="button" onClick={clearSearch}>Hapus pencarian</button>
+                    <h2>No matching topic found.</h2>
+                    <p>Try another word from the topic you are looking for.</p>
+                    <button type="button" onClick={clearSearch}>Clear search</button>
                   </div>
                 )}
               </>
             ) : (
               <div className={styles.empty}>
-                <h2>Belum ada topik yang tercatat.</h2>
-                <p>Topik yang disebut dalam memori selesai akan muncul di sini.</p>
-                <Link href={demo ? "/timeline?demo=jimmy" : "/timeline"}>Buka timeline <ArrowUpRight size={16} aria-hidden="true" /></Link>
+                <h2>No topics recorded yet.</h2>
+                <p>Topics mentioned in completed memories will appear here.</p>
+                <Link href={demo ? "/timeline?demo=jimmy" : "/timeline"}>Open timeline <ArrowUpRight size={16} aria-hidden="true" /></Link>
               </div>
             )}
           </>

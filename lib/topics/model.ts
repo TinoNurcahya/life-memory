@@ -9,8 +9,8 @@ export interface TopicsRowData {
 }
 
 export const TOPICS_CATEGORIES: Record<string, string> = {
-  career: "Karier", social: "Sosial", health: "Kesehatan", learning: "Belajar",
-  leisure: "Waktu luang", routine: "Rutinitas", other: "Lainnya",
+  career: "Career", social: "Social", health: "Health", learning: "Learning",
+  leisure: "Leisure", routine: "Routine", other: "Other",
 };
 
 function validDate(value: string | null | undefined) {
@@ -21,7 +21,7 @@ function validDate(value: string | null | undefined) {
 
 export function formatTopicsDate(value: string | null | undefined) {
   const date = validDate(value);
-  return date ? new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).format(date) : "Belum tercatat";
+  return date ? new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).format(date) : "Not recorded";
 }
 
 export function sortMemories(memories: TimelineItem[]) {
@@ -39,7 +39,7 @@ export function groupTopicsMemories(memories: TimelineItem[]) {
     const key = date ? memory.occurredAt.slice(0, 7) : "undated";
     const group = groups.get(key) ?? {
       key,
-      label: date ? new Intl.DateTimeFormat("id-ID", { month: "long", year: "numeric", timeZone: "UTC" }).format(date) : "Tanggal belum tercatat",
+      label: date ? new Intl.DateTimeFormat("en-GB", { month: "long", year: "numeric", timeZone: "UTC" }).format(date) : "Date not recorded",
       memories: [],
     };
     group.memories.push(memory);
@@ -69,7 +69,7 @@ export function buildTopicsData(directory: DirectoryEntity[], memories: Timeline
 }
 
 function fold(value: string) {
-  return value.normalize("NFKD").replace(/\p{M}/gu, "").toLocaleLowerCase("id-ID").trim();
+  return value.normalize("NFKD").replace(/\p{M}/gu, "").toLocaleLowerCase("en-GB").trim();
 }
 
 export function filterAndSortTopics(topics: TopicsRowData[], query: string, sort: TopicsSort) {
@@ -77,7 +77,7 @@ export function filterAndSortTopics(topics: TopicsRowData[], query: string, sort
   return topics.filter(({ topic }) => {
     return [topic.name, topic.normalized_name].some(value => fold(value).includes(term));
   }).sort((a, b) => {
-    const byName = a.topic.name.localeCompare(b.topic.name, "id-ID", { sensitivity: "base", numeric: true }) || a.topic.id.localeCompare(b.topic.id);
+    const byName = a.topic.name.localeCompare(b.topic.name, "en-GB", { sensitivity: "base", numeric: true }) || a.topic.id.localeCompare(b.topic.id);
     if (sort === "name") return byName;
     if (sort === "count") return b.topic.activity_count - a.topic.activity_count || byName;
     const aDate = validDate(a.topic.last_seen_at) ? a.topic.last_seen_at ?? "" : "";

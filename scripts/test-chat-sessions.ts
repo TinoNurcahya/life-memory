@@ -16,7 +16,7 @@ assert.ok(Array.isArray(sessionsData.sessions), "Response must return an array o
 assert.ok(sessionsData.sessions.length >= 1, "Must contain at least 1 pre-seeded demo session");
 assert.equal(
   sessionsData.sessions[0].title,
-  "Refleksi Kolaborasi Capstone & Ethan",
+  "Memories with Ethan",
   "Pre-seeded session title must match specification"
 );
 console.log(`   ✓ Pre-seeded session verified: "${sessionsData.sessions[0].title}" (${sessionsData.sessions[0].id})\n`);
@@ -27,14 +27,14 @@ const createRes = await fetch(`${baseUrl}/api/chat/sessions`, {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
-    title: "Diskusi Rencana Liburan",
+    title: "Holiday Planning Discussion",
     demo: "jimmy",
   }),
 });
 assert.equal(createRes.status, 200, "Create session must return 200 OK");
 const createData = await createRes.json();
 assert.ok(createData.success, "Session creation must be successful");
-assert.equal(createData.session.title, "Diskusi Rencana Liburan");
+assert.equal(createData.session.title, "Holiday Planning Discussion");
 console.log(`   ✓ New session created: "${createData.session.title}" (${createData.session.id})\n`);
 
 // 3. Verify POST /api/chat links with sessionId and returns within 5s
@@ -43,7 +43,7 @@ const chatRes = await fetch(`${baseUrl}/api/chat`, {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
-    message: "Kapan terakhir ketemu Ethan?",
+    message: "When did I last meet Ethan?",
     sessionId: createData.session.id,
     demo: "jimmy",
   }),

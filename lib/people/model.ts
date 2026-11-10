@@ -9,8 +9,8 @@ export interface PeopleCardData {
 }
 
 export const PEOPLE_CATEGORIES: Record<string, string> = {
-  career: "Karier", social: "Sosial", health: "Kesehatan", learning: "Belajar",
-  leisure: "Waktu luang", routine: "Rutinitas", other: "Lainnya",
+  career: "Career", social: "Social", health: "Health", learning: "Learning",
+  leisure: "Leisure", routine: "Routine", other: "Other",
 };
 
 function validDate(value: string | null | undefined) {
@@ -21,7 +21,7 @@ function validDate(value: string | null | undefined) {
 
 export function formatPeopleDate(value: string | null | undefined) {
   const date = validDate(value);
-  return date ? new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).format(date) : "Belum tercatat";
+  return date ? new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).format(date) : "Not recorded";
 }
 
 export function sortMemories(memories: TimelineItem[]) {
@@ -39,7 +39,7 @@ export function groupPeopleMemories(memories: TimelineItem[]) {
     const key = date ? memory.occurredAt.slice(0, 7) : "undated";
     const group = groups.get(key) ?? {
       key,
-      label: date ? new Intl.DateTimeFormat("id-ID", { month: "long", year: "numeric", timeZone: "UTC" }).format(date) : "Tanggal belum tercatat",
+      label: date ? new Intl.DateTimeFormat("en-GB", { month: "long", year: "numeric", timeZone: "UTC" }).format(date) : "Date not recorded",
       memories: [],
     };
     group.memories.push(memory);
@@ -69,7 +69,7 @@ export function buildPeopleData(directory: DirectoryEntity[], memories: Timeline
 }
 
 function fold(value: string) {
-  return value.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("id-ID").trim();
+  return value.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("en-GB").trim();
 }
 
 export function filterAndSortPeople(people: PeopleCardData[], query: string, sort: PeopleSort) {
@@ -78,7 +78,7 @@ export function filterAndSortPeople(people: PeopleCardData[], query: string, sor
     const aliases = "aliases" in person ? person.aliases ?? [] : [];
     return [person.name, person.normalized_name, ...aliases].some(value => fold(value).includes(term));
   }).sort((a, b) => {
-    const byName = a.person.name.localeCompare(b.person.name, "id-ID", { sensitivity: "base", numeric: true }) || a.person.id.localeCompare(b.person.id);
+    const byName = a.person.name.localeCompare(b.person.name, "en-GB", { sensitivity: "base", numeric: true }) || a.person.id.localeCompare(b.person.id);
     if (sort === "name") return byName;
     if (sort === "count") return b.person.activity_count - a.person.activity_count || byName;
     return (b.person.last_seen_at ?? "").localeCompare(a.person.last_seen_at ?? "") || byName;

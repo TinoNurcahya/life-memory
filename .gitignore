@@ -4,8 +4,9 @@
 .pnp.js
 .yarn/cache
 
-# testing
+# testing & local verification reports
 /coverage
+/reports/
 
 # next.js
 /.next/

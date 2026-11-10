@@ -34,7 +34,7 @@ const ActivityExtractionSchema = {
         properties: {
           summary: {
             type: "STRING",
-            description: "Concise summary of the activity in the user's primary language.",
+            description: "Concise summary of the activity in English.",
           },
           source_text: {
             type: "STRING",
@@ -156,7 +156,7 @@ Your responsibility is to analyze natural language micro-logs and extract discre
 ### RUNTIME CONTEXT:
 - reference_date: "${referenceDate}" (ISO format YYYY-MM-DD)
 - Strict rules:
-  1. Extract only explicitly stated facts. Do not invent emotions or unexpressed sentiment.
+  1. Extract only explicitly stated facts and write the summary in English. Do not invent emotions or unexpressed sentiment.
   2. Split multi-part sentences into separate discrete activities.
   3. Categorize into: career, social, health, learning, leisure, routine, other.
   4. Only mark is_first_time as true if explicitly stated ("pertama kali", "first time", "never before").

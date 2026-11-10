@@ -20,7 +20,7 @@ console.log(`   ✓ Formatted context length: ${memoryContext.length} characters
 
 // 2. Chat Response & Two-Way Introspective Persona Verification
 console.log("▶ [CHECK 2/2] Verifying Live Two-Way Introspective Journal Query…");
-const testQuery = "Kapan terakhir kali aku ketemu Ethan dan apa yang kita bicarakan?";
+const testQuery = "When was the last time I met Ethan and what did we talk about?";
 console.log(`   User Query: "${testQuery}"`);
 
 const start = Date.now();

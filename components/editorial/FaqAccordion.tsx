@@ -100,7 +100,7 @@ const FAQ_DATA: FaqItem[] = [
     category: "features",
     question: "Can I use the AI Chat to log new notes directly?",
     answer:
-      "Yes! When speaking with the AI in /chat, you can simply type 'Catat ini: ...' or click the 'Simpan ke Catatan' button beneath any assistant response. The AI will extract the entities and save it directly to your timeline without you needing to leave the chat.",
+      "Yes! When speaking with the AI in /chat, you can simply type 'Save this: ...' or click the 'Save as memory' button beneath any assistant response. The AI will extract the entities and save it directly to your timeline without you needing to leave the chat.",
   },
 ];
 

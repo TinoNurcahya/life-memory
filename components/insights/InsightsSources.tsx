@@ -30,7 +30,7 @@ export function InsightsSources({ insight, demo, onClose }: { insight: InsightVi
   }, []);
 
   return createPortal(
-    <dialog ref={dialog} data-insights-dialog lang="id" aria-labelledby="insights-source-title" aria-describedby="insights-source-description"
+    <dialog ref={dialog} data-insights-dialog lang="en" aria-labelledby="insights-source-title" aria-describedby="insights-source-description"
       className={["lm-vault-shell--dashboard", dashboardSans.variable, dashboardSerif.variable, styles.dialog].join(" ")}
       onCancel={event => { event.preventDefault(); onClose(); }}
       onClick={event => {
@@ -40,18 +40,18 @@ export function InsightsSources({ insight, demo, onClose }: { insight: InsightVi
       }}>
       <div className={styles.dialogLayout}>
         <header className={styles.dialogHeader}>
-          <p>Catatan sumber</p><button type="button" autoFocus aria-label="Tutup catatan sumber" onClick={onClose}><X size={22} aria-hidden="true" /></button>
+          <p>Source memories</p><button type="button" autoFocus aria-label="Close source memories" onClick={onClose}><X size={22} aria-hidden="true" /></button>
         </header>
         <div className={styles.dialogScroll}>
           <p className={styles.period}>{insight.period}</p>
           <h2 id="insights-source-title">{insight.label}</h2>
           <p id="insights-source-description" className={styles.dialogDescription}>{insight.description}</p>
-          <p className={styles.sourceCount}>{insight.evidence.length < insight.sourceCount ? `${insight.evidence.length} cuplikan dari ${insight.sourceCount} memori terkait` : `${insight.evidence.length} memori terkait`} · Terbaru dahulu</p>
+          <p className={styles.sourceCount}>{insight.evidence.length < insight.sourceCount ? `${insight.evidence.length} excerpts of ${insight.sourceCount} related memories` : `${insight.evidence.length} related ${insight.evidence.length === 1 ? "memory" : "memories"}`} · Newest first</p>
           {insight.evidence.length ? <ol className={styles.sourceList}>{insight.evidence.map(source => <li key={source.activityDetailId}>
             <time dateTime={source.occurredAt}>{formatInsightDate(source.occurredAt)}</time>
-            <blockquote>{source.snippet || "Cuplikan catatan belum tersedia."}</blockquote>
-            <Link href={insightTimelineHref(source.activityDetailId, demo)} data-insight-timeline onClick={onClose}>Buka di timeline <ArrowUpRight size={16} aria-hidden="true" /></Link>
-          </li>)}</ol> : <p className={styles.noSources}>Catatan sumber belum tersedia.</p>}
+            <blockquote>{source.snippet || "Memory excerpt unavailable."}</blockquote>
+            <Link href={insightTimelineHref(source.activityDetailId, demo)} data-insight-timeline onClick={onClose}>Open in timeline <ArrowUpRight size={16} aria-hidden="true" /></Link>
+          </li>)}</ol> : <p className={styles.noSources}>Source memories unavailable.</p>}
         </div>
       </div>
     </dialog>, document.body,

@@ -9,10 +9,10 @@ import { formatInsightDate } from "@/lib/insights/model";
 import { InsightsSources } from "./InsightsSources";
 import styles from "./Insights.module.css";
 
-const labels = { first_time: "Pertama tercatat", recurring: "Berulang", change: "Perubahan" };
+const labels = { first_time: "First recorded", recurring: "Recurring", change: "Changes" };
 type Filter = "all" | InsightView["type"];
 const filters: { value: Filter; label: string }[] = [
-  { value: "all", label: "Semua" },
+  { value: "all", label: "All" },
   { value: "first_time", label: labels.first_time },
   { value: "recurring", label: labels.recurring },
   { value: "change", label: labels.change },
@@ -33,32 +33,32 @@ export function InsightsClient({ model, error = null, demo = false }: { model: I
   const emptyKind = error && !model.insights.length ? "error" : !model.completedCount ? "archive" : !model.insights.length ? "patterns" : "filter";
 
   return (
-    <main className={styles.page} data-insights-page lang="id">
+    <main className={styles.page} data-insights-page lang="en">
       <header className={styles.intro}>
-        <div className={styles.heading}><h1>Insights</h1>{!error && <span>{model.insights.length} pola dalam catatan</span>}</div>
+        <div className={styles.heading}><h1>Insights</h1>{!error && <span>{model.insights.length} {model.insights.length === 1 ? "pattern in archive" : "patterns in archive"}</span>}</div>
         <div className={styles.introBottom}>
-          <p>Yang baru, yang berulang, dan yang berubah dalam arsipmu.</p>
+          <p>What is new, what repeats, and what shifts across your archive.</p>
           {model.completedCount > 0 && <div className={styles.coverage}>
-            <span>{model.completedCount} memori selesai{error ? " yang berhasil dimuat" : ""}</span>
+            <span>{model.completedCount} completed {model.completedCount === 1 ? "memory" : "memories"}{error ? " loaded" : ""}</span>
             <span>{formatInsightDate(model.firstDate)} — {formatInsightDate(model.lastDate)}</span>
           </div>}
         </div>
       </header>
 
-      {error && model.insights.length > 0 && <div className={styles.notice} role="alert"><p>{error}</p><button type="button" onClick={retry} disabled={pending}>{pending ? "Memuat…" : "Coba lagi"}</button></div>}
-      {model.omittedCount > 0 && <p className={styles.dataNote} data-insight-omitted>{model.omittedCount} catatan tidak dihitung karena datanya belum lengkap, tanggal tidak valid, atau merupakan duplikat.</p>}
+      {error && model.insights.length > 0 && <div className={styles.notice} role="alert"><p>{error}</p><button type="button" onClick={retry} disabled={pending}>{pending ? "Loading…" : "Try again"}</button></div>}
+      {model.omittedCount > 0 && <p className={styles.dataNote} data-insight-omitted>{model.omittedCount} {model.omittedCount === 1 ? "memory was" : "memories were"} omitted due to incomplete data, an invalid date, or duplication.</p>}
 
       {model.insights.length > 0 && <>
         <div className={styles.toolbar}>
-          <div className={styles.filters} role="group" aria-label="Jenis pola">
+          <div className={styles.filters} role="group" aria-label="Pattern type">
             {filters.map(option => <button type="button" key={option.value} data-insight-filter={option.value} aria-pressed={filter === option.value}
               onClick={() => { setFilter(option.value); setLimit(12); }}>
               {option.label}<span>{option.value === "all" ? model.insights.length : model.insights.filter(item => item.type === option.value).length}</span>
             </button>)}
           </div>
-          <label className={styles.sort}><span className={styles.srOnly}>Urutan pola</span><select data-insight-sort value={sort} onChange={event => { setSort(event.target.value); setLimit(12); }}><option value="newest">Terbaru</option><option value="oldest">Terlama</option></select></label>
+          <label className={styles.sort}><span className={styles.srOnly}>Sort patterns</span><select data-insight-sort value={sort} onChange={event => { setSort(event.target.value); setLimit(12); }}><option value="newest">Newest</option><option value="oldest">Oldest</option></select></label>
         </div>
-        <p className={styles.resultCount} role="status">{visible.length} dari {filtered.length} pola{filter !== "all" ? ` · ${labels[filter]}` : ""}</p>
+        <p className={styles.resultCount} role="status">{visible.length} of {filtered.length} {filtered.length === 1 ? "pattern" : "patterns"}{filter !== "all" ? ` · ${labels[filter]}` : ""}</p>
       </>}
 
       {visible.length > 0 ? <div className={styles.patterns}>
@@ -70,25 +70,25 @@ export function InsightsClient({ model, error = null, demo = false }: { model: I
           </div>
           <div className={styles.story}>
             <p className={styles.description}>{insight.description}</p>
-            {insight.comparison ? <div className={styles.comparison} aria-label="Perbandingan jumlah memori">
+            {insight.comparison ? <div className={styles.comparison} aria-label="Memory count comparison">
               {[{ label: insight.comparison.previousLabel, count: insight.comparison.previousCount }, { label: insight.comparison.currentLabel, count: insight.comparison.currentCount }].map((point, index) => <div key={index} className={styles.comparisonRow}>
-                <span>{point.label}</span><span className={styles.barTrack} aria-hidden="true"><span style={{ width: `${point.count / Math.max(1, insight.comparison!.previousCount, insight.comparison!.currentCount) * 100}%` }} /></span><strong>{point.count}<span className={styles.srOnly}> memori</span></strong>
+                <span>{point.label}</span><span className={styles.barTrack} aria-hidden="true"><span style={{ width: `${point.count / Math.max(1, insight.comparison!.previousCount, insight.comparison!.currentCount) * 100}%` }} /></span><strong>{point.count}<span className={styles.srOnly}> memories</span></strong>
               </div>)}
-              <p>Jumlah catatan per bulan; bulan terakhir bisa belum lengkap.</p>
+              <p>Monthly memory counts; the most recent month may still be in progress.</p>
             </div> : insight.evidence[0]?.snippet && <blockquote className={styles.excerpt}>{insight.evidence[0].snippet}</blockquote>}
-            <button type="button" className={styles.sourcesButton} data-insight-source onClick={() => setSelected(insight)} aria-label={`Buka catatan sumber untuk ${insight.label}, ${insight.period}`}>
-              <span>{insight.sourceCount} memori terkait</span><span>Lihat catatan <ArrowUpRight size={16} aria-hidden="true" /></span>
+            <button type="button" className={styles.sourcesButton} data-insight-source onClick={() => setSelected(insight)} aria-label={`Open source memories for ${insight.label}, ${insight.period}`}>
+              <span>{insight.sourceCount} related {insight.sourceCount === 1 ? "memory" : "memories"}</span><span>View memories <ArrowUpRight size={16} aria-hidden="true" /></span>
             </button>
           </div>
         </article>)}
       </div> : <section className={styles.empty} data-insight-empty={emptyKind} role={emptyKind === "error" ? "alert" : undefined}>
-        <h2>{emptyKind === "error" ? "Pola belum bisa ditampilkan" : emptyKind === "archive" ? "Cerita akan membentuk pola" : emptyKind === "patterns" ? "Belum ada pola yang cukup terlihat" : "Belum ada pola jenis ini"}</h2>
-        <p>{emptyKind === "error" ? error : emptyKind === "archive" ? "Pola akan muncul dari memori yang sudah selesai. Mulai dengan mencatat hari yang ingin kamu ingat." : emptyKind === "patterns" ? "Catatanmu sudah tersimpan. Pola berulang muncul saat hal yang sama tercatat setidaknya tiga kali dalam satu bulan. Pertama tercatat memerlukan 20 memori selesai dan catatan pertama yang berusia minimal 21 hari." : "Pilih jenis lain untuk membaca pola yang sudah tersedia."}</p>
-        {emptyKind === "error" ? <button type="button" onClick={retry} disabled={pending}>{pending ? "Memuat…" : "Coba lagi"}</button> : emptyKind === "filter" ? <button type="button" onClick={() => { setFilter("all"); setLimit(12); }}>Lihat semua pola</button> : <Link href={timelineHref}>Buka timeline <ArrowUpRight size={16} aria-hidden="true" /></Link>}
+        <h2>{emptyKind === "error" ? "Patterns could not be displayed" : emptyKind === "archive" ? "Stories will form patterns" : emptyKind === "patterns" ? "No patterns are visible yet" : "No patterns of this type yet"}</h2>
+        <p>{emptyKind === "error" ? error : emptyKind === "archive" ? "Patterns emerge from completed memories. Start by recording a day you want to remember." : emptyKind === "patterns" ? "Your memories are saved. Recurring patterns appear when the same entity is recorded at least three times in a month. First recorded patterns require 20 completed memories and an initial entry at least 21 days old." : "Select another filter to explore available patterns."}</p>
+        {emptyKind === "error" ? <button type="button" onClick={retry} disabled={pending}>{pending ? "Loading…" : "Try again"}</button> : emptyKind === "filter" ? <button type="button" onClick={() => { setFilter("all"); setLimit(12); }}>View all patterns</button> : <Link href={timelineHref}>Open timeline <ArrowUpRight size={16} aria-hidden="true" /></Link>}
       </section>}
 
-      {filtered.length > visible.length && <button type="button" className={styles.more} data-insight-more onClick={() => setLimit(value => value + 12)}>Tampilkan lebih banyak <ArrowDown size={16} aria-hidden="true" /></button>}
-      {model.insights.length > 0 && <p className={styles.footnote}>Pola merujuk pada yang tercatat di arsip. “Pertama tercatat” berarti kemunculan paling awal di sini.</p>}
+      {filtered.length > visible.length && <button type="button" className={styles.more} data-insight-more onClick={() => setLimit(value => value + 12)}>Show more <ArrowDown size={16} aria-hidden="true" /></button>}
+      {model.insights.length > 0 && <p className={styles.footnote}>Patterns reflect what is recorded in your archive. “First recorded” marks the earliest appearance here.</p>}
       {selected && <InsightsSources insight={selected} demo={demo} onClose={() => setSelected(null)} />}
     </main>
   );

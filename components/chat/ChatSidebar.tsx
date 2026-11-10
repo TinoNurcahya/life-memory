@@ -24,7 +24,7 @@ interface Props {
 function HistoryDialog({ sessions, activeSessionId, onSelectSession, onNewChat, onDeleteSession, onToggleOpen, busy, error, onRetry, deletingId }: Props) {
   const root = useRef<HTMLDivElement>(null);
   const [query, setQuery] = useState("");
-  const fold = (value: string) => value.normalize("NFKD").replace(/\p{M}/gu, "").toLocaleLowerCase("id-ID");
+  const fold = (value: string) => value.normalize("NFKD").replace(/\p{M}/gu, "").toLocaleLowerCase("en-GB");
   const visible = sessions.filter(session => fold(session.title).includes(fold(query.trim())))
     .sort((a, b) => (Date.parse(b.updatedAt) || 0) - (Date.parse(a.updatedAt) || 0) || a.id.localeCompare(b.id));
 
@@ -69,17 +69,17 @@ function HistoryDialog({ sessions, activeSessionId, onSelectSession, onNewChat, 
       onMouseDown={event => { if (event.target === event.currentTarget) onToggleOpen(); }}>
       <div ref={root} role="dialog" aria-modal="true" aria-labelledby="chat-history-title" className={styles.history} data-chat-history>
         <header className={styles.historyHeader}>
-          <h2 id="chat-history-title">Riwayat</h2>
-          <button type="button" className={styles.iconButton} onClick={onToggleOpen} aria-label="Tutup riwayat" data-chat-history-close><X size={20} aria-hidden="true" /></button>
+          <h2 id="chat-history-title">History</h2>
+          <button type="button" className={styles.iconButton} onClick={onToggleOpen} aria-label="Close history" data-chat-history-close><X size={20} aria-hidden="true" /></button>
         </header>
         <div className={styles.historyTools}>
-          <button type="button" className={styles.historyNew} disabled={busy} onClick={onNewChat}><Plus size={18} aria-hidden="true" /> Obrolan baru</button>
+          <button type="button" className={styles.historyNew} disabled={busy} onClick={onNewChat}><Plus size={18} aria-hidden="true" /> New chat</button>
           <label className={styles.historySearch}>
-            <Search size={17} aria-hidden="true" /><span className={styles.srOnly}>Cari percakapan</span>
-            <input type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="Cari percakapan" />
+            <Search size={17} aria-hidden="true" /><span className={styles.srOnly}>Search conversations</span>
+            <input type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="Search conversations" />
           </label>
         </div>
-        {error && <div className={styles.historyNotice} role="alert"><p>{error}</p>{onRetry && <button type="button" className={styles.textButton} onClick={onRetry} disabled={busy}>Coba lagi</button>}</div>}
+        {error && <div className={styles.historyNotice} role="alert"><p>{error}</p>{onRetry && <button type="button" className={styles.textButton} onClick={onRetry} disabled={busy}>Try again</button>}</div>}
         <div className={styles.historyScroll}>
           {visible.length ? <ul className={styles.sessionList}>
             {visible.map(session => {
@@ -88,17 +88,17 @@ function HistoryDialog({ sessions, activeSessionId, onSelectSession, onNewChat, 
                 <button type="button" className={styles.sessionSelect} disabled={busy} aria-current={session.id === activeSessionId ? "true" : undefined}
                   onClick={() => onSelectSession(session.id)} data-chat-session={session.id}>
                   <span>{session.title}</span>
-                  <time dateTime={Number.isNaN(date.getTime()) ? undefined : session.updatedAt}>{Number.isNaN(date.getTime()) ? "Tanggal belum tersedia" : new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short", year: "numeric" }).format(date)}</time>
+                  <time dateTime={Number.isNaN(date.getTime()) ? undefined : session.updatedAt}>{Number.isNaN(date.getTime()) ? "Date unavailable" : new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric" }).format(date)}</time>
                 </button>
                 <button type="button" className={styles.sessionDelete} disabled={busy || Boolean(deletingId)} onClick={() => onDeleteSession(session.id)}
-                  aria-label={(deletingId === session.id ? "Menghapus " : "Hapus percakapan ") + session.title} data-chat-delete={session.id}>
+                  aria-label={(deletingId === session.id ? "Deleting " : "Delete conversation ") + session.title} data-chat-delete={session.id}>
                   <Trash2 size={16} aria-hidden="true" />
                 </button>
               </li>;
             })}
-          </ul> : <div className={styles.historyEmpty}><p>{query ? "Percakapan tidak ditemukan." : "Belum ada percakapan tersimpan."}</p>{query && <button type="button" className={styles.textButton} onClick={() => { setQuery(""); root.current?.querySelector("input")?.focus(); }}>Hapus pencarian</button>}</div>}
+          </ul> : <div className={styles.historyEmpty}><p>{query ? "No conversations found." : "No saved conversations yet."}</p>{query && <button type="button" className={styles.textButton} onClick={() => { setQuery(""); root.current?.querySelector("input")?.focus(); }}>Clear search</button>}</div>}
         </div>
-        <p className={styles.historyCount} role="status">{query ? visible.length + " dari " : ""}{sessions.length} percakapan</p>
+        <p className={styles.historyCount} role="status">{query ? visible.length + " of " : ""}{sessions.length} {sessions.length === 1 && !query ? "conversation" : "conversations"}</p>
       </div>
     </div>, document.body,
   );

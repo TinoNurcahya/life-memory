@@ -24,20 +24,20 @@ export function PersonDetail({
   return (
     <VaultShell title={person.name} isDemo={demo}>
       <main className={[styles.page, styles.personPage].join(" ")} data-person-detail>
-        <Link href={"/people" + suffix} className={styles.backLink}><ArrowLeft size={16} aria-hidden="true" /> Semua orang</Link>
+        <Link href={"/people" + suffix} className={styles.backLink}><ArrowLeft size={16} aria-hidden="true" /> All people</Link>
         <header className={styles.personIntro}>
           <p className={styles.eyebrow}>People</p>
           <h1>{person.name}</h1>
-          {aliases.length > 0 && <p className={styles.aliases}>Juga tercatat sebagai {aliases.join(", ")}</p>}
+          {aliases.length > 0 && <p className={styles.aliases}>Also recorded as {aliases.join(", ")}</p>}
           <div className={styles.personStats}>
-            <span><strong>{person.activity_count}</strong> memori</span>
-            <span>Pertama tercatat <time dateTime={person.first_seen_at ?? undefined}>{formatPeopleDate(person.first_seen_at)}</time></span>
-            <span>Terakhir <time dateTime={person.last_seen_at ?? undefined}>{formatPeopleDate(person.last_seen_at)}</time></span>
+            <span><strong>{person.activity_count}</strong> {person.activity_count === 1 ? "memory" : "memories"}</span>
+            <span>First recorded <time dateTime={person.first_seen_at ?? undefined}>{formatPeopleDate(person.first_seen_at)}</time></span>
+            <span>Latest <time dateTime={person.last_seen_at ?? undefined}>{formatPeopleDate(person.last_seen_at)}</time></span>
           </div>
         </header>
 
         {memoriesError ? (
-          <PeopleFeedback>Memori orang ini belum bisa dimuat. Informasi orang tetap tersedia.</PeopleFeedback>
+          <PeopleFeedback>Memories for this person could not be loaded. Person details remain available.</PeopleFeedback>
         ) : groups.length ? (
           <div className={styles.monthGroups}>
             {groups.map(group => (
@@ -48,14 +48,14 @@ export function PersonDetail({
                     <article key={memory.id} className={styles.memory} data-person-memory={memory.id}>
                       <div className={styles.memoryMeta}>
                         <time dateTime={memory.occurredAt}>{formatPeopleDate(memory.occurredAt)}</time>
-                        <span>{PEOPLE_CATEGORIES[memory.category ?? "other"] ?? "Lainnya"}</span>
+                        <span>{PEOPLE_CATEGORIES[memory.category ?? "other"] ?? "Other"}</span>
                       </div>
                       <div className={styles.memoryContent} data-has-photo={Boolean(memory.imageUrls?.length)}>
                         {!!memory.imageUrls?.length && <PeoplePhoto images={memory.imageUrls} summary={memory.summary} date={formatPeopleDate(memory.occurredAt)} />}
                         <div className={styles.memoryCopy}>
                           <p className={styles.memorySummary}>{memory.summary}</p>
                           {memory.sourceText && memory.sourceText !== memory.summary && <blockquote className={styles.sourceText}>{memory.sourceText}</blockquote>}
-                          <Link href={"/timeline" + suffix + "#" + encodeURIComponent(memory.id)} className={styles.timelineLink}>Lihat di timeline <ArrowUpRight size={15} aria-hidden="true" /></Link>
+                          <Link href={"/timeline" + suffix + "#" + encodeURIComponent(memory.id)} className={styles.timelineLink}>View in timeline <ArrowUpRight size={15} aria-hidden="true" /></Link>
                         </div>
                       </div>
                     </article>
@@ -66,8 +66,8 @@ export function PersonDetail({
           </div>
         ) : (
           <div className={styles.empty}>
-            <h2>{person.activity_count ? "Cuplikan memori belum tersedia." : "Belum ada memori selesai."}</h2>
-            <p>Memori yang sudah terjadi dan menyebut {person.name} akan tampil di sini.</p>
+            <h2>{person.activity_count ? "Memory excerpts unavailable." : "No completed memories yet."}</h2>
+            <p>Completed memories mentioning {person.name} will appear here.</p>
           </div>
         )}
         <PeopleManagement person={person} candidates={candidates} demo={demo} />

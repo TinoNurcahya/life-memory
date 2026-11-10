@@ -36,16 +36,10 @@ const CLOSING_REFLECTIONS = [
   "I want to remember you.\n" +
   "*From now on, forever and ever.*",
 
-  "いつか、この景色が思い出に変わるその時、\n" +
-  "あなたは何を覚えていたいですか？ \n" +
-  "私はあなたを覚えていたい。\n" +
-  "*この先も、ずっと、ずっと。*",
-
-  "Suatu hari nanti, ketika pemandangan ini telah berubah menjadi kenangan,\n" +
-  "kira-kira apa yang ingin kamu ingat?\n" +
-  "Kalau aku,\n" +
-  "aku ingin mengingatmu.\n" +
-  "*Mulai dari sekarang, selalu, selamanya.*",
+  "Maybe it wasn’t the grand milestones,\n" +
+  "but the quiet afternoons in between.\n" +
+  "Write it down while the light is still warm.\n" +
+  "*Keep what matters.*",
 ];
 
 function ArchivePhoto({ src, alt, className = "", sizes = "(max-width: 767px) 90vw, 45vw" }: {

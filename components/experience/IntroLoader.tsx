@@ -90,7 +90,7 @@ export function IntroLoader({ onComplete }: { onComplete?: () => void }) {
       gsap.set(penTip, { opacity: 0 });
     }
 
-    // Inisialisasi garis kontur huruf (stroke) dan lapisan tinta (fill)
+    // Initialize letter contour strokes and ink fill layers
     strokeRefs.current.forEach((el, idx) => {
       if (!el) return;
       const len = el.getTotalLength() + 2;
@@ -127,23 +127,23 @@ export function IntroLoader({ onComplete }: { onComplete?: () => void }) {
       onComplete: finish,
     });
 
-    // Menghidupkan goresan pena kaligrafi yang menelusuri tiap huruf secara real-time
-    let currentTime = 0.2; // Waktu mulai pena
+    // Animate calligraphy pen stroke tracing each letter in real time
+    let currentTime = 0.2; // Pen start time
 
     strokeRefs.current.forEach((el, idx) => {
       if (!el) return;
       const len = el.getTotalLength() + 2;
-      const isCapital = idx === 0 || idx === 4; // 'L' dan 'M'
+      const isCapital = idx === 0 || idx === 4; // 'L' and 'M'
       const drawDuration = isCapital ? 0.32 : 0.2;
       const fillEl = fillRefs.current[idx];
 
-      // Progres penelusuran pena untuk huruf ini
+      // Pen tracking progress for this letter
       const tracker = { progress: 0 };
 
-      // 1. Munculkan kontur huruf tepat saat giliran pena
+      // 1. Reveal letter contour right when pen starts
       tl.set(el, { opacity: 1 }, currentTime);
 
-      // 2. Animasikan garis kontur huruf
+      // 2. Animate letter contour stroke
       tl.to(
         el,
         {
@@ -154,9 +154,9 @@ export function IntroLoader({ onComplete }: { onComplete?: () => void }) {
         currentTime
       );
 
-      // 3. Titik pena meluncur menelusuri koordinat garis huruf secara presisi
+      // 3. Pen tip glides precisely along letter path coordinates
       if (penTip) {
-        // Tampilkan pena pada titik awal huruf
+        // Show pen at start point of letter
         tl.add(() => {
           if (!active) return;
           const startPt = el.getPointAtLength(0);
@@ -187,7 +187,7 @@ export function IntroLoader({ onComplete }: { onComplete?: () => void }) {
         );
       }
 
-      // 4. Efek tinta meresap (Ink Bleed Diffusion) ke dalam badan huruf
+      // 4. Ink Bleed Diffusion effect into letter body
       if (fillEl) {
         tl.to(
           fillEl,
@@ -201,7 +201,7 @@ export function IntroLoader({ onComplete }: { onComplete?: () => void }) {
         );
       }
 
-      // 5. Garis kontur sedikit melembut menyatu dengan tinta solid
+      // 5. Contour stroke softens slightly into solid ink
       tl.to(
         el,
         {
@@ -212,12 +212,12 @@ export function IntroLoader({ onComplete }: { onComplete?: () => void }) {
         currentTime + drawDuration * 0.75
       );
 
-      // Jeda antar huruf (sedikit lebih renggang saat berpindah dari 'Life' ke 'Memory')
+      // Delay between letters (slightly wider when moving from 'Life' to 'Memory')
       const advance = idx === 3 ? 0.24 : 0.14;
       currentTime += advance;
     });
 
-    // 6. Titik pena memudar lembut setelah seluruh huruf selesai terlukis
+    // 6. Pen tip fades out gently after all letters are drawn
     if (penTip) {
       tl.to(
         penTip,
@@ -231,7 +231,7 @@ export function IntroLoader({ onComplete }: { onComplete?: () => void }) {
       );
     }
 
-    // 7. Subjudul muncul perlahan di bawah teks setelah semua huruf selesai terbentuk
+    // 7. Subtitle appears gently below text after all letters are formed
     if (subtitleRef.current) {
       tl.to(
         subtitleRef.current,
@@ -246,10 +246,10 @@ export function IntroLoader({ onComplete }: { onComplete?: () => void }) {
       );
     }
 
-    // 8. Jeda apresiasi membaca singkat (~0.7 detik)
+    // 8. Brief reading pause (~0.7s)
     tl.to({}, { duration: 0.7 });
 
-    // 9. Pemicu buka beranda
+    // 9. Trigger home reveal
     tl.add(() => {
       if (!introTriggered) {
         introTriggered = true;
@@ -257,7 +257,7 @@ export function IntroLoader({ onComplete }: { onComplete?: () => void }) {
       }
     });
 
-    // 10. Transisi keluar murni fade out halus
+    // 10. Smooth fade out exit transition
     if (containerRef.current) {
       tl.to(containerRef.current, {
         opacity: 0,
@@ -297,13 +297,13 @@ export function IntroLoader({ onComplete }: { onComplete?: () => void }) {
       aria-hidden="true"
     >
       <div className="relative flex flex-col items-center justify-center text-foreground px-4 w-full max-w-xl">
-        {/* SVG ViewBox presisi huruf-huruf Life Memory dengan filter tinta basah & ujung pena */}
+        {/* Precision SVG ViewBox for Life Memory letters with wet ink & pen tip filters */}
         <svg
           viewBox="50 50 420 85"
           className="w-full max-w-[480px] md:max-w-[540px] h-auto overflow-visible"
         >
           <defs>
-            {/* Filter aura pendaran lembut ujung pena */}
+            {/* Soft glow aura filter for pen tip */}
             <filter id="pen-tip-aura" x="-100%" y="-100%" width="300%" height="300%">
               <feGaussianBlur stdDeviation="1.8" result="glow" />
               <feMerge>
@@ -312,7 +312,7 @@ export function IntroLoader({ onComplete }: { onComplete?: () => void }) {
               </feMerge>
             </filter>
 
-            {/* Filter difusi tinta meresap ke serat kertas (Ink Bleed) */}
+            {/* Ink Bleed diffusion filter into paper fibers */}
             <filter id="ink-bleed-diffusion" x="-20%" y="-20%" width="140%" height="140%">
               <feGaussianBlur in="SourceGraphic" stdDeviation="0.45" result="blur" />
               <feColorMatrix
@@ -328,7 +328,7 @@ export function IntroLoader({ onComplete }: { onComplete?: () => void }) {
             </filter>
           </defs>
 
-          {/* Lapisan 1: Pengisian Tinta Meresap Organik (Ink Bleed Fill) */}
+          {/* Layer 1: Organic Ink Bleed Fill */}
           {LETTER_PATHS.map((item, idx) => (
             <path
               key={`fill-${item.char}-${idx}`}
@@ -342,7 +342,7 @@ export function IntroLoader({ onComplete }: { onComplete?: () => void }) {
             />
           ))}
 
-          {/* Lapisan 2: Garis Kontur Gambar Huruf (Drawing Stroke) */}
+          {/* Layer 2: Letter Drawing Contour Stroke */}
           {LETTER_PATHS.map((item, idx) => (
             <path
               key={`stroke-${item.char}-${idx}`}
@@ -358,21 +358,21 @@ export function IntroLoader({ onComplete }: { onComplete?: () => void }) {
             />
           ))}
 
-          {/* Titik Ujung Pena Real-Time (Leading Pen Tip) */}
+          {/* Real-Time Leading Pen Tip */}
           <g
             ref={penTipRef}
             style={{ willChange: "transform, opacity", pointerEvents: "none" }}
           >
-            {/* Pendaran aura luar monokrom halus */}
+            {/* Subtle monochrome outer aura glow */}
             <circle r="4.8" fill="currentColor" opacity="0.25" filter="url(#pen-tip-aura)" />
-            {/* Inti tinta pekat ujung pena */}
+            {/* Dense ink core at pen tip */}
             <circle r="2.2" fill="currentColor" opacity="0.9" />
-            {/* Pantulan mikro kilau tinta cair */}
+            {/* Micro liquid ink specular highlight */}
             <circle cx="-0.6" cy="-0.6" r="0.7" fill="var(--color-canvas)" opacity="0.85" />
           </g>
         </svg>
 
-        {/* Subjudul muncul lembut di bawah huruf-huruf yang telah terbentuk */}
+        {/* Subtitle appears gently below formed letters */}
         <p
           ref={subtitleRef}
           className="mt-3 font-mono text-[10px] md:text-[11px] uppercase text-muted tracking-[0.2em]"

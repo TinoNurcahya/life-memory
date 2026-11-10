@@ -48,18 +48,18 @@ export function SettingsClient({ user, isDemo = false }: SettingsClientProps) {
         if (typeof window !== "undefined") {
           sessionStorage.removeItem("extra_demo_memories");
         }
-        toast.success("Keluar dari mode demo.");
+        toast.success("Exited demo mode.");
         router.push("/");
         return;
       }
 
       const supabase = createClient();
       await supabase.auth.signOut();
-      toast.success("Berhasil keluar dari akun.");
+      toast.success("Signed out successfully.");
       router.push("/");
       router.refresh();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Gagal logout.");
+      toast.error(err instanceof Error ? err.message : "Failed to sign out.");
     } finally {
       setIsLoggingOut(false);
     }

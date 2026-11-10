@@ -18,13 +18,13 @@ interface DayInspectorDrawerProps {
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
-  career: "Karier",
-  social: "Sosial",
-  health: "Kesehatan",
-  learning: "Belajar",
-  leisure: "Waktu luang",
-  routine: "Rutinitas",
-  other: "Lainnya",
+  career: "Career",
+  social: "Social",
+  health: "Health",
+  learning: "Learning",
+  leisure: "Leisure",
+  routine: "Routine",
+  other: "Other",
 };
 
 const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -142,11 +142,11 @@ function DayInspectorPanel({ onClose, date, items, demo = false }: Omit<DayInspe
   const parsedDate = date ? new Date(`${date}T00:00:00Z`) : null;
   const validDate = parsedDate && !Number.isNaN(parsedDate.getTime());
   const formattedDate = validDate
-    ? new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(parsedDate)
-    : date || "Memori harian";
+    ? new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(parsedDate)
+    : date || "Daily memories";
   const weekday = validDate
-    ? new Intl.DateTimeFormat("id-ID", { weekday: "long", timeZone: "UTC" }).format(parsedDate)
-    : "Catatan harian";
+    ? new Intl.DateTimeFormat("en-GB", { weekday: "long", timeZone: "UTC" }).format(parsedDate)
+    : "Daily archive";
   const totalPhotos = items.reduce((total, item) => total + (item.imageUrls?.length ?? 0), 0);
   const linkSuffix = demo ? "?demo=jimmy" : "";
 
@@ -172,13 +172,13 @@ function DayInspectorPanel({ onClose, date, items, demo = false }: Omit<DayInspe
       >
         <header className={styles.header}>
           <div>
-            <p className={styles.eyebrow}>Memori harian <span aria-hidden="true">/</span> {weekday}</p>
+            <p className={styles.eyebrow}>Daily memories <span aria-hidden="true">/</span> {weekday}</p>
             <h2 id={titleId} className={styles.title}>{formattedDate}</h2>
             <p id={summaryId} className={styles.daySummary}>
-              {items.length} memori <span aria-hidden="true">·</span> {totalPhotos} foto
+              {items.length} {items.length === 1 ? "memory" : "memories"} <span aria-hidden="true">·</span> {totalPhotos} {totalPhotos === 1 ? "photo" : "photos"}
             </p>
           </div>
-          <button ref={closeButtonRef} type="button" onClick={onClose} className={styles.close} aria-label="Tutup memori harian">
+          <button ref={closeButtonRef} type="button" onClick={onClose} className={styles.close} aria-label="Close daily memories">
             <X size={21} strokeWidth={1.5} aria-hidden="true" />
           </button>
         </header>
@@ -186,8 +186,8 @@ function DayInspectorPanel({ onClose, date, items, demo = false }: Omit<DayInspe
         <div className={styles.content}>
           {items.length === 0 ? (
             <div className={styles.empty}>
-              <p>Belum ada memori di hari ini.</p>
-              <span>Catatan yang kamu simpan untuk tanggal ini akan muncul di sini.</span>
+              <p>No memories on this day yet.</p>
+              <span>Memories you record for this date will appear here.</span>
             </div>
           ) : items.map((item, itemIndex) => {
             const images = item.imageUrls ?? [];
@@ -195,11 +195,11 @@ function DayInspectorPanel({ onClose, date, items, demo = false }: Omit<DayInspe
               <article key={item.id} className={styles.memory}>
                 <div className={styles.metadata}>
                   <span className={styles.memoryNumber}>{String(itemIndex + 1).padStart(2, "0")}</span>
-                  <span>{CATEGORY_LABELS[item.category ?? "other"] ?? "Lainnya"}</span>
+                  <span>{CATEGORY_LABELS[item.category ?? "other"] ?? "Other"}</span>
                   {item.timeHint && <span>{item.timeHint}</span>}
-                  {item.isFirstTime && <span>Pertama kali</span>}
-                  {item.eventStatus === "planned" && <span>Direncanakan</span>}
-                  {item.eventStatus === "cancelled" && <span>Dibatalkan</span>}
+                  {item.isFirstTime && <span>First time</span>}
+                  {item.eventStatus === "planned" && <span>Planned</span>}
+                  {item.eventStatus === "cancelled" && <span>Cancelled</span>}
                 </div>
 
                 {images.length > 0 && (
@@ -209,7 +209,7 @@ function DayInspectorPanel({ onClose, date, items, demo = false }: Omit<DayInspe
                         key={`${item.id}-photo-${imageIndex}`}
                         type="button"
                         className={styles.photo}
-                        aria-label={`Buka foto ${imageIndex + 1} dari ${images.length}: ${item.summary}`}
+                        aria-label={`Open photo ${imageIndex + 1} of ${images.length}: ${item.summary}`}
                         aria-haspopup="dialog"
                         onClick={(event) => {
                           photoTriggerRef.current = event.currentTarget;
@@ -217,8 +217,8 @@ function DayInspectorPanel({ onClose, date, items, demo = false }: Omit<DayInspe
                         }}
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={src} alt={item.summary || `Foto memori ${imageIndex + 1}`} loading="lazy" />
-                        {imageIndex === 3 && images.length > 4 && <span className={styles.morePhotos}>+{images.length - 4} foto</span>}
+                        <img src={src} alt={item.summary || `Memory photo ${imageIndex + 1}`} loading="lazy" />
+                        {imageIndex === 3 && images.length > 4 && <span className={styles.morePhotos}>+{images.length - 4} photos</span>}
                       </button>
                     ))}
                   </div>
@@ -236,7 +236,7 @@ function DayInspectorPanel({ onClose, date, items, demo = false }: Omit<DayInspe
                 )}
 
                 <Link className={styles.timelineLink} href={`/timeline${linkSuffix}#${item.id}`} onClick={onClose}>
-                  Lihat di timeline <ArrowUpRight size={14} aria-hidden="true" />
+                  View in timeline <ArrowUpRight size={14} aria-hidden="true" />
                 </Link>
               </article>
             );
@@ -244,8 +244,8 @@ function DayInspectorPanel({ onClose, date, items, demo = false }: Omit<DayInspe
         </div>
 
         <footer className={styles.footer}>
-          <span>Semua memori pada tanggal ini.</span>
-          <button type="button" onClick={onClose}>Selesai</button>
+          <span>All memories from this date.</span>
+          <button type="button" onClick={onClose}>Done</button>
         </footer>
       </aside>
 
@@ -258,7 +258,7 @@ function DayInspectorPanel({ onClose, date, items, demo = false }: Omit<DayInspe
             onClose={closeLightbox}
             caption={lightbox.item.summary}
             date={`${weekday}, ${formattedDate}`}
-            labels={{ close: "Tutup foto", previous: "Foto sebelumnya", next: "Foto selanjutnya", openImage: "Buka gambar penuh" }}
+            labels={{ close: "Close photo", previous: "Previous photo", next: "Next photo", openImage: "Open full image" }}
           />
         </div>
       )}

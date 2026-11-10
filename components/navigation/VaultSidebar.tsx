@@ -130,16 +130,16 @@ export function VaultSidebar({
         if (typeof window !== "undefined") {
           sessionStorage.removeItem("extra_demo_memories");
         }
-        toast.success("Keluar dari mode demo.");
+        toast.success("Exited demo mode.");
         router.push("/");
         return;
       }
       const supabase = createClient();
       await supabase.auth.signOut();
-      toast.success("Berhasil keluar dari akun.");
+      toast.success("Signed out successfully.");
       router.push("/");
     } catch {
-      toast.error("Gagal keluar dari akun.");
+      toast.error("Failed to sign out.");
     }
   };
 

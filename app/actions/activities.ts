@@ -106,7 +106,7 @@ export async function getOrGenerateMonthlyReflection(
     const { getReflectionData } = await import("@/lib/queries/reflection");
     const result = await getReflectionData(targetMonth, isDemo);
     if (result.error) return { success: false, error: result.error, code: "DATABASE_ERROR" };
-    if (!result.essay) return { success: false, error: "Belum ada memori selesai pada bulan ini.", code: "NOT_FOUND" };
+    if (!result.essay) return { success: false, error: "There are no completed memories for this month yet.", code: "NOT_FOUND" };
     return { success: true, data: result.essay };
   }
   const { generateReflection } = await import("@/app/actions/reflection");

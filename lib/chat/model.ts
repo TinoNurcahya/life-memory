@@ -60,7 +60,7 @@ export function chatHref(demo: boolean, sessionId?: string | null, newChat = fal
 export function formatChatTime(value: string) {
   const date = new Date(value);
   return Number.isFinite(date.getTime())
-    ? new Intl.DateTimeFormat("id-ID", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Jakarta" }).format(date)
+    ? new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "Asia/Jakarta" }).format(date)
     : "";
 }
 
@@ -69,12 +69,12 @@ export function buildDemoChat(items: TimelineItem[]) {
     .sort((a, b) => b.occurredAt.localeCompare(a.occurredAt) || b.id.localeCompare(a.id))[0];
   if (!latest) return { sessions: [] as ChatSessionSummary[], messages: [] as MessageItem[] };
   const createdAt = latest.occurredAt + "T09:00:00.000Z";
-  const date = new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(createdAt));
+  const date = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(createdAt));
   return {
-    sessions: [{ id: "demo-session-ethan", title: "Catatan bersama Ethan", updatedAt: createdAt }],
+    sessions: [{ id: "demo-session-ethan", title: "Memories with Ethan", updatedAt: createdAt }],
     messages: [
-      { id: "demo-msg-1", role: "user" as const, content: "Apa catatan terbaruku bersama Ethan?", createdAt },
-      { id: "demo-msg-2", role: "assistant" as const, content: "Catatan terbaru yang menyebut Ethan bertanggal **" + date + "**:\n\n> " + latest.summary + "\n\nApa yang ingin kamu ingat dari momen itu?", createdAt },
+      { id: "demo-msg-1", role: "user" as const, content: "What is my latest memory with Ethan?", createdAt },
+      { id: "demo-msg-2", role: "assistant" as const, content: "Your latest memory mentioning Ethan is dated **" + date + "**:\n\n> " + latest.summary + "\n\nWhat would you like to remember from that moment?", createdAt },
     ],
   };
 }

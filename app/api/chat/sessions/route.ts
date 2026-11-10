@@ -21,7 +21,7 @@ export async function GET(request: Request) {
           {
             id: "demo-session-ethan",
             user_id: "demo",
-            title: "Refleksi Kolaborasi Capstone & Ethan",
+            title: "Memories with Ethan",
             created_at: new Date(Date.now() - 3600000 * 2).toISOString(),
             updated_at: new Date(Date.now() - 3600000 * 2).toISOString(),
           },
@@ -58,7 +58,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid input" }, { status: 400 });
     }
 
-    const { title = "Percakapan Baru", demo } = parsed.data;
+    const { title = "New Conversation", demo } = parsed.data;
     const isDemo = demo === "jimmy";
 
     if (isDemo) {

@@ -9,8 +9,8 @@ export interface PlacesCardData {
 }
 
 export const PLACES_CATEGORIES: Record<string, string> = {
-  career: "Karier", social: "Sosial", health: "Kesehatan", learning: "Belajar",
-  leisure: "Waktu luang", routine: "Rutinitas", other: "Lainnya",
+  career: "Career", social: "Social", health: "Health", learning: "Learning",
+  leisure: "Leisure", routine: "Routine", other: "Other",
 };
 
 function validDate(value: string | null | undefined) {
@@ -21,7 +21,7 @@ function validDate(value: string | null | undefined) {
 
 export function formatPlacesDate(value: string | null | undefined) {
   const date = validDate(value);
-  return date ? new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).format(date) : "Belum tercatat";
+  return date ? new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).format(date) : "Not recorded";
 }
 
 export function sortMemories(memories: TimelineItem[]) {
@@ -39,7 +39,7 @@ export function groupPlacesMemories(memories: TimelineItem[]) {
     const key = date ? memory.occurredAt.slice(0, 7) : "undated";
     const group = groups.get(key) ?? {
       key,
-      label: date ? new Intl.DateTimeFormat("id-ID", { month: "long", year: "numeric", timeZone: "UTC" }).format(date) : "Tanggal belum tercatat",
+      label: date ? new Intl.DateTimeFormat("en-GB", { month: "long", year: "numeric", timeZone: "UTC" }).format(date) : "Date not recorded",
       memories: [],
     };
     group.memories.push(memory);
@@ -69,7 +69,7 @@ export function buildPlacesData(directory: DirectoryEntity[], memories: Timeline
 }
 
 function fold(value: string) {
-  return value.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("id-ID").trim();
+  return value.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("en-GB").trim();
 }
 
 export function filterAndSortPlaces(places: PlacesCardData[], query: string, sort: PlacesSort) {
@@ -78,7 +78,7 @@ export function filterAndSortPlaces(places: PlacesCardData[], query: string, sor
     const aliases = "aliases" in place ? place.aliases ?? [] : [];
     return [place.name, place.normalized_name, ...aliases].some(value => fold(value).includes(term));
   }).sort((a, b) => {
-    const byName = a.place.name.localeCompare(b.place.name, "id-ID", { sensitivity: "base", numeric: true }) || a.place.id.localeCompare(b.place.id);
+    const byName = a.place.name.localeCompare(b.place.name, "en-GB", { sensitivity: "base", numeric: true }) || a.place.id.localeCompare(b.place.id);
     if (sort === "name") return byName;
     if (sort === "count") return b.place.activity_count - a.place.activity_count || byName;
     const aDate = validDate(a.place.last_seen_at) ? a.place.last_seen_at! : "";

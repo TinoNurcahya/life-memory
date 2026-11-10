@@ -11,9 +11,9 @@ export async function loadInsightsData(
   try {
     const archive = await loader();
     items = archive.items;
-    if (archive.error) error = "Sebagian arsip belum berhasil dimuat. Pola yang terlihat mungkin belum lengkap.";
+    if (archive.error) error = "Part of your archive could not be loaded. Visible patterns may be incomplete.";
   } catch {
-    error = "Arsip belum berhasil dimuat. Coba lagi untuk melihat polanya.";
+    error = "Your archive could not be loaded. Try again to view your patterns.";
   }
   const activities = items.map(item => ({
     id: item.id, occurredAt: item.occurredAt, category: item.category, eventStatus: item.eventStatus,

@@ -14,14 +14,14 @@ interface VisualCalendarProps {
 }
 
 const CATEGORIES = [
-  { key: "all", label: "Semua kategori" },
-  { key: "career", label: "Karier" },
-  { key: "social", label: "Sosial" },
-  { key: "health", label: "Kesehatan" },
-  { key: "learning", label: "Belajar" },
-  { key: "leisure", label: "Waktu luang" },
-  { key: "routine", label: "Rutinitas" },
-  { key: "other", label: "Lainnya" },
+  { key: "all", label: "All categories" },
+  { key: "career", label: "Career" },
+  { key: "social", label: "Social" },
+  { key: "health", label: "Health" },
+  { key: "learning", label: "Learning" },
+  { key: "leisure", label: "Leisure" },
+  { key: "routine", label: "Routine" },
+  { key: "other", label: "Other" },
 ];
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -35,8 +35,8 @@ const CATEGORY_COLORS: Record<string, string> = {
 };
 
 const WEEKDAYS = [
-  ["Sen", "Senin"], ["Sel", "Selasa"], ["Rab", "Rabu"], ["Kam", "Kamis"],
-  ["Jum", "Jumat"], ["Sab", "Sabtu"], ["Min", "Minggu"],
+  ["Mon", "Monday"], ["Tue", "Tuesday"], ["Wed", "Wednesday"], ["Thu", "Thursday"],
+  ["Fri", "Friday"], ["Sat", "Saturday"], ["Sun", "Sunday"],
 ];
 
 function localDateKey(date: Date) {
@@ -121,7 +121,7 @@ export function VisualCalendar({ initialItems, demo = false, initialToday }: Vis
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const monthDate = new Date(viewMonth.year, viewMonth.month, 1);
-  const monthName = new Intl.DateTimeFormat("id-ID", { month: "long" }).format(monthDate);
+  const monthName = new Intl.DateTimeFormat("en-GB", { month: "long" }).format(monthDate);
   const monthLabel = monthName + " " + viewMonth.year;
 
   const itemsByDate = useMemo(() => {
@@ -139,7 +139,7 @@ export function VisualCalendar({ initialItems, demo = false, initialToday }: Vis
     const offset = (new Date(viewMonth.year, viewMonth.month, 1).getDay() + 6) % 7;
     const daysInMonth = new Date(viewMonth.year, viewMonth.month + 1, 0).getDate();
     const count = Math.ceil((offset + daysInMonth) / 7) * 7;
-    const dateFormatter = new Intl.DateTimeFormat("id-ID", {
+    const dateFormatter = new Intl.DateTimeFormat("en-GB", {
       weekday: "long", day: "numeric", month: "long", year: "numeric",
     });
     return Array.from({ length: count }, (_, index) => {
@@ -181,27 +181,27 @@ export function VisualCalendar({ initialItems, demo = false, initialToday }: Vis
     });
   }
 
-  if (!todayString) return <p role="status">Memuat kalender…</p>;
+  if (!todayString) return <p role="status">Loading calendar…</p>;
 
   return (
     <div className={styles.calendar}>
       <div className={styles.topline}>
-        <p className={styles.eyebrow}>Arsip bulanan</p>
+        <p className={styles.eyebrow}>Monthly archive</p>
         <Link href={demo ? "/timeline?demo=jimmy" : "/timeline"} className={styles.timelineLink}>
-          Lihat timeline <ArrowUpRight size={16} aria-hidden="true" />
+          View timeline <ArrowUpRight size={16} aria-hidden="true" />
         </Link>
       </div>
 
       <header className={styles.masthead}>
-        <h1 className={styles.title} aria-label={"Kalender " + monthLabel}>
+        <h1 className={styles.title} aria-label={"Calendar " + monthLabel}>
           <span className={styles.monthName}>{monthName}</span>
           <span className={styles.year}>{viewMonth.year}</span>
         </h1>
-        <nav className={styles.monthNavigation} aria-label="Navigasi bulan">
-          <button type="button" onClick={() => changeMonth(-1)} aria-label="Bulan sebelumnya">
+        <nav className={styles.monthNavigation} aria-label="Month navigation">
+          <button type="button" onClick={() => changeMonth(-1)} aria-label="Previous month">
             <ChevronLeft size={21} aria-hidden="true" />
           </button>
-          <button type="button" onClick={() => changeMonth(1)} aria-label="Bulan berikutnya">
+          <button type="button" onClick={() => changeMonth(1)} aria-label="Next month">
             <ChevronRight size={21} aria-hidden="true" />
           </button>
         </nav>
@@ -210,9 +210,9 @@ export function VisualCalendar({ initialItems, demo = false, initialToday }: Vis
       <div className={styles.toolbar}>
         <p className={styles.summary} aria-live="polite" aria-atomic="true">
           <span className="sr-only">{monthLabel + ". "}</span>
-          <span><strong>{monthStats.memories}</strong> memori</span>
-          <span><strong>{monthStats.activeDays}</strong> hari terisi</span>
-          <span><strong>{monthStats.photos}</strong> foto</span>
+          <span><strong>{monthStats.memories}</strong> {monthStats.memories === 1 ? "memory" : "memories"}</span>
+          <span><strong>{monthStats.activeDays}</strong> active {monthStats.activeDays === 1 ? "day" : "days"}</span>
+          <span><strong>{monthStats.photos}</strong> {monthStats.photos === 1 ? "photo" : "photos"}</span>
         </p>
         <div className={styles.tools}>
           <button
@@ -220,10 +220,10 @@ export function VisualCalendar({ initialItems, demo = false, initialToday }: Vis
             className={styles.todayButton}
             onClick={() => setRequestedMonth(null)}
           >
-            Hari ini
+            Today
           </button>
           <label className={styles.categoryFilter}>
-            <span className="sr-only">Filter kategori</span>
+            <span className="sr-only">Filter category</span>
             <select value={selectedCategory} onChange={(event) => setSelectedCategory(event.target.value)}>
               {CATEGORIES.map((category) => <option key={category.key} value={category.key}>{category.label}</option>)}
             </select>
@@ -233,12 +233,12 @@ export function VisualCalendar({ initialItems, demo = false, initialToday }: Vis
 
       {monthStats.memories === 0 && (
         <p className={styles.emptyMonth} role="status">
-          {selectedCategory === "all" ? "Belum ada memori di bulan ini." : "Belum ada memori untuk kategori ini di bulan " + monthName + "."}
-          {selectedCategory !== "all" && <button type="button" onClick={() => setSelectedCategory("all")}>Lihat semua kategori</button>}
+          {selectedCategory === "all" ? "No memories in this month yet." : "No memories for this category in " + monthName + "."}
+          {selectedCategory !== "all" && <button type="button" onClick={() => setSelectedCategory("all")}>View all categories</button>}
         </p>
       )}
 
-      <section aria-label={"Kalender " + monthLabel} className={styles.sheet} data-calendar-grid>
+      <section aria-label={"Calendar " + monthLabel} className={styles.sheet} data-calendar-grid>
         <div className={styles.weekdays} aria-hidden="true">
           {WEEKDAYS.map(([short, full]) => (
             <div key={short}>
@@ -264,7 +264,7 @@ export function VisualCalendar({ initialItems, demo = false, initialToday }: Vis
                 type="button"
                 className={className}
                 data-calendar-date={cell.date}
-                aria-label={cell.label + ", " + cell.items.length + " memori" + (hasPhotos ? ", " + cell.photos.length + " foto" : "")}
+                aria-label={cell.label + ", " + cell.items.length + " " + (cell.items.length === 1 ? "memory" : "memories") + (hasPhotos ? ", " + cell.photos.length + " " + (cell.photos.length === 1 ? "photo" : "photos") : "")}
                 aria-current={cell.isToday ? "date" : undefined}
                 aria-haspopup="dialog"
                 aria-expanded={isSelected}
@@ -278,7 +278,7 @@ export function VisualCalendar({ initialItems, demo = false, initialToday }: Vis
                 )}
                 <span className={styles.dayTop} aria-hidden="true">
                   <span className={styles.dateNumber}>{cell.dayNumber}</span>
-                  {cell.isToday && <span className={styles.todayLabel}>Hari ini</span>}
+                  {cell.isToday && <span className={styles.todayLabel}>Today</span>}
                 </span>
                 {!hasPhotos && cell.items.length > 0 && (
                   <span className={styles.noteExcerpt} aria-hidden="true">{cell.items[0].summary}</span>
@@ -295,9 +295,9 @@ export function VisualCalendar({ initialItems, demo = false, initialToday }: Vis
                     {cell.items.length > 4 && <span className={styles.moreItems}>+{cell.items.length - 4}</span>}
                   </span>
                   {cell.photos.length > 1 ? (
-                    <span className={styles.photoCount}>+{cell.photos.length - 1}<span className={styles.countLabel}> foto</span></span>
+                    <span className={styles.photoCount}>+{cell.photos.length - 1}<span className={styles.countLabel}> photos</span></span>
                   ) : cell.items.length > 1 ? (
-                    <span className={styles.memoryCount}>{cell.items.length}<span className={styles.countLabel}> memori</span></span>
+                    <span className={styles.memoryCount}>{cell.items.length}<span className={styles.countLabel}> memories</span></span>
                   ) : null}
                 </span>
               </button>
@@ -307,7 +307,7 @@ export function VisualCalendar({ initialItems, demo = false, initialToday }: Vis
       </section>
 
       <footer className={styles.footer}>
-        <span>Pilih tanggal untuk melihat semua memori hari itu.</span>
+        <span>Select a date to view all memories from that day.</span>
       </footer>
 
       <DayInspectorDrawer

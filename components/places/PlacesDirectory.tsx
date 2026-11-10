@@ -17,7 +17,7 @@ function PlaceCard({ item, demo, memoriesError }: { item: PlacesCardData; demo: 
       className={styles.card} aria-labelledby={nameId} data-place-card={place.id}>
       <figure className={styles.cardVisual}>
         <PlacesCover memory={latestMemory} unavailable={memoriesError || (!latestMemory && place.activity_count > 0)} />
-        {latestMemory && <figcaption className={styles.coverCaption}>Memori · <time dateTime={latestMemory.occurredAt}>{formatPlacesDate(latestMemory.occurredAt)}</time></figcaption>}
+        {latestMemory && <figcaption className={styles.coverCaption}>Memory · <time dateTime={latestMemory.occurredAt}>{formatPlacesDate(latestMemory.occurredAt)}</time></figcaption>}
       </figure>
       <div className={styles.cardBody}>
         <div className={styles.cardHeading}>
@@ -25,8 +25,8 @@ function PlaceCard({ item, demo, memoriesError }: { item: PlacesCardData; demo: 
           <ArrowUpRight size={23} strokeWidth={1.5} aria-hidden="true" />
         </div>
         <div className={styles.cardContext}>
-          <span>{place.activity_count} memori</span>
-          <span>{place.last_seen_at ? "Terakhir tercatat " : ""}<time dateTime={place.last_seen_at ?? undefined}>{formatPlacesDate(place.last_seen_at)}</time></span>
+          <span>{place.activity_count} {place.activity_count === 1 ? "memory" : "memories"}</span>
+          <span>{place.last_seen_at ? "Last recorded " : ""}<time dateTime={place.last_seen_at ?? undefined}>{formatPlacesDate(place.last_seen_at)}</time></span>
         </div>
         {latestMemory && <p className={styles.excerpt}>{latestMemory.summary}</p>}
       </div>
@@ -53,35 +53,35 @@ export function PlacesDirectory({
         <header className={styles.intro}>
           <div className={styles.heading}>
             <h1>Places</h1>
-            {!directoryError && <span>{places.length} tempat</span>}
+            {!directoryError && <span>{places.length} {places.length === 1 ? "place" : "places"}</span>}
           </div>
-          <p>Tempat-tempat yang tersimpan dalam catatanmu.</p>
+          <p>Places that form the backdrop of your memories.</p>
         </header>
         {directoryError ? (
-          <PlacesFeedback>Daftar tempat belum bisa dimuat. Coba muat ulang halaman ini.</PlacesFeedback>
+          <PlacesFeedback>The places directory could not be loaded. Try reloading this page.</PlacesFeedback>
         ) : (
           <>
-            {memoriesError && <PlacesFeedback>Cuplikan memori belum bisa dimuat. Nama tempat dan jumlah memori tetap tersedia.</PlacesFeedback>}
+            {memoriesError && <PlacesFeedback>Memory excerpts could not be loaded. Place names and memory counts remain available.</PlacesFeedback>}
             {places.length > 0 ? (
               <>
                 <div className={styles.toolbar}>
                   <div className={styles.search}>
-                    <label className="sr-only" htmlFor="places-search">Cari nama tempat atau alias</label>
+                    <label className="sr-only" htmlFor="places-search">Search place name or alias</label>
                     <Search size={18} aria-hidden="true" />
-                    <input id="places-search" ref={searchInput} type="search" placeholder="Cari nama tempat atau alias…" value={query} onChange={event => setQuery(event.target.value)} />
-                    {query && <button type="button" aria-label="Hapus pencarian" onClick={clearSearch}><X size={17} aria-hidden="true" /></button>}
+                    <input id="places-search" ref={searchInput} type="search" placeholder="Search place name or alias…" value={query} onChange={event => setQuery(event.target.value)} />
+                    {query && <button type="button" aria-label="Clear search" onClick={clearSearch}><X size={17} aria-hidden="true" /></button>}
                   </div>
                   <label className={styles.sort}>
-                    <span className="sr-only">Urutkan tempat</span>
+                    <span className="sr-only">Sort places</span>
                     <select value={sort} onChange={event => setSort(event.target.value as PlacesSort)}>
-                      <option value="recent">Terbaru</option>
-                      <option value="name">Nama A–Z</option>
-                      <option value="count">Jumlah memori</option>
+                      <option value="recent">Most recent</option>
+                      <option value="name">Name A–Z</option>
+                      <option value="count">Most memories</option>
                     </select>
                   </label>
                 </div>
                 <p className={styles.resultCount} role="status" aria-live="polite">
-                  {query.trim() ? visible.length + " dari " + places.length + " tempat ditemukan" : "Berdasarkan memori yang sudah terjadi"}
+                  {query.trim() ? visible.length + " of " + places.length + " places found" : "Based on completed memories"}
                 </p>
                 {visible.length ? (
                   <div className={styles.directoryList}>
@@ -89,17 +89,17 @@ export function PlacesDirectory({
                   </div>
                 ) : (
                   <div className={styles.empty}>
-                    <h2>Tempat itu belum ditemukan.</h2>
-                    <p>Coba nama lain atau alias yang pernah kamu catat.</p>
-                    <button type="button" onClick={clearSearch}>Hapus pencarian</button>
+                    <h2>No matching place found.</h2>
+                    <p>Try another name or an alias you have recorded.</p>
+                    <button type="button" onClick={clearSearch}>Clear search</button>
                   </div>
                 )}
               </>
             ) : (
               <div className={styles.empty}>
-                <h2>Belum ada tempat yang tercatat.</h2>
-                <p>Tempat yang disebut dalam memori selesai akan muncul di sini.</p>
-                <Link href={demo ? "/timeline?demo=jimmy" : "/timeline"}>Buka timeline <ArrowUpRight size={16} aria-hidden="true" /></Link>
+                <h2>No places recorded yet.</h2>
+                <p>Places mentioned in completed memories will appear here.</p>
+                <Link href={demo ? "/timeline?demo=jimmy" : "/timeline"}>Open timeline <ArrowUpRight size={16} aria-hidden="true" /></Link>
               </div>
             )}
           </>

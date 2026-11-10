@@ -15,9 +15,9 @@ export type { MessageItem } from "@/lib/chat/model";
 const EMPTY_SESSIONS: ChatSessionSummary[] = [];
 const EMPTY_MESSAGES: MessageItem[] = [];
 const PROMPTS = [
-  "Apa yang paling sering kucatat belakangan ini?",
-  "Rangkum aktivitasku minggu ini.",
-  "Apa hal baru yang pernah kucoba?",
+  "What have I recorded most often lately?",
+  "Summarize my activities this week.",
+  "What new things have I tried recently?",
 ];
 type SaveState = { status: "pending" | "saved" | "error"; error?: string; href?: string };
 
@@ -98,14 +98,14 @@ export function ChatClient({
         const sessionExists = !id || sessions.some(session => session.id === id);
         const rawMessages = id ? localStorage.getItem("jimmy_chat_msg_" + id) : null;
         const cachedMessages = parseMessages(rawMessages);
-        const messagesError = !sessionExists ? "Percakapan ini tidak ditemukan. Pilih percakapan lain dari riwayat."
-          : rawMessages !== null && cachedMessages === null ? "Pesan demo tersimpan tidak dapat dibaca. Kamu bisa membuka percakapan lain atau memulai yang baru." : null;
+        const messagesError = !sessionExists ? "This conversation could not be found. Select another conversation from history."
+          : rawMessages !== null && cachedMessages === null ? "Saved demo messages could not be read. You can open another conversation or start a new one." : null;
         setState({ sessions, activeSessionId: id,
           messages: messagesError || !id ? [] : cachedMessages ?? (id === initialSessionId ? initialMessages : []), messagesError });
-        if (raw !== null && stored === null) setStorageWarning("Riwayat demo tersimpan tidak dapat dibaca. Contoh percakapan ditampilkan kembali.");
+        if (raw !== null && stored === null) setStorageWarning("Saved demo history could not be read. Showing sample conversation instead.");
       } catch {
         storageFailed.current = true;
-        setStorageWarning("Penyimpanan browser tidak tersedia. Percakapan demo hanya bertahan selama halaman ini terbuka.");
+        setStorageWarning("Browser storage is unavailable. Demo conversations will only persist while this page remains open.");
       }
       setHydrated(true);
     });
@@ -121,7 +121,7 @@ export function ChatClient({
       }
     } catch {
       storageFailed.current = true;
-      queueMicrotask(() => { if (alive.current) setStorageWarning("Riwayat demo tidak dapat disimpan di browser ini. Percakapan yang terbuka tetap tersedia."); });
+      queueMicrotask(() => { if (alive.current) setStorageWarning("Demo history cannot be saved in this browser. Your open conversation remains available."); });
     }
   }, [isDemo, hydrated, state]);
 
@@ -143,7 +143,7 @@ export function ChatClient({
   const saving = Object.values(saveStates).some(value => value.status === "pending");
   const busy = sending || navigationPending || deletingId !== null || saving || !hydrated;
   const canCompose = hydrated && !initialSessionsError && !state.messagesError && !navigationPending;
-  const activeTitle = state.sessions.find(session => session.id === state.activeSessionId)?.title ?? "Percakapan baru";
+  const activeTitle = state.sessions.find(session => session.id === state.activeSessionId)?.title ?? "New conversation";
   const guarded = () => sendLock.current || deleteLock.current || saveLocks.current.size > 0 || navigationPending || !hydrated;
   const retryLoad = () => startNavigation(() => router.refresh());
   const updateUrl = (id: string | null, isNew = false) => window.history.replaceState(window.history.state, "", chatHref(isDemo, id, isNew));
@@ -172,7 +172,7 @@ export function ChatClient({
   const removeSession = async (id: string) => {
     if (guarded()) return;
     const session = state.sessions.find(item => item.id === id);
-    if (!session || !window.confirm('Hapus percakapan "' + session.title + '"? Pesan dalam percakapan ini akan dihapus.')) return;
+    if (!session || !window.confirm('Delete conversation "' + session.title + '"? Messages in this conversation will be deleted.')) return;
     deleteLock.current = true;
     setDeletingId(id);
     setDeleteError(null);
@@ -182,12 +182,12 @@ export function ChatClient({
       if (!isDemo) {
         const response = await fetch("/api/chat/sessions?id=" + encodeURIComponent(id), { method: "DELETE", signal: controller.signal });
         const data = await response.json();
-        if (!response.ok || !data.success) throw new Error("Percakapan belum berhasil dihapus. Coba lagi.");
+        if (!response.ok || !data.success) throw new Error("Conversation could not be deleted. Please try again.");
       }
       if (!alive.current) return;
       if (isDemo) {
         try { localStorage.removeItem("jimmy_chat_msg_" + id); }
-        catch { setStorageWarning("Perubahan riwayat tidak dapat disimpan di browser ini."); }
+        catch { setStorageWarning("History changes cannot be saved in this browser."); }
       }
       const removedActive = state.activeSessionId === id;
       setState(previous => ({
@@ -198,7 +198,7 @@ export function ChatClient({
         setInput(""); setSendError(null); setSavedNotice(null); updateUrl(null, true);
       }
     } catch {
-      if (alive.current) setDeleteError("Percakapan belum berhasil dihapus. Coba lagi.");
+      if (alive.current) setDeleteError("Conversation could not be deleted. Please try again.");
     } finally {
       controllers.current.delete(controller);
       deleteLock.current = false;
@@ -230,7 +230,7 @@ export function ChatClient({
             method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title }), signal: controller.signal,
           });
           const data = await response.json();
-          if (!response.ok || !data.success || !isUuid(data.session?.id)) throw new Error("Percakapan baru belum bisa dibuat.");
+          if (!response.ok || !data.success || !isUuid(data.session?.id)) throw new Error("New conversation could not be created.");
           session = { id: data.session.id, title: typeof data.session.title === "string" ? data.session.title : title,
             updatedAt: typeof data.session.updated_at === "string" && Number.isFinite(Date.parse(data.session.updated_at)) ? data.session.updated_at : new Date().toISOString() };
         }
@@ -244,7 +244,7 @@ export function ChatClient({
         body: JSON.stringify({ message: query, history: previousMessages.slice(-6).map(({ role, content }) => ({ role, content })), demo: isDemo ? "jimmy" : undefined, sessionId }),
       });
       const data = await response.json();
-      if (!response.ok || !data.success || !isMessage(data.message) || data.message.role !== "assistant") throw new Error("Jawaban belum dapat dimuat.");
+      if (!response.ok || !data.success || !isMessage(data.message) || data.message.role !== "assistant") throw new Error("Reply could not be loaded.");
       if (!alive.current) return;
       const updatedAt = new Date().toISOString();
       setState(previous => ({ ...previous, messages: [...previous.messages, data.message],
@@ -255,15 +255,15 @@ export function ChatClient({
           rememberDemoNote(data.savedItem);
           setSavedNotice("/timeline?demo=jimmy#" + encodeURIComponent(data.savedItem.id));
           setSaveStates(previous => ({ ...previous, [userMessage.id]: { status: "saved", href: "/timeline?demo=jimmy#" + encodeURIComponent(data.savedItem.id) } }));
-        } catch { setStorageWarning("Catatan demo belum dapat disimpan di browser ini."); }
+        } catch { setStorageWarning("Demo note could not be saved in this browser."); }
       }
     } catch {
       if (!alive.current) return;
       setState(previous => ({ ...previous, messages: previous.messages.filter(message => message.id !== userMessage.id) }));
       setInput(query);
-      setSendError(/catat|simpan/i.test(query)
-        ? "Jawaban belum diterima. Pesan dikembalikan ke draf; periksa timeline sebelum mengirim ulang permintaan menyimpan catatan."
-        : "Jawaban belum diterima. Pesanmu kembali ke draf dan bisa dikirim lagi.");
+      setSendError(/catat|simpan|save|record|remember|note/i.test(query)
+        ? "No reply received yet. Your message was returned to the draft; check the timeline before resending a save request."
+        : "No reply received yet. Your message was returned to the draft and can be sent again.");
     } finally {
       controllers.current.delete(controller);
       sendLock.current = false;
@@ -288,17 +288,17 @@ export function ChatClient({
         body: JSON.stringify({ text: message.content, demo: isDemo ? "jimmy" : undefined }),
       });
       const data = await response.json();
-      if (!response.ok || !data.success) throw new Error("Catatan belum berhasil disimpan.");
+      if (!response.ok || !data.success) throw new Error("Memory could not be saved.");
       if (!alive.current) return;
       let href = isDemo ? "/timeline?demo=jimmy" : "/timeline";
       if (isDemo) {
-        if (!data.item || typeof data.item.id !== "string") throw new Error("Catatan demo belum tersedia.");
+        if (!data.item || typeof data.item.id !== "string") throw new Error("Demo memory is unavailable.");
         rememberDemoNote(data.item);
         href += "#" + encodeURIComponent(data.item.id);
       } else if (typeof data.detailId === "string") href += "#" + encodeURIComponent(data.detailId);
       setSaveStates(previous => ({ ...previous, [message.id]: { status: "saved", href } }));
     } catch {
-      if (alive.current) setSaveStates(previous => ({ ...previous, [message.id]: { status: "error", error: "Catatan belum berhasil disimpan. Periksa timeline sebelum mencoba lagi." } }));
+      if (alive.current) setSaveStates(previous => ({ ...previous, [message.id]: { status: "error", error: "Memory could not be saved. Check the timeline before trying again." } }));
     } finally {
       controllers.current.delete(controller);
       saveLocks.current.delete(message.id);
@@ -312,7 +312,7 @@ export function ChatClient({
   }, []);
 
   return (
-    <section className={styles.page} data-chat-page data-chat-client data-chat-ready={hydrated} aria-busy={navigationPending}>
+    <section className={styles.page} lang="en" data-chat-page data-chat-client data-chat-ready={hydrated} aria-busy={navigationPending}>
       <header className={styles.toolbar}>
         <div className={styles.toolbarTitle}>
           <h1>Ask Memory</h1>
@@ -320,10 +320,10 @@ export function ChatClient({
         </div>
         <div className={styles.toolbarActions}>
           <button type="button" className={styles.textButton} data-chat-history-toggle aria-expanded={sidebarOpen} aria-haspopup="dialog" onClick={() => setSidebarOpen(true)}>
-            <History size={17} aria-hidden="true" /><span>Riwayat</span>
+            <History size={17} aria-hidden="true" /><span>History</span>
           </button>
           <button type="button" className={styles.textButton} data-chat-new disabled={busy} onClick={newChat}>
-            <Plus size={17} aria-hidden="true" /><span>Obrolan baru</span>
+            <Plus size={17} aria-hidden="true" /><span>New chat</span>
           </button>
         </div>
       </header>
@@ -344,14 +344,14 @@ export function ChatClient({
               {(initialSessionsError || state.messagesError) ? (
                 <div className={styles.notice} role="alert" data-chat-error>
                   <p>{initialSessionsError || state.messagesError}</p>
-                  <button type="button" className={styles.textButton} disabled={navigationPending} onClick={retryLoad}>Coba lagi</button>
+                  <button type="button" className={styles.textButton} disabled={navigationPending} onClick={retryLoad}>Try again</button>
                 </div>
               ) : state.messages.length === 0 ? (
                 <div className={styles.empty}>
-                  <p className={styles.eyebrow}>Dari catatanmu</p>
-                  <h2>Apa yang ingin kamu ingat?</h2>
-                  <p>Cari kembali sebuah momen, lihat pola kecil, atau ceritakan sesuatu yang baru.</p>
-                  <div className={styles.prompts} aria-label="Contoh pertanyaan">
+                  <p className={styles.eyebrow}>From your archive</p>
+                  <h2>What would you like to remember?</h2>
+                  <p>Revisit a moment, trace a quiet pattern, or record something new.</p>
+                  <div className={styles.prompts} aria-label="Sample prompts">
                     {PROMPTS.map(prompt => <button key={prompt} type="button" className={styles.prompt} data-chat-prompt disabled={!canCompose || busy}
                       onClick={() => { setInput(prompt); textarea.current?.focus({ preventScroll: true }); }}>
                       <span>{prompt}</span><ArrowUpRight size={17} aria-hidden="true" />
@@ -360,24 +360,24 @@ export function ChatClient({
                 </div>
               ) : (
                 <>
-                  {initialHasOlderMessages && <p className={styles.status}>Menampilkan 50 pesan terakhir dari percakapan ini.</p>}
-                  <ol className={styles.conversation} role="log" aria-label="Isi percakapan" aria-live="polite" aria-relevant="additions">
+                  {initialHasOlderMessages && <p className={styles.status}>Showing the latest 50 messages from this conversation.</p>}
+                  <ol className={styles.conversation} role="log" aria-label="Conversation messages" aria-live="polite" aria-relevant="additions">
                     {state.messages.map(message => {
                       const save = saveStates[message.id];
                       return <li key={message.id} className={[styles.message, message.role === "user" ? styles.userMessage : styles.assistantMessage].join(" ")}
                         data-chat-message={message.id} data-role={message.role}>
-                        <p className={styles.messageLabel}>{message.role === "user" ? "Kamu" : "Life Memory"}</p>
+                        <p className={styles.messageLabel}>{message.role === "user" ? "You" : "Life Memory"}</p>
                         <div className={styles.messageBody}><ChatMessageContent content={message.content} /></div>
                         <div className={styles.messageActions}>
                           {save?.status === "saved" ? (
                             <Link href={save.href ?? (isDemo ? "/timeline?demo=jimmy" : "/timeline")} className={styles.savedLabel} data-chat-saved={message.id}>
-                              <Check size={15} aria-hidden="true" /> Tersimpan · Lihat catatan
+                              <Check size={15} aria-hidden="true" /> Saved · View memory
                             </Link>
                           ) : (
                             <button type="button" className={styles.saveButton} data-chat-save={message.id}
                               disabled={save?.status === "pending" || sending || navigationPending || message.content.length > 10000}
                               onClick={() => saveMessage(message)}>
-                              <BookmarkPlus size={15} aria-hidden="true" />{save?.status === "pending" ? "Menyimpan…" : "Simpan ke catatan"}
+                              <BookmarkPlus size={15} aria-hidden="true" />{save?.status === "pending" ? "Saving…" : "Save as memory"}
                             </button>
                           )}
                           <time className={styles.messageTime} dateTime={message.createdAt}>{formatChatTime(message.createdAt)}</time>
@@ -388,29 +388,29 @@ export function ChatClient({
                   </ol>
                 </>
               )}
-              {sending && <p className={styles.status} role="status" data-chat-status>Sedang membaca catatanmu…</p>}
-              {navigationPending && <p className={styles.status} role="status">Membuka percakapan…</p>}
-              {savedNotice && <p className={styles.status} role="status"><Link href={savedNotice}>Catatan tersimpan. Lihat di timeline <ArrowUpRight size={14} aria-hidden="true" /></Link></p>}
+              {sending && <p className={styles.status} role="status" data-chat-status>Reading your archive…</p>}
+              {navigationPending && <p className={styles.status} role="status">Opening conversation…</p>}
+              {savedNotice && <p className={styles.status} role="status"><Link href={savedNotice}>Memory saved. View in timeline <ArrowUpRight size={14} aria-hidden="true" /></Link></p>}
             </div>
           </main>
-          {newReply && <button type="button" className={styles.jumpLatest} onClick={jumpLatest}><ArrowDown size={16} aria-hidden="true" /> Jawaban baru</button>}
+          {newReply && <button type="button" className={styles.jumpLatest} onClick={jumpLatest}><ArrowDown size={16} aria-hidden="true" /> New reply</button>}
           <footer className={styles.composer}>
             <div className={styles.composerInner}>
               {sendError && <p className={styles.notice} role="alert" data-chat-error>{sendError}</p>}
               <form className={styles.composerForm} onSubmit={event => { event.preventDefault(); void send(); }}>
-                <label htmlFor="chat-message" className={styles.srOnly}>Pesan untuk Life Memory</label>
+                <label htmlFor="chat-message" className={styles.srOnly}>Message for Life Memory</label>
                 <textarea id="chat-message" ref={textarea} className={styles.composerInput} rows={1} maxLength={2000}
                   data-chat-composer value={input} disabled={!canCompose || sending || deletingId !== null}
-                  placeholder="Tanyakan sesuatu dari catatanmu…" aria-describedby="chat-composer-hint"
+                  placeholder="Ask something from your archive…" aria-describedby="chat-composer-hint"
                   onChange={event => setInput(event.target.value)} onKeyDown={event => {
                     if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing && event.keyCode !== 229) {
                       event.preventDefault(); void send();
                     }
                   }} />
-                <button type="submit" className={styles.sendButton} aria-label="Kirim pesan" disabled={!canCompose || busy || !input.trim()}><Send size={18} aria-hidden="true" /></button>
+                <button type="submit" className={styles.sendButton} aria-label="Send message" disabled={!canCompose || busy || !input.trim()}><Send size={18} aria-hidden="true" /></button>
               </form>
               <div className={styles.composerMeta}>
-                <p id="chat-composer-hint">Enter untuk kirim · Shift+Enter untuk baris baru. <span>Untuk menyimpan momen, tulis “Catat ini: …”.</span></p>
+                <p id="chat-composer-hint">Enter to send · Shift+Enter for new line. <span>To save a moment, write “Save this: …”.</span></p>
                 {input.length >= 1800 && <span className={styles.count} aria-live="polite">{input.length}/2000</span>}
               </div>
             </div>
