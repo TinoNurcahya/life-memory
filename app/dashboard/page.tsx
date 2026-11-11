@@ -14,7 +14,11 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
       const supabase = await createClient();
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        userName = user.user_metadata?.full_name || user.email?.split("@")[0] || null;
+        userName =
+          user.user_metadata?.full_name ||
+          user.user_metadata?.name ||
+          user.email?.split("@")[0] ||
+          null;
       }
     } catch {
       // ignore

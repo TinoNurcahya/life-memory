@@ -4,9 +4,16 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import { AuthShell, AuthStatus, AuthSubmitLabel } from "@/components/auth/AuthShell";
-
-const inputClass = "min-h-12 w-full rounded-xl border border-hairline bg-surface px-10 text-base text-foreground placeholder:text-faint outline-none transition focus-visible:border-brand focus-visible:ring-2 focus-visible:ring-brand/30";
+import {
+  AuthDivider,
+  AuthShell,
+  AuthStatus,
+  AuthSubmitLabel,
+  GoogleContinueButton,
+  completeGoogleIdTokenFromHash,
+  startGoogleOAuth,
+} from "@/components/auth/AuthShell";
+import styles from "@/components/auth/Auth.module.css";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -16,30 +23,65 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [oauthNotice, setOauthNotice] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   useEffect(() => {
-    if (new URLSearchParams(window.location.search).get("error") === "auth_callback") {
-      setError("We could not complete email confirmation. Please use a fresh confirmation link, then sign in again.");
+    const params = new URLSearchParams(window.location.search);
+    const errorDescription = params.get("error_description");
+    if (errorDescription) {
+      setError(errorDescription);
+    } else if (params.get("error") === "auth_callback") {
+      setError(
+        "We could not complete authentication. Please use a fresh confirmation link or sign in with email and password."
+      );
     }
-  }, []);
+
+    if (window.location.hash.includes("id_token") || window.location.hash.includes("error")) {
+      setIsGoogleLoading(true);
+      void completeGoogleIdTokenFromHash()
+        .then((res) => {
+          if (res.handled) {
+            if (res.error) {
+              setError(res.error);
+            } else if (res.redirectTo) {
+              router.replace(res.redirectTo);
+              return;
+            }
+          }
+          setIsGoogleLoading(false);
+        })
+        .catch(() => {
+          setError("Could not complete Google Sign-In. Please try again.");
+          setIsGoogleLoading(false);
+        });
+    }
+  }, [router]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (submittingRef.current) return;
     submittingRef.current = true;
     setError("");
+    setOauthNotice("");
     setIsSubmitting(true);
 
     try {
-      const { error: signInError } = await createClient().auth.signInWithPassword({ email, password });
+      const { error: signInError } = await createClient().auth.signInWithPassword({
+        email,
+        password,
+      });
       if (signInError) {
         setError(signInError.message);
         return;
       }
 
       const redirect = new URLSearchParams(window.location.search).get("redirect");
-      const safeRedirect = redirect?.startsWith("/") && !redirect.startsWith("//") ? redirect : "/dashboard";
+      const safeRedirect =
+        redirect?.startsWith("/") && !redirect.startsWith("//")
+          ? redirect
+          : "/dashboard";
       router.replace(safeRedirect);
     } catch {
       setError("We could not reach the archive. Please try again.");
@@ -50,35 +92,127 @@ export default function LoginPage() {
   };
 
   const handleGoogle = async () => {
-    const redirect = new URLSearchParams(window.location.search).get("redirect");
-    await createClient().auth.signInWithOAuth({ provider: "google", options: { redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirect || "/dashboard")}` } });
+    if (isGoogleLoading || isSubmitting) return;
+    setError("");
+    setOauthNotice("");
+    setIsGoogleLoading(true);
+    try {
+      const redirect =
+        new URLSearchParams(window.location.search).get("redirect") ||
+        "/dashboard";
+      const result = await startGoogleOAuth(redirect);
+      if (!result.ok) {
+        if (result.providerDisabled) {
+          setOauthNotice(
+            result.message ||
+              "Google Sign-In is not enabled in Supabase Auth yet."
+          );
+        } else {
+          setError(
+            result.message ||
+              "Could not sign in with Google. Please try email & password."
+          );
+        }
+      }
+    } finally {
+      setIsGoogleLoading(false);
+    }
   };
 
-  return <AuthShell variant="login" onDemoRequest={() => router.push("/dashboard?demo=jimmy")}>
-    <form onSubmit={handleSubmit} className="space-y-4">
-      {error && <AuthStatus message={error} tone="error" />}
-      <div>
-        <label htmlFor="login-email" className="mb-1.5 block text-sm font-medium text-muted">Email address</label>
-        <div className="relative">
-          <Mail aria-hidden="true" className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-faint" />
-          <input ref={emailRef} id="login-email" name="email" type="email" autoComplete="email" inputMode="email" required value={email} onChange={(event) => setEmail(event.target.value)} placeholder="name@example.com" className={inputClass} />
+  return (
+    <AuthShell
+      variant="login"
+      onDemoRequest={() => router.push("/dashboard?demo=jimmy")}
+    >
+      <form onSubmit={handleSubmit} className={styles.authForm}>
+        {error && <AuthStatus message={error} tone="error" />}
+        {oauthNotice && (
+          <AuthStatus
+            message={oauthNotice}
+            tone="info"
+            actionHref="/dashboard?demo=jimmy"
+            actionLabel="Open Jimmy's Demo Vault"
+          />
+        )}
+
+        <div className={styles.fieldGroup}>
+          <label htmlFor="login-email" className={styles.fieldLabel}>
+            <span>Email address</span>
+          </label>
+          <div className={styles.inputWrapper}>
+            <Mail aria-hidden="true" className={styles.inputIcon} />
+            <input
+              ref={emailRef}
+              id="login-email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              inputMode="email"
+              required
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="name@example.com"
+              className={styles.textInput}
+            />
+          </div>
         </div>
-      </div>
-      <div>
-        <label htmlFor="login-password" className="mb-1.5 block text-sm font-medium text-muted">Password</label>
-        <div className="relative">
-          <Lock aria-hidden="true" className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-faint" />
-          <input id="login-password" name="password" type={showPassword ? "text" : "password"} autoComplete="current-password" minLength={6} required value={password} onChange={(event) => setPassword(event.target.value)} className={`${inputClass} pr-12`} />
-          <button type="button" onClick={() => setShowPassword((value) => !value)} className="absolute right-1 top-1/2 inline-flex min-h-11 min-w-11 -translate-y-1/2 items-center justify-center rounded-lg text-muted hover:text-foreground" aria-label={showPassword ? "Hide password" : "Show password"}>
-            {showPassword ? <EyeOff aria-hidden="true" className="h-4 w-4" /> : <Eye aria-hidden="true" className="h-4 w-4" />}
-          </button>
+
+        <div className={styles.fieldGroup}>
+          <label htmlFor="login-password" className={styles.fieldLabel}>
+            <span>Password</span>
+          </label>
+          <div className={styles.inputWrapper}>
+            <Lock aria-hidden="true" className={styles.inputIcon} />
+            <input
+              id="login-password"
+              name="password"
+              type={showPassword ? "text" : "password"}
+              autoComplete="current-password"
+              minLength={6}
+              required
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="Enter your password"
+              className={`${styles.textInput} ${styles.passwordInput}`}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((value) => !value)}
+              className={styles.visibilityBtn}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? (
+                <EyeOff aria-hidden="true" className="h-4 w-4" />
+              ) : (
+                <Eye aria-hidden="true" className="h-4 w-4" />
+              )}
+            </button>
+          </div>
         </div>
-      </div>
-      <button type="submit" disabled={isSubmitting} className="group inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-foreground px-4 text-sm font-medium text-canvas transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60">
-        <AuthSubmitLabel idle="Sign in to Life Memory" pending="Signing in…" isSubmitting={isSubmitting} />
-      </button>
-      <button type="button" onClick={handleGoogle} className="inline-flex min-h-12 w-full items-center justify-center rounded-xl border border-strong px-4 text-sm font-medium text-foreground transition-colors hover:bg-surface-subdued">Continue with Google</button>
-      <p role="status" aria-live="polite" className="sr-only">{isSubmitting ? "Signing in…" : ""}</p>
-    </form>
-  </AuthShell>;
+
+        <button
+          type="submit"
+          disabled={isSubmitting || isGoogleLoading}
+          className={`group ${styles.primarySubmitBtn}`}
+        >
+          <AuthSubmitLabel
+            idle="Sign in to Life Memory"
+            pending="Signing in…"
+            isSubmitting={isSubmitting}
+          />
+        </button>
+
+        <AuthDivider />
+
+        <GoogleContinueButton
+          onClick={handleGoogle}
+          isLoading={isGoogleLoading}
+        />
+
+        <p role="status" aria-live="polite" className="sr-only">
+          {isSubmitting ? "Signing in…" : ""}
+        </p>
+      </form>
+    </AuthShell>
+  );
 }

@@ -696,10 +696,13 @@ section[id] {
   border: 1px solid var(--color-border-hairline);
 }
 
-/* Custom hairline borders */
+/* Custom hairline & strong border colors (do not override border-width so border-t / border-b work cleanly) */
 .border-hairline {
-  border-width: 1px;
   border-color: var(--color-border-hairline);
+}
+
+.border-strong {
+  border-color: var(--color-border-strong);
 }
 
 /* Subtle Shimmer for async state */

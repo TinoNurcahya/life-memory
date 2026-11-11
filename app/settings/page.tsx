@@ -45,7 +45,12 @@ export default async function SettingsPage({
         user = {
           id: userData.user.id,
           email: profile?.email || userData.user.email || null,
-          fullName: profile?.full_name || null,
+          fullName:
+            profile?.full_name ||
+            userData.user.user_metadata?.full_name ||
+            userData.user.user_metadata?.name ||
+            userData.user.email?.split("@")[0] ||
+            null,
         };
       }
     } catch {

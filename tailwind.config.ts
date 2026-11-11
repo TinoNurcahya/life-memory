@@ -20,6 +20,8 @@ const config: Config = {
           hairline: "var(--color-border-hairline)",
           strong: "var(--color-border-strong)",
         },
+        hairline: "var(--color-border-hairline)",
+        strong: "var(--color-border-strong)",
         foreground: "var(--color-text-foreground)",
         muted: "var(--color-text-muted)",
         faint: "var(--color-text-faint)",
