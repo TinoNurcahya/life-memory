@@ -7,6 +7,8 @@ import { motion } from "motion/react";
 import { ArrowLeft, ArrowRight, Moon, Sun } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { ThemeProvider, useTheme } from "@/lib/experience/theme-context";
+import { dashboardSans, dashboardSerif } from "@/components/dashboard/fonts";
+import "@/components/dashboard/dashboard.css";
 import styles from "./Auth.module.css";
 
 type AuthVariant = "login" | "register";
@@ -234,7 +236,9 @@ function AuthShellInner({ variant, children, onDemoRequest }: AuthShellProps) {
   const config = content[variant];
 
   return (
-    <div className={styles.authPage}>
+    <div
+      className={`${styles.authPage} lm-vault-shell--dashboard ${dashboardSans.variable} ${dashboardSerif.variable}`}
+    >
       <EditorialMedia variant={variant} />
       <main className={styles.mainColumn}>
         <AuthTopBar indexLabel={config.indexLabel} />

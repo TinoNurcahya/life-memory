@@ -13,8 +13,9 @@ export default function FaqPage() {
     <EditorialShell
       badge="Knowledge Base"
       title="Frequently Asked Questions"
-      subtitle="Find transparent answers regarding how our Google Gemini AI pipeline functions, our zero-training privacy policy, and how to get the most out of your living archive."
-      lastUpdated="October 2026"
+      subtitle="Transparent answers on how our asynchronous entity extraction works, why our reflections never hallucinate, and how your archive remains 100% private and portable."
+      lastUpdated="November 2026"
+      wide
     >
       <FaqAccordion />
     </EditorialShell>

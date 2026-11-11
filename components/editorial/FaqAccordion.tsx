@@ -1,211 +1,332 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, Bot, ShieldCheck, Compass, HelpCircle } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, ChevronDown, Compass } from "lucide-react";
+import styles from "./About.module.css";
 
 interface FaqItem {
   id: string;
+  code: string;
   category: "general" | "ai" | "privacy" | "features";
   question: string;
-  answer: string | React.ReactNode;
+  answer: string;
 }
 
-const FAQ_DATA: FaqItem[] = [
-  // Category: General
-  {
-    id: "gen-1",
-    category: "general",
-    question: "What is Life Memory, and how does it differ from a traditional journal app?",
-    answer:
-      "Traditional journal apps place the cognitive burden entirely on you: you must manually categorize entries, invent tags, or remember to open blank pages. Life Memory is an autobiographical archive designed around natural, stream-of-consciousness writing. You write raw, unstructured thoughts (e.g. 'Coffee with Ethan at the library yesterday morning to debug the API timeout'), and our intelligent engine automatically reconstructs the people, places, topics, temporal rhythm, and recurring life patterns in the background.",
-  },
-  {
-    id: "gen-2",
-    category: "general",
-    question: "Can I try Life Memory without creating an account?",
-    answer:
-      "Yes! We provide an instant, zero-friction interactive demo featuring the persona of 'Jimmy', an engineering student. The Jimmy dataset contains 48 authentic memories spanning 56 dynamic relative days, complete with real entities, pattern insights, and monthly reflections. You can explore the entire system at /dashboard?demo=jimmy without giving up any personal email or credit card.",
-  },
-  {
-    id: "gen-3",
-    category: "general",
-    question: "Is there a subscription fee or usage limit?",
-    answer:
-      "During our public launch phase, Life Memory is free for personal use. You can log unlimited memories, query the AI chat assistant, generate monthly reflection magazines, and export your complete archive at any time.",
-  },
+interface FaqDomainSection {
+  id: "general" | "ai" | "privacy" | "features";
+  indexLabel: string;
+  title: string;
+  lead: string;
+  badge: string;
+}
 
-  // Category: AI & Gemini Intelligence
+const FAQ_SECTIONS: FaqDomainSection[] = [
   {
-    id: "ai-1",
-    category: "ai",
-    question: "Which artificial intelligence models power Life Memory?",
-    answer:
-      "Life Memory utilizes Google's state-of-the-art Gemini 3.5 & 3.8 Flash model family. For fast conversational memory queries and note saving in chat, we use gemini-3.5-flash-lite, delivering responses in ~1.6 to 2 seconds. For deep narrative generation, such as our monthly reflection essays, we utilize gemini-3.8-flash with an evidence-grounded citation cascade.",
+    id: "general",
+    indexLabel: "01 — General & Philosophy",
+    title: "The Living Archive",
+    lead: "How stream-of-consciousness micro-logging replaces rigid folders and manual tags.",
+    badge: "3 Questions",
   },
   {
-    id: "ai-2",
-    category: "ai",
-    question: "Does the AI hallucinate or make up memories I never logged?",
-    answer:
-      "No. We enforce strict mathematical and factual grounding rules. In our monthly reflections, every single statement must link to a verified atomic activity_detail_id, accompanied by global continuous footnotes [1]..[N]. If the AI attempts to mention an event without a matching source record, our deterministic citation validator rejects the claim. In the chat assistant, context is strictly restricted to your logged memories.",
+    id: "ai",
+    indexLabel: "02 — AI & Grounding",
+    title: "Gemini & Citations",
+    lead: "How asynchronous entity extraction and deterministic footnote validation work.",
+    badge: "3 Questions",
   },
   {
-    id: "ai-3",
-    category: "ai",
-    question: "Can I edit or override the AI's entity extractions?",
-    answer:
-      "Absolutely. In the /timeline view, you have 100% human-in-the-loop control. You can change any activity category (e.g. Career, Social, Health, Learning, Leisure), remove erroneously linked entities, or manually add custom people, places, and topics.",
-  },
-
-  // Category: Privacy & Security
-  {
-    id: "priv-1",
-    category: "privacy",
-    question: "Are my personal memories used to train Google or OpenAI models?",
-    answer:
-      "Strictly and emphatically NO. We use enterprise Google Gemini API endpoints, which operate under Google Cloud's enterprise terms: your data is never used to train, tune, or improve foundation models. Furthermore, payloads are processed ephemerally in memory only for the duration of inference and are immediately discarded.",
+    id: "privacy",
+    indexLabel: "03 — Privacy & RLS",
+    title: "Security & Sovereignty",
+    lead: "Zero model training commitments, PostgreSQL Row-Level Security, and 1-click JSON export.",
+    badge: "3 Questions",
   },
   {
-    id: "priv-2",
-    category: "privacy",
-    question: "How is my database isolated from other users?",
-    answer:
-      "Your private archive is hosted on Supabase PostgreSQL with database-level Row Level Security (RLS) enabled on all 10 relational tables. Every database query checks auth.uid() = user_id. Even if an attacker attempts unauthorized queries, PostgreSQL directly enforces cryptographic tenant isolation.",
-  },
-  {
-    id: "priv-3",
-    category: "privacy",
-    question: "How do I export or delete my entire archive?",
-    answer:
-      "You have absolute data sovereignty. Go to Settings at any time to download your complete archive (all 10 relational tables including activities, details, people, places, topics, and insights) in standard JSON format. If you choose to leave, our Danger Zone allows you to type 'DELETE' to trigger an irreversible, cascading erasure of all your data.",
-  },
-
-  // Category: Features & Experience
-  {
-    id: "feat-1",
-    category: "features",
-    question: "What is the 'You Probably Forgot This' (S-14) feature?",
-    answer:
-      "S-14 is our deterministic nostalgia algorithm designed to counter memory decay. It identifies authentic activities logged at least 14 days ago whose primary entities (a specific friend, place, or topic) haven't been mentioned in your notes for over 21 days. It surfaces a forgotten moment to gently trigger positive retrospection.",
-  },
-  {
-    id: "feat-2",
-    category: "features",
-    question: "What is the Interactive Evidence Drawer (Vaul)?",
-    answer:
-      "On the /insights page, our analytics engine derives high-level life patterns (e.g., 'Third coffee with Ethan this month' or 'Shift toward outdoor runs'). Clicking any pattern opens a smooth bottom drawer (powered by Vaul) that displays the exact atomic journal entries and highlighted keywords that proved the pattern.",
-  },
-  {
-    id: "feat-3",
-    category: "features",
-    question: "Can I use the AI Chat to log new notes directly?",
-    answer:
-      "Yes! When speaking with the AI in /chat, you can simply type 'Save this: ...' or click the 'Save as memory' button beneath any assistant response. The AI will extract the entities and save it directly to your timeline without you needing to leave the chat.",
+    id: "features",
+    indexLabel: "04 — Features & Recall",
+    title: "Rediscovery & Tools",
+    lead: "Exploring the S-14 Forgotten Memory engine, Evidence Drawer, and Ask Memory chat.",
+    badge: "3 Questions",
   },
 ];
 
-const CATEGORIES = [
-  { id: "all", label: "All Questions", icon: HelpCircle },
-  { id: "general", label: "General & Philosophy", icon: Compass },
-  { id: "ai", label: "AI & Gemini Tech", icon: Bot },
-  { id: "privacy", label: "Privacy & Security", icon: ShieldCheck },
-  { id: "features", label: "Features & Tips", icon: HelpCircle },
+const FAQ_DATA: FaqItem[] = [
+  {
+    id: "gen-1",
+    code: "Q-01",
+    category: "general",
+    question: "What is Life Memory, and how does it differ from a traditional journal app?",
+    answer:
+      "Traditional journal apps place the organizational burden entirely on you: inventing tags, choosing folders, or facing intimidating blank pages. Life Memory is built around natural, stream-of-consciousness micro-logging. You write a single sentence (e.g., 'Coffee with Ethan at the library yesterday morning to debug the API timeout'), and our pipeline automatically reconstructs the people, places, topics, temporal rhythm, and recurring patterns in the background.",
+  },
+  {
+    id: "gen-2",
+    code: "Q-02",
+    category: "general",
+    question: "Can I explore Life Memory without creating an account?",
+    answer:
+      "Yes. You can launch Jimmy's Demo Vault immediately at /dashboard?demo=jimmy without entering an email address. The sample archive contains 48 curated memories across 56 days—complete with extracted people, places, topics, visual calendar entries, pattern insights, and monthly footnote reflections.",
+  },
+  {
+    id: "gen-3",
+    code: "Q-03",
+    category: "general",
+    question: "Is there a subscription fee or usage limit?",
+    answer:
+      "During our public release, Life Memory is free for personal use. You can log memories, search your timeline, converse with Ask Memory, generate monthly reflection essays, and export your full JSON archive without paywalls.",
+  },
+  {
+    id: "ai-1",
+    code: "Q-04",
+    category: "ai",
+    question: "Which AI models power Life Memory's extraction and reflections?",
+    answer:
+      "Life Memory uses Google's Gemini 3.5 & 3.8 Flash model family via enterprise APIs. Quick Logger saves your raw sentence optimistically in under 100ms, while Gemini asynchronously extracts people, places, topics, and first-time experiences. Monthly Reflections and Ask Memory use grounded citation prompts that strictly reference your own logged records.",
+  },
+  {
+    id: "ai-2",
+    code: "Q-05",
+    category: "ai",
+    question: "Does the AI ever hallucinate or invent memories I never logged?",
+    answer:
+      "No. Every statement in a Monthly Reflection or Ask Memory response must cite a verified atomic record using continuous footnotes ([1], [2]). If a generated sentence references an unverified ID, our deterministic citation validator strips it before rendering. Furthermore, First-Time detection and S-14 Forgotten Memory selection are 100% deterministic algorithms—not LLM guesses.",
+  },
+  {
+    id: "ai-3",
+    code: "Q-06",
+    category: "ai",
+    question: "Can I edit or override the entities extracted by AI?",
+    answer:
+      "Yes—you retain 100% human-in-the-loop authority. In the Timeline view (/timeline), you can edit any activity's text, change its category (Learning, Career, Health, Social, Leisure, Routine), or refine extracted people, places, and topics at any time.",
+  },
+  {
+    id: "priv-1",
+    code: "Q-07",
+    category: "privacy",
+    question: "Are my personal memories ever used to train AI models?",
+    answer:
+      "Never. Payloads sent to Google Gemini enterprise APIs are processed ephemerally in volatile memory solely to return your structured tags or reflection response, and are governed by a strict zero-training commitment.",
+  },
+  {
+    id: "priv-2",
+    code: "Q-08",
+    category: "privacy",
+    question: "How is my archive isolated from other users in the database?",
+    answer:
+      "Your archive is stored on Supabase PostgreSQL with database-level Row-Level Security (RLS) enforced across every relational table (auth.uid() = user_id). Even at the SQL engine layer, a session can only read or mutate rows owned by its cryptographic user ID.",
+  },
+  {
+    id: "priv-3",
+    code: "Q-09",
+    category: "privacy",
+    question: "How do I export my data or permanently delete my account?",
+    answer:
+      "Open Settings & Data (/settings) at any time and click 'Export JSON' to download your complete relational archive in a single portable file. If you ever wish to leave, you can trigger a permanent, cascading purge of your account and all associated records.",
+  },
+  {
+    id: "feat-1",
+    code: "Q-10",
+    category: "features",
+    question: "How does the 'You Probably Forgot This' (S-14) engine work?",
+    answer:
+      "S-14 is a 100% deterministic scoring algorithm that counters memory decay. It evaluates memories logged at least 14 days ago whose associated people, places, or topics have gone unmentioned for 21+ days, surfacing high-significance moments that have quietly slipped out of recent routine.",
+  },
+  {
+    id: "feat-2",
+    code: "Q-11",
+    category: "features",
+    question: "What is the Evidence Drawer on the Pattern Insights page?",
+    answer:
+      "Every pattern card on /insights (such as a recurring habit, a first-time milestone, or a monthly category shift) is backed by concrete evidence. Clicking any insight opens the Evidence Drawer showing the exact dated journal notes that produced that finding.",
+  },
+  {
+    id: "feat-3",
+    code: "Q-12",
+    category: "features",
+    question: "Can I log new memories directly from the Ask Memory (/chat) page?",
+    answer:
+      "Yes. While chatting with Ask Memory (/chat) to recall past events, you can also save any note directly into your timeline with a single click—bridging conversational reflection and daily capture.",
+  },
+];
+
+const FILTER_OPTIONS = [
+  { id: "all", label: "All Domains (12)" },
+  { id: "general", label: "01 · General (3)" },
+  { id: "ai", label: "02 · AI & Grounding (3)" },
+  { id: "privacy", label: "03 · Privacy & RLS (3)" },
+  { id: "features", label: "04 · Features (3)" },
 ] as const;
 
 export function FaqAccordion() {
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [openId, setOpenId] = useState<string | null>("gen-1");
 
-  const filteredFaqs =
+  const visibleSections =
     activeCategory === "all"
-      ? FAQ_DATA
-      : FAQ_DATA.filter((item) => item.category === activeCategory);
+      ? FAQ_SECTIONS
+      : FAQ_SECTIONS.filter((sec) => sec.id === activeCategory);
 
   const toggleItem = (id: string) => {
     setOpenId((prev) => (prev === id ? null : id));
   };
 
   return (
-    <div className="space-y-8">
-      {/* Category Filter Pills */}
-      <div className="flex flex-wrap items-center gap-2">
-        {CATEGORIES.map((cat) => {
-          const Icon = cat.icon;
-          const isActive = activeCategory === cat.id;
+    <div className={styles.aboutContainer}>
+      {/* Top Telemetry Strip */}
+      <div className={styles.metricsStrip} aria-label="Knowledge base overview">
+        <div className={styles.metricCell}>
+          <span className={styles.metricLabel}>01 · Knowledge Base</span>
+          <span className={styles.metricValue}>12 Answers</span>
+          <span className={styles.metricSub}>Core architecture &amp; usage guide</span>
+        </div>
+        <div className={styles.metricCell}>
+          <span className={styles.metricLabel}>02 · Domains Covered</span>
+          <span className={styles.metricValue}>4 Pillars</span>
+          <span className={styles.metricSub}>Philosophy, AI, Privacy &amp; Tools</span>
+        </div>
+        <div className={styles.metricCell}>
+          <span className={styles.metricLabel}>03 · AI Hallucination</span>
+          <span className={styles.metricValue}>0% Tolerated</span>
+          <span className={styles.metricSub}>Strict [1][2] citation validator</span>
+        </div>
+        <div className={styles.metricCell}>
+          <span className={styles.metricLabel}>04 · Sandbox Access</span>
+          <span className={styles.metricValue}>48 Memories</span>
+          <span className={styles.metricSub}>Instant zero-signup Jimmy demo</span>
+        </div>
+      </div>
+
+      {/* Category Filter Bar */}
+      <div className={styles.faqFilterBar} role="tablist" aria-label="Filter FAQ by domain">
+        {FILTER_OPTIONS.map((opt) => {
+          const isActive = activeCategory === opt.id;
           return (
             <button
-              key={cat.id}
+              key={opt.id}
               type="button"
-              onClick={() => setActiveCategory(cat.id)}
-              className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 font-mono text-xs transition-all ${
-                isActive
-                  ? "bg-brand text-white shadow-xs"
-                  : "border border-hairline bg-surface text-muted hover:border-brand/40 hover:text-foreground"
+              role="tab"
+              aria-selected={isActive}
+              onClick={() => setActiveCategory(opt.id)}
+              className={`${styles.faqFilterBtn} ${
+                isActive ? styles.faqFilterBtnActive : ""
               }`}
             >
-              <Icon className="h-3.5 w-3.5" />
-              <span>{cat.label}</span>
+              {opt.label}
             </button>
           );
         })}
       </div>
 
-      {/* Accordion Cards */}
-      <div className="space-y-3">
-        {filteredFaqs.map((faq) => {
-          const isOpen = openId === faq.id;
-          return (
-            <div
-              key={faq.id}
-              className={`rounded-2xl border transition-all duration-200 overflow-hidden ${
-                isOpen
-                  ? "border-brand/40 bg-surface shadow-xs"
-                  : "border-hairline bg-surface/60 hover:border-hairline/80 hover:bg-surface"
-              }`}
-            >
-              <button
-                type="button"
-                onClick={() => toggleItem(faq.id)}
-                className="flex w-full items-center justify-between p-5 sm:p-6 text-left transition-colors"
-                aria-expanded={isOpen}
-              >
-                <span className="font-serif text-lg sm:text-xl font-medium text-foreground pr-4">
-                  {faq.question}
-                </span>
-                <span
-                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-hairline bg-surface-subdued text-muted transition-transform duration-300 ${
-                    isOpen ? "rotate-180 bg-brand/10 text-brand border-brand/30" : ""
-                  }`}
-                >
-                  <ChevronDown className="h-4 w-4" />
-                </span>
-              </button>
-
-              {isOpen && (
-                <div className="border-t border-hairline/60 px-5 pb-6 pt-4 sm:px-6 sm:pb-6 text-sm text-muted leading-relaxed">
-                  {faq.answer}
-                </div>
-              )}
+      {/* 2-Column Editorial Index Sections */}
+      {visibleSections.map((section) => {
+        const items = FAQ_DATA.filter((item) => item.category === section.id);
+        return (
+          <section
+            key={section.id}
+            className={styles.chapterSection}
+            aria-labelledby={`faq-sec-${section.id}`}
+          >
+            <div className={styles.indexColumn}>
+              <span className={styles.chapterNumber}>
+                <span className={styles.chapterDot} aria-hidden="true" />
+                {section.indexLabel}
+              </span>
+              <h2 id={`faq-sec-${section.id}`} className={styles.chapterTitle}>
+                {section.title}
+              </h2>
+              <p className={styles.chapterLead}>{section.lead}</p>
+              <span className={styles.chapterMetaBadge}>{section.badge}</span>
             </div>
-          );
-        })}
-      </div>
 
-      {/* Still Have Questions CTA */}
-      <div className="rounded-2xl border border-hairline bg-surface-subdued/50 p-6 text-center sm:flex sm:items-center sm:justify-between sm:text-left gap-4">
-        <div>
-          <h3 className="font-serif text-lg font-medium text-foreground">Have a question not listed here?</h3>
-          <p className="mt-1 text-xs text-muted">
-            Our team and documentation are always open. Drop us an inquiry anytime.
+            <div className={styles.contentColumn}>
+              <div className={styles.faqList}>
+                {items.map((faq) => {
+                  const isOpen = openId === faq.id;
+                  return (
+                    <div
+                      key={faq.id}
+                      className={`${styles.faqItemCard} ${
+                        isOpen ? styles.faqItemCardOpen : ""
+                      }`}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => toggleItem(faq.id)}
+                        className={styles.faqTrigger}
+                        aria-expanded={isOpen}
+                      >
+                        <span className={styles.faqQuestionWrap}>
+                          <span className={styles.faqIndexBadge}>{faq.code}</span>
+                          <span className={styles.faqQuestionText}>
+                            {faq.question}
+                          </span>
+                        </span>
+                        <span
+                          className={`${styles.faqChevronBadge} ${
+                            isOpen ? styles.faqChevronBadgeOpen : ""
+                          }`}
+                          aria-hidden="true"
+                        >
+                          <ChevronDown className="h-3.5 w-3.5" />
+                        </span>
+                      </button>
+
+                      {isOpen && (
+                        <div className={styles.faqAnswer}>{faq.answer}</div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        );
+      })}
+
+      {/* Closing CTA Row */}
+      <section className={styles.chapterSection} aria-labelledby="faq-support-heading">
+        <div className={styles.indexColumn}>
+          <span className={styles.chapterNumber}>
+            <span className={styles.chapterDot} aria-hidden="true" />
+            05 — Direct Support
+          </span>
+          <h2 id="faq-support-heading" className={styles.chapterTitle}>
+            Still Curious?
+          </h2>
+          <p className={styles.chapterLead}>
+            Test the full system live in Jimmy&apos;s Demo Vault or reach out directly.
           </p>
         </div>
-        <a
-          href="mailto:support@lifememory.app"
-          className="mt-4 sm:mt-0 inline-flex items-center justify-center rounded-xl border border-hairline bg-surface px-4 py-2 font-mono text-xs text-foreground transition hover:bg-surface-elevated"
-        >
-          Contact Support →
-        </a>
-      </div>
+
+        <div className={styles.contentColumn}>
+          <div className={styles.ctaCard}>
+            <h3 className={styles.ctaHeadline}>
+              Experience the archive firsthand.
+            </h3>
+            <p className={styles.ctaBody}>
+              The fastest way to understand Life Memory is to explore Jimmy&apos;s 48-memory sample archive or reach out to our team with any technical or privacy questions.
+            </p>
+            <div className={styles.ctaActions}>
+              <Link href="/dashboard?demo=jimmy" className={styles.ctaPrimaryBtn}>
+                <Compass className="h-4 w-4" aria-hidden="true" />
+                <span>Explore Jimmy&apos;s Demo Vault</span>
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+              <a
+                href="mailto:tinonurcahya.ti@gmail.com"
+                className={styles.ctaSecondaryBtn}
+              >
+                <span>Contact Support</span>
+              </a>
+              <Link href="/about" className={styles.ctaSecondaryBtn}>
+                <span>Read Our Philosophy</span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

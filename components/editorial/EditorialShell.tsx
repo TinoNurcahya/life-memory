@@ -4,49 +4,73 @@ import Link from "next/link";
 import { ArrowLeft, Moon, Sun, Compass } from "lucide-react";
 import { ThemeProvider, useTheme } from "@/lib/experience/theme-context";
 import { SiteFooter } from "@/components/navigation/SiteFooter";
+import { dashboardSans, dashboardSerif } from "@/components/dashboard/fonts";
+import "@/components/dashboard/dashboard.css";
+import styles from "./About.module.css";
 
 function EditorialHeader() {
-  const { theme, mounted, toggleTheme } = useTheme();
+  const { resolvedTheme, mounted, setTheme } = useTheme();
+  const isDark = mounted && resolvedTheme === "dark";
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-hairline/80 bg-surface/90 px-4 backdrop-blur-md sm:px-8">
-      <div className="flex items-center gap-4">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1.5 font-mono text-xs text-muted transition hover:text-foreground"
-        >
-          <ArrowLeft className="h-3.5 w-3.5" />
-          <span>Landing</span>
-        </Link>
-        <span className="h-3.5 w-px bg-hairline" />
-        <Link href="/" className="flex items-center gap-2 text-foreground font-serif text-sm font-medium">
-          <span className="flex h-5 w-5 items-center justify-center rounded-sm bg-brand/10 font-mono text-[9px] font-bold text-brand">LM</span>
-          <span>Life Memory</span>
-        </Link>
-      </div>
+    <header className={styles.topHeader}>
+      <div className={styles.topHeaderInner}>
+        <div className={styles.topHeaderLeft}>
+          <Link href="/" className={styles.backNavLink}>
+            <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
+            <span>Landing</span>
+          </Link>
+          <span className={styles.headerDivider} aria-hidden="true" />
+          <Link href="/dashboard?demo=jimmy" className={styles.brandLink}>
+            <span className={styles.brandMark}>LM</span>
+            <span>Life Memory</span>
+          </Link>
+        </div>
 
-      <div className="flex items-center gap-3">
-        <Link
-          href="/dashboard?demo=jimmy"
-          className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-brand/20 bg-brand/5 px-2.5 py-1 font-mono text-xs text-brand transition hover:bg-brand/10"
-        >
-          <Compass className="h-3 w-3" />
-          <span>Demo</span>
-        </Link>
-        <Link
-          href="/login"
-          className="font-mono text-xs text-muted hover:text-foreground transition"
-        >
-          Sign In
-        </Link>
-        <button
-          type="button"
-          onClick={toggleTheme}
-          aria-label="Toggle theme"
-          className="rounded-lg p-2 text-muted hover:bg-surface-subdued hover:text-foreground transition"
-        >
-          {mounted && theme === "dark" ? <Sun className="h-4 w-4 text-accent-gold" /> : <Moon className="h-4 w-4 text-brand" />}
-        </button>
+        <nav aria-label="Editorial navigation" className={styles.topNavLinks}>
+          <Link href="/about" className={styles.topNavLink}>
+            Philosophy
+          </Link>
+          <Link href="/privacy" className={styles.topNavLink}>
+            Privacy
+          </Link>
+          <Link href="/terms" className={styles.topNavLink}>
+            Terms
+          </Link>
+          <Link href="/faq" className={styles.topNavLink}>
+            FAQ
+          </Link>
+          <Link href="/sitemap" className={styles.topNavLink}>
+            Sitemap
+          </Link>
+        </nav>
+
+        <div className={styles.topHeaderRight}>
+          <Link href="/dashboard?demo=jimmy" className={styles.demoPillLink}>
+            <Compass className="h-3.5 w-3.5" aria-hidden="true" />
+            <span>Open Demo</span>
+          </Link>
+          <Link href="/login" className={styles.signInNavLink}>
+            Sign in
+          </Link>
+          <button
+            type="button"
+            onClick={(event) => setTheme(isDark ? "light" : "dark", event)}
+            aria-label={
+              isDark
+                ? "Switch to Warm Paper light theme"
+                : "Switch to Quiet Night dark theme"
+            }
+            title={isDark ? "Warm Paper (Light)" : "Quiet Night (Dark)"}
+            className={styles.headerThemeBtn}
+          >
+            {isDark ? (
+              <Sun className="h-4 w-4" aria-hidden="true" />
+            ) : (
+              <Moon className="h-4 w-4" aria-hidden="true" />
+            )}
+          </button>
+        </div>
       </div>
     </header>
   );
@@ -58,43 +82,39 @@ export function EditorialShell({
   title,
   subtitle,
   lastUpdated,
+  wide = false,
 }: {
   children: React.ReactNode;
   badge: string;
   title: string;
   subtitle: string;
   lastUpdated?: string;
+  wide?: boolean;
 }) {
   return (
     <ThemeProvider>
-      <div className="min-h-screen bg-canvas text-foreground flex flex-col justify-between">
+      <div
+        className={`min-h-screen bg-canvas text-foreground flex flex-col justify-between lm-vault-shell--dashboard font-sans ${dashboardSans.variable} ${dashboardSerif.variable}`}
+      >
         <div>
           <EditorialHeader />
-          <main className="mx-auto max-w-4xl px-4 py-12 sm:px-8 sm:py-16">
-            {/* Header section */}
-            <header className="mb-12 border-b border-hairline/80 pb-8">
-              <div className="flex items-center gap-2">
-                <span className="rounded-full border border-brand/20 bg-brand/10 px-2.5 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wider text-brand">
-                  {badge}
-                </span>
-                {lastUpdated && (
-                  <span className="font-mono text-[11px] text-faint">
-                    Effective: {lastUpdated}
-                  </span>
-                )}
+          <main className={wide ? styles.pageWide : styles.pageStandard}>
+            {/* Editorial Intro — Identical to /settings & /dashboard */}
+            <header className={styles.intro}>
+              <div className={styles.heading}>
+                <h1>{title}</h1>
+                <span>{badge} · Personal Memory Intelligence</span>
               </div>
-              <h1 className="mt-3 font-serif text-3xl sm:text-5xl font-normal tracking-tight text-foreground leading-[1.15]">
-                {title}
-              </h1>
-              <p className="mt-4 text-base sm:text-lg text-muted font-sans leading-relaxed max-w-2xl">
-                {subtitle}
-              </p>
+              <div className={styles.introBottom}>
+                <p>{subtitle}</p>
+                <div className={styles.leadMeta}>
+                  {lastUpdated && <span>Edition · {lastUpdated}</span>}
+                  <span>Zero Model Training · 100% Portable JSON</span>
+                </div>
+              </div>
             </header>
 
-            {/* Content body */}
-            <article className="prose prose-neutral dark:prose-invert max-w-none font-sans leading-relaxed">
-              {children}
-            </article>
+            <article className={styles.articleBody}>{children}</article>
           </main>
         </div>
 

@@ -14,7 +14,7 @@ const routes = [
   ["Topics", "/topics"],
   ["Insights", "/insights"],
   ["Reflection", "/reflection"],
-  ["Tanya AI", "/chat"],
+  ["Ask Memory", "/chat"],
   ["Forgot this", "/forgot-this"],
   ["Settings", "/settings"],
   ["About Us", "/about"],
