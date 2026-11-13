@@ -7,6 +7,7 @@ import { getArchiveData, type TimelineItem } from "@/lib/queries/activities";
 import { createClient } from "@/lib/supabase/server";
 import { addDaysToDate } from "@/lib/utils/dates";
 import { isGenericPlace, normalizeEntityName, normalizeTopicName } from "@/lib/utils/normalization";
+import { checkRateLimit, getClientIdentifier, rateLimitResponse } from "@/lib/security/rate-limit";
 import { logger } from "@/lib/logger";
 
 const ChatRequestSchema = z.object({
@@ -44,6 +45,16 @@ export async function POST(request: Request) {
     let targetSessionId = sessionId;
 
     if (isDemo) {
+      // Rate limit demo by IP
+      const clientKey = getClientIdentifier(request, null);
+      const rateCheck = checkRateLimit(`chat:demo:${clientKey}`, { limit: 15, windowMs: 60_000 });
+      if (!rateCheck.allowed) {
+        return rateLimitResponse(
+          rateCheck.resetMs,
+          rateCheck.limit,
+          "Too many chat messages. Please wait a moment before sending another message."
+        );
+      }
       items = getJimmyDemoItems();
     } else {
       supabase = await createClient();
@@ -55,6 +66,18 @@ export async function POST(request: Request) {
         );
       }
       userId = user.id;
+
+      // Rate limit authenticated user by userId
+      const clientKey = getClientIdentifier(request, userId);
+      const rateCheck = checkRateLimit(`chat:${clientKey}`, { limit: 15, windowMs: 60_000 });
+      if (!rateCheck.allowed) {
+        return rateLimitResponse(
+          rateCheck.resetMs,
+          rateCheck.limit,
+          "Too many chat messages. Please wait a moment before sending another message."
+        );
+      }
+
       const archiveData = await getArchiveData();
       items = archiveData.items;
 

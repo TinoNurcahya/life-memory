@@ -5,6 +5,7 @@ import { extractActivities } from "@/lib/ai/gemini-extractor";
 import { generateMemoryIllustration } from "@/lib/ai/image-generator";
 import { addDaysToDate } from "@/lib/utils/dates";
 import { isGenericPlace, normalizeEntityName, normalizeTopicName, uniqueClean } from "@/lib/utils/normalization";
+import { checkRateLimit, getClientIdentifier, rateLimitResponse } from "@/lib/security/rate-limit";
 import { logger } from "@/lib/logger";
 
 const requestSchema = z.object({
@@ -16,6 +17,17 @@ export async function POST(request: Request) {
   const supabase = await createClient();
   const { data: userData } = await supabase.auth.getUser();
   if (!userData.user) return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+
+  // Rate Limiting: Max 10 extractions per minute per user
+  const clientKey = getClientIdentifier(request, userData.user.id);
+  const rateCheck = checkRateLimit(`extract:${clientKey}`, { limit: 10, windowMs: 60_000 });
+  if (!rateCheck.allowed) {
+    return rateLimitResponse(
+      rateCheck.resetMs,
+      rateCheck.limit,
+      "Too many extraction requests. Please wait a moment before trying again."
+    );
+  }
 
   const body = requestSchema.safeParse(await request.json().catch(() => null));
   if (!body.success) return NextResponse.json({ error: "activityId is required" }, { status: 400 });
@@ -82,26 +94,89 @@ export async function POST(request: Request) {
       }).select("id").single();
       if (detailError || !detail) throw detailError ?? new Error("Could not save extracted activity");
 
-      for (const name of people) {
-        const normalized = normalizeEntityName(name);
-        const { data: entity, error } = await supabase.from("people").upsert({ user_id: userData.user.id, name, normalized_name: normalized }, { onConflict: "user_id,normalized_name" }).select("id").single();
-        if (error || !entity) throw error ?? new Error("Could not resolve person");
-        const link = await supabase.from("activity_people").insert({ activity_detail_id: detail.id, person_id: entity.id, user_id: userData.user.id });
-        if (link.error) throw link.error;
+      // Batch Entity Resolution & Junction Link Inserts (eliminates sequential N+1 network calls)
+      if (people.length > 0) {
+        const resolvedPeople = await Promise.all(
+          people.map(async (name) => {
+            const normalized = normalizeEntityName(name);
+            const { data: entity, error } = await supabase
+              .from("people")
+              .upsert(
+                { user_id: userData.user.id, name, normalized_name: normalized },
+                { onConflict: "user_id,normalized_name" }
+              )
+              .select("id")
+              .single();
+            if (error || !entity) throw error ?? new Error("Could not resolve person");
+            return entity.id;
+          })
+        );
+
+        if (resolvedPeople.length > 0) {
+          const links = resolvedPeople.map((personId) => ({
+            activity_detail_id: detail.id,
+            person_id: personId,
+            user_id: userData.user.id,
+          }));
+          const { error: linkError } = await supabase.from("activity_people").insert(links);
+          if (linkError) throw linkError;
+        }
       }
-      for (const name of places) {
-        const normalized = normalizeEntityName(name);
-        const { data: entity, error } = await supabase.from("places").upsert({ user_id: userData.user.id, name, normalized_name: normalized }, { onConflict: "user_id,normalized_name" }).select("id").single();
-        if (error || !entity) throw error ?? new Error("Could not resolve place");
-        const link = await supabase.from("activity_places").insert({ activity_detail_id: detail.id, place_id: entity.id, user_id: userData.user.id });
-        if (link.error) throw link.error;
+
+      if (places.length > 0) {
+        const resolvedPlaces = await Promise.all(
+          places.map(async (name) => {
+            const normalized = normalizeEntityName(name);
+            const { data: entity, error } = await supabase
+              .from("places")
+              .upsert(
+                { user_id: userData.user.id, name, normalized_name: normalized },
+                { onConflict: "user_id,normalized_name" }
+              )
+              .select("id")
+              .single();
+            if (error || !entity) throw error ?? new Error("Could not resolve place");
+            return entity.id;
+          })
+        );
+
+        if (resolvedPlaces.length > 0) {
+          const links = resolvedPlaces.map((placeId) => ({
+            activity_detail_id: detail.id,
+            place_id: placeId,
+            user_id: userData.user.id,
+          }));
+          const { error: linkError } = await supabase.from("activity_places").insert(links);
+          if (linkError) throw linkError;
+        }
       }
-      for (const name of topics) {
-        const normalized = normalizeTopicName(name);
-        const { data: entity, error } = await supabase.from("topics").upsert({ user_id: userData.user.id, name, normalized_name: normalized }, { onConflict: "user_id,normalized_name" }).select("id").single();
-        if (error || !entity) throw error ?? new Error("Could not resolve topic");
-        const link = await supabase.from("activity_topics").insert({ activity_detail_id: detail.id, topic_id: entity.id, user_id: userData.user.id });
-        if (link.error) throw link.error;
+
+      if (topics.length > 0) {
+        const resolvedTopics = await Promise.all(
+          topics.map(async (name) => {
+            const normalized = normalizeTopicName(name);
+            const { data: entity, error } = await supabase
+              .from("topics")
+              .upsert(
+                { user_id: userData.user.id, name, normalized_name: normalized },
+                { onConflict: "user_id,normalized_name" }
+              )
+              .select("id")
+              .single();
+            if (error || !entity) throw error ?? new Error("Could not resolve topic");
+            return entity.id;
+          })
+        );
+
+        if (resolvedTopics.length > 0) {
+          const links = resolvedTopics.map((topicId) => ({
+            activity_detail_id: detail.id,
+            topic_id: topicId,
+            user_id: userData.user.id,
+          }));
+          const { error: linkError } = await supabase.from("activity_topics").insert(links);
+          if (linkError) throw linkError;
+        }
       }
     }
 

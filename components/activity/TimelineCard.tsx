@@ -77,6 +77,10 @@ export function TimelineCard({ item, demo = false, index = 0 }: { item: Timeline
         });
         const result = await response.json().catch(() => null);
         if (!response.ok || result?.success !== true) {
+          if (response.status === 429) {
+            setFeedback({ error: true, text: "Too many requests. Please wait a moment before trying again." });
+            return;
+          }
           setFeedback({ error: true, text: result?.error || "Extraction failed. Try again." });
           return;
         }
@@ -131,9 +135,9 @@ export function TimelineCard({ item, demo = false, index = 0 }: { item: Timeline
         <MemoryImageGrid compact images={item.imageUrls} summary={item.summary} date={formatArchiveDate(item.occurredAt)} />
       </div>
 
-      {!demo && item.status === "FAILED" && (
+      {!demo && (item.status === "FAILED" || item.status === "PENDING") && (
         <button type="button" className={styles.textButton} onClick={retry} disabled={busy}>
-          {isPending ? "Retrying extraction…" : "Retry extraction"}
+          {isPending ? "Extracting memory…" : item.status === "PENDING" ? "Retry if stuck" : "Retry extraction"}
         </button>
       )}
       {!demo && item.status === "RESOLVED" && (

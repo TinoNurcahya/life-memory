@@ -90,7 +90,8 @@ function relationMap<T extends { id: string }>(rows: RelationRow<T>[]) {
   return map;
 }
 
-export async function getArchiveData(): Promise<ArchiveData> {
+export async function getArchiveData(options: { limit?: number } = {}): Promise<ArchiveData> {
+  const limit = options.limit ?? 200;
   const supabase = await createClient();
   const { data: userData, error: userError } = await supabase.auth.getUser();
 
@@ -103,49 +104,72 @@ export async function getArchiveData(): Promise<ArchiveData> {
   }
 
   const userId = userData.user.id;
-  const [activitiesResult, detailsResult, peopleResult, placesResult, topicsResult] = await Promise.all([
-    supabase
-      .from("activities")
-      .select("id, raw_text, client_entry_date, status, created_at")
-      .eq("user_id", userId)
-      .order("created_at", { ascending: false }),
-    supabase
-      .from("activity_details")
-      .select("id, activity_id, summary, source_text, category, occurred_at, event_status, time_of_day, time_hint, is_first_time, needs_review, review_reasons, image_urls")
-      .eq("user_id", userId)
-      .order("occurred_at", { ascending: false }),
-    supabase
-      .from("activity_people")
-      .select("activity_detail_id, relation:people(id, user_id, name, normalized_name, aliases, created_at, updated_at)")
-      .eq("user_id", userId),
-    supabase
-      .from("activity_places")
-      .select("activity_detail_id, relation:places(id, user_id, name, normalized_name, aliases, created_at, updated_at)")
-      .eq("user_id", userId),
-    supabase
-      .from("activity_topics")
-      .select("activity_detail_id, relation:topics(id, user_id, name, normalized_name, created_at, updated_at)")
-      .eq("user_id", userId),
-  ]);
 
-  const firstError = [
-    activitiesResult.error,
-    detailsResult.error,
-    peopleResult.error,
-    placesResult.error,
-    topicsResult.error,
-  ].find(Boolean);
+  let activitiesQuery = supabase
+    .from("activities")
+    .select("id, raw_text, client_entry_date, status, created_at")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
 
-  if (firstError) {
+  let detailsQuery = supabase
+    .from("activity_details")
+    .select("id, activity_id, summary, source_text, category, occurred_at, event_status, time_of_day, time_hint, is_first_time, needs_review, review_reasons, image_urls")
+    .eq("user_id", userId)
+    .order("occurred_at", { ascending: false });
+
+  if (Number.isFinite(limit) && limit > 0) {
+    activitiesQuery = activitiesQuery.limit(limit);
+    detailsQuery = detailsQuery.limit(limit);
+  }
+
+  const [activitiesResult, detailsResult] = await Promise.all([activitiesQuery, detailsQuery]);
+
+  if (activitiesResult.error || detailsResult.error) {
     return {
       items: [],
       stats: { activities: 0, people: 0, places: 0, topics: 0, firstTimes: 0 },
-      error: firstError.message,
+      error: (activitiesResult.error || detailsResult.error)?.message ?? "Database error",
     };
   }
 
   const activities = (activitiesResult.data ?? []) as ActivityRow[];
   const details = (detailsResult.data ?? []) as DetailRow[];
+  const detailIds = details.map((d) => d.id);
+
+  let peopleQuery = supabase
+    .from("activity_people")
+    .select("activity_detail_id, relation:people(id, user_id, name, normalized_name, aliases, created_at, updated_at)")
+    .eq("user_id", userId);
+
+  let placesQuery = supabase
+    .from("activity_places")
+    .select("activity_detail_id, relation:places(id, user_id, name, normalized_name, aliases, created_at, updated_at)")
+    .eq("user_id", userId);
+
+  let topicsQuery = supabase
+    .from("activity_topics")
+    .select("activity_detail_id, relation:topics(id, user_id, name, normalized_name, created_at, updated_at)")
+    .eq("user_id", userId);
+
+  if (detailIds.length > 0) {
+    peopleQuery = peopleQuery.in("activity_detail_id", detailIds);
+    placesQuery = placesQuery.in("activity_detail_id", detailIds);
+    topicsQuery = topicsQuery.in("activity_detail_id", detailIds);
+  }
+
+  const [peopleResult, placesResult, topicsResult] = detailIds.length > 0
+    ? await Promise.all([peopleQuery, placesQuery, topicsQuery])
+    : [{ data: [], error: null }, { data: [], error: null }, { data: [], error: null }];
+
+  const firstRelError = [peopleResult.error, placesResult.error, topicsResult.error].find(Boolean);
+  if (firstRelError) {
+    return {
+      items: [],
+      stats: { activities: 0, people: 0, places: 0, topics: 0, firstTimes: 0 },
+      error: firstRelError.message,
+    };
+  }
+
   const activityById = new Map(activities.map((activity) => [activity.id, activity]));
   const peopleByDetail = relationMap((peopleResult.data ?? []) as RelationRow<Person>[]);
   const placesByDetail = relationMap((placesResult.data ?? []) as RelationRow<Place>[]);
