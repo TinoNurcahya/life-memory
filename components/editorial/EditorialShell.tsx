@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ArrowLeft, Moon, Sun, Compass } from "lucide-react";
 import { ThemeProvider, useTheme } from "@/lib/experience/theme-context";
+import { LifeMemoryLogo } from "@/components/brand/LifeMemoryLogo";
 import { SiteFooter } from "@/components/navigation/SiteFooter";
 import { dashboardSans, dashboardSerif } from "@/components/dashboard/fonts";
 import "@/components/dashboard/dashboard.css";
@@ -22,7 +23,7 @@ function EditorialHeader() {
           </Link>
           <span className={styles.headerDivider} aria-hidden="true" />
           <Link href="/dashboard?demo=jimmy" className={styles.brandLink}>
-            <span className={styles.brandMark}>LM</span>
+            <LifeMemoryLogo className="h-6 w-6" />
             <span>Life Memory</span>
           </Link>
         </div>

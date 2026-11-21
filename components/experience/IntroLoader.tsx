@@ -2,6 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
+import { CustomEase } from "gsap/CustomEase";
+
+gsap.registerPlugin(CustomEase);
+CustomEase.create("themeIris", "0.4, 0, 0.2, 1");
 
 // Vector paths for "Life Memory" extracted directly from Newsreader font
 const LETTER_PATHS = [
@@ -47,12 +51,87 @@ const LETTER_PATHS = [
   },
 ];
 
+/**
+ * Builds a CSS clip-path polygon with an outer clockwise rectangle and
+ * a counter-clockwise elliptical inner cutout, creating a true viewport aperture.
+ */
+function buildEllipticalCutoutPolygon(
+  cx: number,
+  cy: number,
+  rx: number,
+  ry: number,
+  vw: number,
+  vh: number,
+  segments = 36
+) {
+  if (rx <= 0.5 || ry <= 0.5) {
+    return "polygon(0px 0px, 100% 0px, 100% 100%, 0px 100%, 0px 0px)";
+  }
+
+  // Clockwise outer rectangle covering the full viewport
+  let poly = `polygon(0px 0px, ${vw}px 0px, ${vw}px ${vh}px, 0px ${vh}px, 0px 0px`;
+
+  // Counter-clockwise inner ellipse cutout (nonzero winding cancels the outer winding)
+  for (let i = 0; i <= segments; i++) {
+    const angle = (i / segments) * 2 * Math.PI;
+    const px = (cx + rx * Math.cos(angle)).toFixed(1);
+    const py = (cy - ry * Math.sin(angle)).toFixed(1);
+    poly += `, ${px}px ${py}px`;
+  }
+
+  poly += ")";
+  return poly;
+}
+
+/**
+ * Accurately measures the screen position and dimensions of the 'o' inner counter.
+ */
+function measureHole(svgEl: SVGSVGElement | null, anchorEl: SVGElement | null) {
+  const vw = typeof window !== "undefined" ? window.innerWidth : 1440;
+  const vh = typeof window !== "undefined" ? window.innerHeight : 900;
+  let cx = vw / 2;
+  let cy = vh / 2;
+  let rx = 10;
+  let ry = 14;
+
+  if (anchorEl) {
+    const rect = anchorEl.getBoundingClientRect();
+    if (rect.width > 0 && rect.height > 0) {
+      cx = rect.left + rect.width / 2;
+      cy = rect.top + rect.height / 2;
+      rx = Math.max(6, rect.width / 2);
+      ry = Math.max(8, rect.height / 2);
+    }
+  } else if (svgEl) {
+    const sRect = svgEl.getBoundingClientRect();
+    if (sRect.width > 0) {
+      // Center of 'o' in viewBox 50 50 420 85 is (377.28, 94.66)
+      const contentH = sRect.width * (85 / 420);
+      const topOffset = (sRect.height - contentH) / 2;
+      cx = sRect.left + ((377.28 - 50) / 420) * sRect.width;
+      cy = sRect.top + topOffset + ((94.66 - 50) / 85) * contentH;
+      rx = (9.5 / 420) * sRect.width;
+      ry = (13.3 / 85) * contentH;
+    }
+  }
+
+  const maxCornerDist = Math.hypot(
+    Math.max(cx, vw - cx),
+    Math.max(cy, vh - cy)
+  );
+  const maxRadius = Math.ceil(maxCornerDist * 1.35);
+
+  return { cx, cy, rx, ry, maxRadius, vw, vh };
+}
+
 export function IntroLoader({ onComplete }: { onComplete?: () => void }) {
   const [phase, setPhase] = useState<"visible" | "hidden">("visible");
   const callbackRef = useRef(onComplete);
   const completedRef = useRef(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+  const oAnchorRef = useRef<SVGEllipseElement>(null);
   const penTipRef = useRef<SVGGElement>(null);
   const strokeRefs = useRef<(SVGPathElement | null)[]>([]);
   const fillRefs = useRef<(SVGPathElement | null)[]>([]);
@@ -121,6 +200,28 @@ export function IntroLoader({ onComplete }: { onComplete?: () => void }) {
     if (containerRef.current) {
       gsap.set(containerRef.current, { opacity: 1 });
     }
+
+    // Hole state for 'o' aperture reveal animation
+    const hole = {
+      rx: 0,
+      ry: 0,
+    };
+
+    let currentCx = window.innerWidth / 2;
+    let currentCy = window.innerHeight / 2;
+
+    const applyHole = () => {
+      if (!containerRef.current) return;
+      const poly = buildEllipticalCutoutPolygon(
+        currentCx,
+        currentCy,
+        hole.rx,
+        hole.ry,
+        window.innerWidth,
+        window.innerHeight
+      );
+      containerRef.current.style.clipPath = poly;
+    };
 
     const tl = gsap.timeline({
       paused: true,
@@ -246,25 +347,70 @@ export function IntroLoader({ onComplete }: { onComplete?: () => void }) {
       );
     }
 
-    // 8. Brief reading pause (~0.7s)
-    tl.to({}, { duration: 0.7 });
+    // --- PHASE 2: Letter 'O' Aperture Cutout & Snappy Zoom Reveal ---
+    const finishLettersTime = currentTime + 0.65;
 
-    // 9. Trigger home reveal
+    // 8. Measure exact screen position of letter 'o' inner counter
+    tl.add(() => {
+      const m = measureHole(svgRef.current, oAnchorRef.current);
+      currentCx = m.cx;
+      currentCy = m.cy;
+    }, finishLettersTime);
+
+    // 9. Open hole inside letter 'o' smoothly (~0.35s), revealing live web underneath seamlessly
+    tl.to(
+      hole,
+      {
+        rx: () => {
+          const m = measureHole(svgRef.current, oAnchorRef.current);
+          currentCx = m.cx;
+          currentCy = m.cy;
+          return m.rx;
+        },
+        ry: () => {
+          const m = measureHole(svgRef.current, oAnchorRef.current);
+          return m.ry;
+        },
+        duration: 0.35,
+        ease: "power2.out",
+        onUpdate: applyHole,
+      },
+      finishLettersTime + 0.05
+    );
+
+    // 10. Sweet-spot micro-pause (~0.35s) giving the user time to register and appreciate the live website inside 'O'
+    const peekPauseTime = finishLettersTime + 0.05 + 0.35 + 0.35;
+
+    // 11. Trigger hero reveal right when the zoom begins
     tl.add(() => {
       if (!introTriggered) {
         introTriggered = true;
         callbackRef.current?.();
       }
-    });
+    }, peekPauseTime);
 
-    // 10. Smooth fade out exit transition
-    if (containerRef.current) {
-      tl.to(containerRef.current, {
-        opacity: 0,
-        duration: 0.6,
-        ease: "power2.inOut",
-      });
-    }
+    // 12. Theme-synchronized zoom reveal (0.5s, cubic-bezier(.4, 0, .2, 1)) expanding hole across entire screen
+    // Text and canvas stay static until the expanding hole sweeps over and swallows them completely
+    tl.to(
+      hole,
+      {
+        rx: () => {
+          const m = measureHole(svgRef.current, oAnchorRef.current);
+          return m.maxRadius;
+        },
+        ry: () => {
+          const m = measureHole(svgRef.current, oAnchorRef.current);
+          return m.maxRadius;
+        },
+        duration: 0.5,
+        ease: "themeIris",
+        onUpdate: applyHole,
+      },
+      peekPauseTime
+    );
+
+    // 13. Complete intro loader and unmount cleanly
+    tl.add(finish);
 
     startFrame = requestAnimationFrame(() => {
       if (active && !completedRef.current) tl.play();
@@ -278,11 +424,30 @@ export function IntroLoader({ onComplete }: { onComplete?: () => void }) {
     };
     motionQuery.addEventListener("change", handleMotionChange);
 
+    // Skip on click or Escape key
+    const skip = () => {
+      tl.progress(1);
+    };
+
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") skip();
+    };
+
+    const containerEl = containerRef.current;
+    if (containerEl) {
+      containerEl.addEventListener("click", skip);
+    }
+    window.addEventListener("keydown", onKey);
+
     return () => {
       active = false;
       cancelAnimationFrame(startFrame);
       tl.kill();
       motionQuery.removeEventListener("change", handleMotionChange);
+      if (containerEl) {
+        containerEl.removeEventListener("click", skip);
+      }
+      window.removeEventListener("keydown", onKey);
     };
   }, []);
 
@@ -292,13 +457,17 @@ export function IntroLoader({ onComplete }: { onComplete?: () => void }) {
     <div
       ref={containerRef}
       data-intro-loader
-      className="fixed inset-0 z-[90] flex flex-col items-center justify-center select-none overflow-hidden"
-      style={{ backgroundColor: "var(--color-canvas)", willChange: "opacity" }}
+      className="fixed inset-0 z-[90] flex flex-col items-center justify-center select-none overflow-hidden cursor-pointer"
+      style={{
+        backgroundColor: "var(--color-canvas)",
+        willChange: "clip-path, opacity",
+      }}
       aria-hidden="true"
     >
       <div className="relative flex flex-col items-center justify-center text-foreground px-4 w-full max-w-xl">
         {/* Precision SVG ViewBox for Life Memory letters with wet ink & pen tip filters */}
         <svg
+          ref={svgRef}
           viewBox="50 50 420 85"
           className="w-full max-w-[480px] md:max-w-[540px] h-auto overflow-visible"
         >
@@ -327,6 +496,19 @@ export function IntroLoader({ onComplete }: { onComplete?: () => void }) {
               </feMerge>
             </filter>
           </defs>
+
+          {/* Precision anchor element at the exact inner hole center of 'o' */}
+          <ellipse
+            ref={oAnchorRef}
+            cx="377.28"
+            cy="94.66"
+            rx="9.5"
+            ry="13.3"
+            fill="none"
+            stroke="none"
+            opacity="0"
+            pointerEvents="none"
+          />
 
           {/* Layer 1: Organic Ink Bleed Fill */}
           {LETTER_PATHS.map((item, idx) => (
