@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowUp, Compass, MessageSquare } from "lucide-react";
+import { LifeMemoryLogo } from "@/components/brand/LifeMemoryLogo";
 import styles from "@/components/editorial/About.module.css";
 
 interface BentoCardItem {
@@ -195,7 +196,7 @@ export function SiteFooter({ className = "" }: { className?: string }) {
           <div className={styles.footerCol}>
             <span className={styles.footerColIndex}>01 — Archive</span>
             <Link href="/" className={styles.footerBrandRow}>
-              <span className={styles.brandMark}>LM</span>
+              <LifeMemoryLogo className="h-6 w-6" />
               <span>Life Memory</span>
             </Link>
             <p className={styles.footerBio}>
